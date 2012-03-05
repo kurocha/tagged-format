@@ -1,0 +1,12 @@
+top: mesh triangles
+	indices: array 2u
+		0 1 2 3
+	end
+
+	vertices: array 3p3n2m
+		 0  0 0 0 0 1 0 0
+		 0 10 0 0 0 1 0 1
+		10  0 0 0 0 1 1 0
+		10 10 0 0 0 1 1 1
+	end
+end
