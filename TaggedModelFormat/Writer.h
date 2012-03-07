@@ -61,12 +61,14 @@ namespace TaggedModelFormat {
 		BufferedOffset<Header> header();
 		
 		template <typename BlockT>
-		BufferedOffset<BlockT> append(BlockT * block, OffsetT capacity = 0) {
-			OffsetT offset = _write_buffer->append(block->size + capacity);
-			block->size += capacity;
+		BufferedOffset<BlockT> append(OffsetT capacity = 0) {
+			BlockT block;
+			clear(block, capacity);
+			
+			OffsetT offset = _write_buffer->append(block.size);
 			
 			void * start = _write_buffer->fetch(offset);
-			memcpy(start, block, block->size);
+			memcpy(start, &block, sizeof(BlockT));
 						
 			return BufferedOffset<BlockT>(offset, _write_buffer);
 		}

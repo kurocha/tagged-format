@@ -103,7 +103,13 @@ int main(int argc, const char * argv[]) {
 	for (std::size_t i = 0; i < argc; i += 1) {
 		std::string argument = argv[i];
 		
-		if (argument == "--text-to-binary") {
+		if (argument == "--help") {
+			std::cerr << argv[0] << " Copyright 2012 Samuel Williams. No warranty." << std::endl;
+			std::cerr << "\t--text-to-binary [input-text-path] [output-binary-path]" << std::endl;
+			std::cerr << "\t--dump-binary [input-binary-path]" << std::endl;
+		}
+		
+		else if (argument == "--text-to-binary") {
 			assert(i + 2 < argc);
 			
 			std::ifstream input(argv[i+1]);
@@ -114,7 +120,7 @@ int main(int argc, const char * argv[]) {
 			i += 2;
 		}
 		
-		if (argument == "--dump-binary") {
+		else if (argument == "--dump-binary") {
 			assert(i + 1 < argc);
 			
 			MemoryBuffer memory_buffer;
@@ -124,5 +130,12 @@ int main(int argc, const char * argv[]) {
 			
 			i += 1;
 		}
+	}
+	
+	if (argc == 1) {
+		std::ifstream input("/Users/samuel/Documents/Programming/Graphics/TaggedModelFormat/TMF Tool/cube.tagged-model-text");
+		std::ofstream output("dump.tagged-model-binary");
+		
+		Parser::serialize(input, output);
 	}
 }

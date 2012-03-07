@@ -25,11 +25,10 @@ namespace TaggedModelFormat {
 	}
 	
 	BufferedOffset<Header> Writer::header() {
-		Header header;
-		clear(header);
+		auto header = append<Header>();
+
+		header->magic = 42;
 		
-		header.magic = 42;
-		
-		return append(&header);
+		return header;
 	}
 }

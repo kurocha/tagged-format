@@ -171,16 +171,13 @@ namespace TaggedModelFormat {
 		static const uint32_t TAG = '3326';
 	};
 	
-	template <typename BlockT>
-	void clear(BlockT & block) {
-		memset(&block, 0, sizeof(BlockT));
-		
-		block.tag = BlockTraits<BlockT>::TAG;
-		block.size = sizeof(BlockT);
-	}
-	
 	std::string tag_name(uint32_t tag);
 	
+	template <typename BlockT>
+	void clear(BlockT & block, OffsetT capacity = 0) {
+		block.tag = BlockTraits<BlockT>::TAG;
+		block.size = sizeof(BlockT) + capacity;
+	}
 }
 
 #endif

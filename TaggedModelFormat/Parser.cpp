@@ -80,11 +80,8 @@ namespace TaggedModelFormat {
 			return 0;
 		}
 		
-		OffsetT Context::parse_mesh() {
-			Mesh mesh;
-			clear(mesh);
-			
-			auto mesh_block = _writer->append(&mesh);
+		OffsetT Context::parse_mesh() {			
+			auto mesh_block = _writer->append<Mesh>();
 			
 			std::string layout; 
 			_input >> layout;
@@ -102,7 +99,7 @@ namespace TaggedModelFormat {
 			mesh_block->indices_offset = child.lookup("indices");
 			mesh_block->vertices_offset = child.lookup("vertices");
 			
-			//std::cerr << "Mesh: " << mesh_block->indices_offset << " => " << mesh_block->vertices_offset << std::endl;
+			std::cerr << "Mesh: " << mesh_block->indices_offset << " => " << mesh_block->vertices_offset << std::endl;
 			
 			return mesh_block;
 		}
@@ -115,11 +112,12 @@ namespace TaggedModelFormat {
 				ElementT value;
 				
 				input >> value;
+				//std::cerr << "(parse items) <- " << value << std::endl;
 				
-				if (input.fail()) {					
+				if (input.fail()) {
 					input.clear();
 					
-					input >> symbol;
+					assert(input >> symbol);
 					assert(symbol == "end");
 					
 					break;
@@ -136,11 +134,8 @@ namespace TaggedModelFormat {
 			std::vector<ElementT> items;
 			parse_items(_input, items);
 			
-			Indices<ElementT> indices;
-			clear(indices);
-			
 			std::size_t buffer_size = sizeof(ElementT) * items.size();
-			auto indices_block = _writer->append(&indices, buffer_size);
+			auto indices_block = _writer->append<Indices<ElementT>>(buffer_size);
 			memcpy(indices_block->indices, items.data(), buffer_size);
 			
 			return indices_block;
@@ -151,11 +146,8 @@ namespace TaggedModelFormat {
 			std::vector<ElementT> items;
 			parse_items(_input, items);
 			
-			Vertices<ElementT> vertices;
-			clear(vertices);
-			
 			std::size_t buffer_size = sizeof(ElementT) * items.size();
-			auto vertices_block = _writer->append(&vertices, buffer_size);
+			auto vertices_block = _writer->append<Vertices<ElementT>>(buffer_size);
 			memcpy(vertices_block->vertices, items.data(), buffer_size);
 			
 			return vertices_block;
@@ -164,9 +156,9 @@ namespace TaggedModelFormat {
 		OffsetT Context::parse_array() {
 			std::string value_type, symbol;
 			
-			_input >> value_type;
-			
-			//std::cerr << "Value type = " << value_type << std::endl;
+			assert(_input >> value_type);
+			//std::cerr << "(parse array) <- " << value_type << std::endl;
+			std::cerr << "Value type = " << value_type << std::endl;
 			
 			if (value_type == "2u") {
 				return parse_indices<uint16_t>();
@@ -179,14 +171,15 @@ namespace TaggedModelFormat {
 			throw std::runtime_error("Could not parse input");
 		}
 		
-		void Context::parse() {
-			std::string symbol, name;
-			
+		void Context::parse() {			
 			while (_input.good()) {
+				std::string symbol, name;
+				
 				bool named = false;
 				_input >> symbol;
+				//std::cerr << "(parse) <- " << symbol << std::endl;
 				
-				if (symbol == "end") {
+				if (_input.eof() || symbol == "end") {
 					return;
 				}
 				
@@ -196,8 +189,11 @@ namespace TaggedModelFormat {
 					name = symbol;
 					named = true;
 					
-					_input >> symbol;
+					assert(_input >> symbol);
+					//std::cerr << "(parse name) <- " << symbol << std::endl;
 				}
+				
+				std::cerr << "Parsing " << symbol << " for " << name << std::endl;
 				
 				OffsetT offset = 0;
 				if (symbol.front() == '$') {
