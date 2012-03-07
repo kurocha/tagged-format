@@ -36,7 +36,7 @@ import bpy
 
 from bpy.props import StringProperty, BoolProperty
 
-def face_to_triangles(face, triangulate=True):
+def face_to_triangles(face):
 	triangles = []
 	if len(face.vertices) == 4:
 		triangles.append((face.vertices[0], face.vertices[1], face.vertices[2],))
@@ -46,7 +46,65 @@ def face_to_triangles(face, triangulate=True):
 
 	return triangles
 
-def write_tagged_model_text(filepath, apply_mods=True, triangulate=True):
+class Vertex(object):
+	def __init__(self, vertex, mapping, face):
+		self._vertex = vertex
+		self._mapping = mapping
+		self._face = face
+	
+	def position(self):
+		return self._vertex.co
+	
+	def normal(self):
+		return self._vertex.normal
+		#return self._face.normal
+	
+	def mapping(self):
+		return self._mapping
+	
+	def __hash__(self):
+		return hash(self.__key__())
+	
+	def __eq__(self, other):
+		return self.__key__() == other.__key__()
+	
+	def __ne__(self, other):
+		return self.__key__() != other.__key__()
+	
+	def __lt__(self, other):
+		return self.__key__() < other.__key__()
+	
+	def __le__(self, other):
+		return self.__key__() <= other.__key__()
+	
+	def __gt__(self, other):
+		return self.__key__() > other.__key__()
+	
+	def __ge__(self, other):
+		return self.__key__() >= other.__key__()
+	
+	def __key__(self):
+		return (tuple(self.position()), tuple(self.normal()), tuple(self.mapping()),)
+
+class Vertices(object):
+	def __init__(self):
+		self.vertices = []
+		self.indices = {}
+	
+	def get(self, vertex):
+		if vertex in self.indices:
+			return self.indices[vertex]
+
+		index = self.indices[vertex] = len(self.vertices)		
+		self.vertices.append(vertex)
+		
+		return index
+	
+	def __iter__(self):
+		for item in self.vertices:
+			yield item
+
+def write_tagged_model_text(filepath):
 	scene = bpy.context.scene
 	output = open(filepath, "w")
 	
@@ -54,24 +112,32 @@ def write_tagged_model_text(filepath, apply_mods=True, triangulate=True):
 		output.write("top: mesh triangles\n")
 		mesh = data_object.to_mesh(scene, True, "PREVIEW")
 		
+		vertices = Vertices()
+		triangles = []
+		world_matrix = data_object.matrix_world
+		uv_coordinates = mesh.uv_textures[0]
+		for index, face in enumerate(mesh.faces):
+			for triangle in face_to_triangles(face):
+				# Get the 3 vertices
+				face_vertices = [Vertex(mesh.vertices[triangle[i]], uv_coordinates.data[index].uv[i], face) for i in range(3)]
+				triangles.append([vertices.get(vertex) for vertex in face_vertices])
+		
 		output.write("\tindices: array 2u\n")
-		for face in mesh.faces:
-			triangles = face_to_triangles(face, triangulate)
-			for triangle in triangles:
-				output.write("\t\t{0} {1} {2}\n".format(*triangle))
+		for triangle in triangles:
+			output.write("\t\t{0} {1} {2}\n".format(*triangle))
 		output.write("\tend\n")
 		
 		output.write("\tvertices: array 3p3n2m\n")
-		world_matrix = data_object.matrix_world
-		for vertex in mesh.vertices:
-			position = world_matrix * vertex.co
-			normal = world_matrix * vertex.normal
-			uv = (0, 0,)
+		
+		for vertex in vertices:
+			position = world_matrix * vertex.position()
+			normal = world_matrix * vertex.normal()
+			mapping = vertex.mapping()
 			
 			output.write("\t\t{0} {1} {2}\n".format(
 				" ".join([str(i) for i in position]), 
 				" ".join([str(i) for i in normal]),
-				" ".join([str(i) for i in uv])
+				" ".join([str(i) for i in mapping])
 			))
 		output.write("\tend\n")
 		
@@ -109,7 +175,7 @@ class TMFExporter(bpy.types.Operator):
 			)
 
 	def execute(self, context):
-		write_tagged_model_text(self.filepath, self.apply_modifiers, self.triangulate)
+		write_tagged_model_text(self.filepath)
 
 		return {'FINISHED'}
 
