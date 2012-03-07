@@ -17,7 +17,7 @@ namespace TaggedModelFormat {
 	typedef unsigned char ByteT;
 	
 	struct Buffer {
-		void * begin;
+		const void * begin;
 		OffsetT size;
 		
 		void * at(OffsetT offset) {

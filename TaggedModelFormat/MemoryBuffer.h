@@ -15,7 +15,9 @@ namespace TaggedModelFormat {
 	
 	class MemoryBuffer : public virtual IWriteBuffer {
 	protected:
-		Buffer _buffer;
+		void * _begin;
+		std::size_t _size;
+		
 		std::size_t _capacity;
 		
 		void resize(std::size_t size);

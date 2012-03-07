@@ -19,10 +19,10 @@ namespace TaggedModelFormat {
 	
 	void MemoryBuffer::resize(std::size_t size) {
 		if (size < _capacity) {
-			_buffer.size = size;
+			_size = size;
 		} else {
-			_buffer.begin = realloc(_buffer.begin, size);
-			_buffer.size = size;
+			_begin = realloc(_begin, size);
+			_size = size;
 			
 			_capacity = size;
 		}
@@ -30,35 +30,35 @@ namespace TaggedModelFormat {
 	
 	MemoryBuffer::MemoryBuffer() {
 		_capacity = 0;
-		_buffer.begin = nullptr;
-		_buffer.size = 0;
+		_begin = nullptr;
+		_size = 0;
 	}
 	
 	MemoryBuffer::MemoryBuffer(std::size_t capacity) {
 		_capacity = capacity;
-		_buffer.begin = malloc(_capacity);
-		_buffer.size = 0;
+		_begin = malloc(_capacity);
+		_size = 0;
 	}
 	
 	MemoryBuffer::~MemoryBuffer() {
-		if (_buffer.begin)
-			free(_buffer.begin);
+		if (_begin)
+			free(_begin);
 	}
 	
 	Buffer MemoryBuffer::buffer() {
-		return _buffer;
+		return (Buffer){_begin, _size};
 	}
 	
 	OffsetT MemoryBuffer::append(std::size_t size) {
-		OffsetT current = _buffer.size;
+		OffsetT current = _size;
 		
-		resize(_buffer.size + size);
+		resize(_size + size);
 		
 		return current;
 	}
 	
 	void * MemoryBuffer::fetch(OffsetT offset) {
-		return _buffer.at(offset);
+		return (ByteT *)_begin + offset;
 	}
 	
 	void MemoryBuffer::write_to_file(std::string path) const {
@@ -73,7 +73,7 @@ namespace TaggedModelFormat {
 		
 		{
 			// Resize the file on disk:			
-			if (lseek(fd, _buffer.size - 1, SEEK_SET) == -1) {
+			if (lseek(fd, _size - 1, SEEK_SET) == -1) {
 				perror("lseek");
 			}
 			
@@ -82,11 +82,11 @@ namespace TaggedModelFormat {
 			}
 		}
 		
-		void * buffer = mmap(0, _buffer.size, PROT_WRITE, MAP_SHARED, fd, 0);
+		void * buffer = mmap(0, _size, PROT_WRITE, MAP_SHARED, fd, 0);
 		
-		memcpy(buffer, _buffer.begin, _buffer.size);
+		memcpy(buffer, _begin, _size);
 		
-		if (munmap(buffer, _buffer.size) == -1) {
+		if (munmap(buffer, _size) == -1) {
 			perror("munmap");
 		}
 		
@@ -109,7 +109,7 @@ namespace TaggedModelFormat {
 				
 		void * buffer = mmap(0, size, PROT_READ, MAP_SHARED, fd, 0);
 		
-		memcpy(_buffer.begin, buffer, size);
+		memcpy(_begin, buffer, size);
 				
 		if (munmap(buffer, size) == -1) {
 			perror("munmap");
