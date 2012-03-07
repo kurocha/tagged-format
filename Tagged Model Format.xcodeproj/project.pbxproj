@@ -127,9 +127,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		7E062CB6150073C800A6505E /* TaggedModelFormat */ = {
+		7E062CB6150073C800A6505E /* Tagged Model Format */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7E062CBA150073C800A6505E /* Build configuration list for PBXNativeTarget "TaggedModelFormat" */;
+			buildConfigurationList = 7E062CBA150073C800A6505E /* Build configuration list for PBXNativeTarget "Tagged Model Format" */;
 			buildPhases = (
 				7E062CB3150073C800A6505E /* Sources */,
 				7E062CB4150073C800A6505E /* Frameworks */,
@@ -139,7 +139,7 @@
 			);
 			dependencies = (
 			);
-			name = TaggedModelFormat;
+			name = "Tagged Model Format";
 			productName = TaggedModelFormat;
 			productReference = 7E062CB7150073C800A6505E /* libTaggedModelFormat.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
@@ -169,7 +169,7 @@
 				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "Orion Transfer Ltd";
 			};
-			buildConfigurationList = 7E9816231500735800F4C17E /* Build configuration list for PBXProject "TaggedModelFormat" */;
+			buildConfigurationList = 7E9816231500735800F4C17E /* Build configuration list for PBXProject "Tagged Model Format" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -181,7 +181,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7E062CB6150073C800A6505E /* TaggedModelFormat */,
+				7E062CB6150073C800A6505E /* Tagged Model Format */,
 				7E062CCD1500806700A6505E /* tmf-tool */,
 			);
 		};
@@ -302,7 +302,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		7E062CBA150073C800A6505E /* Build configuration list for PBXNativeTarget "TaggedModelFormat" */ = {
+		7E062CBA150073C800A6505E /* Build configuration list for PBXNativeTarget "Tagged Model Format" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7E062CB8150073C800A6505E /* Debug */,
@@ -320,7 +320,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7E9816231500735800F4C17E /* Build configuration list for PBXProject "TaggedModelFormat" */ = {
+		7E9816231500735800F4C17E /* Build configuration list for PBXProject "Tagged Model Format" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7E98162B1500735800F4C17E /* Debug */,
