@@ -33,14 +33,15 @@
 		7E062CC21500794200A6505E /* Writer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Writer.cpp; sourceTree = "<group>"; };
 		7E062CC31500794200A6505E /* Writer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Writer.h; sourceTree = "<group>"; };
 		7E062CC71500797000A6505E /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
-		7E062CCE1500806700A6505E /* tmf-tool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tmf-tool; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E062CCE1500806700A6505E /* tmf-tool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "tmf-tool"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E062CD11500806700A6505E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		7E062CDA1500CAAF00A6505E /* Block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Block.cpp; sourceTree = "<group>"; };
 		7E062CF21504B24C00A6505E /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		7E062CF31504B24C00A6505E /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
-		7E062CF71504BC1400A6505E /* box.tagged-mesh-text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "box.tagged-mesh-text"; sourceTree = "<group>"; };
+		7E062CF71504BC1400A6505E /* square.tagged-mesh-text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "square.tagged-mesh-text"; sourceTree = "<group>"; };
 		7E062D0C1504E30900A6505E /* MemoryBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryBuffer.cpp; sourceTree = "<group>"; };
 		7E062D0D1504E30900A6505E /* MemoryBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryBuffer.h; sourceTree = "<group>"; };
+		7E0F410215064EC700F66DE0 /* cube.tagged-model-text */ = {isa = PBXFileReference; lastKnownFileType = text; path = "cube.tagged-model-text"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,7 +84,8 @@
 		7E062CD01500806700A6505E /* TMF Tool */ = {
 			isa = PBXGroup;
 			children = (
-				7E062CF71504BC1400A6505E /* box.tagged-mesh-text */,
+				7E0F410215064EC700F66DE0 /* cube.tagged-model-text */,
+				7E062CF71504BC1400A6505E /* square.tagged-mesh-text */,
 				7E062CD11500806700A6505E /* main.cpp */,
 			);
 			path = "TMF Tool";
@@ -154,7 +156,7 @@
 			dependencies = (
 			);
 			name = "tmf-tool";
-			productName = tmf-tool;
+			productName = "tmf-tool";
 			productReference = 7E062CCE1500806700A6505E /* tmf-tool */;
 			productType = "com.apple.product-type.tool";
 		};
@@ -307,6 +309,7 @@
 				7E062CB9150073C800A6505E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7E062CD51500806700A6505E /* Build configuration list for PBXNativeTarget "tmf-tool" */ = {
 			isa = XCConfigurationList;
@@ -315,6 +318,7 @@
 				7E062CD71500806700A6505E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7E9816231500735800F4C17E /* Build configuration list for PBXProject "TaggedModelFormat" */ = {
 			isa = XCConfigurationList;
