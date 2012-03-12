@@ -12,6 +12,7 @@
 #include <sstream>
 #include <vector>
 #include <assert.h>
+#include <string.h>
 
 namespace TaggedModelFormat {
 	namespace Parser {
@@ -38,24 +39,40 @@ namespace TaggedModelFormat {
 			return input;
 		}
 		
+		std::istream & operator>>(std::istream & input, Axis & axis) {
+			input >> axis.name;
+			input >> axis.translation[0] >> axis.translation[1] >> axis.translation[2];
+			input >> axis.rotation[0] >> axis.rotation[1] >> axis.rotation[2] >> axis.rotation[3];
+			
+			return input;
+		}
+		
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2 & vertex) {
-			output << "P = " << vertex.position[0] << ", " << vertex.position[1] << ", " << vertex.position[2] << std::endl;
-			output << "N = " << vertex.normal[0] << ", " << vertex.normal[1] << ", " << vertex.normal[2] << std::endl;
-			output << "M = " << vertex.mapping[0] << ",  " << vertex.mapping[1] << std::endl;
+			output << "P=(" << vertex.position[0] << ", " << vertex.position[1] << ", " << vertex.position[2] << ")";
+			output << " N=(" << vertex.normal[0] << ", " << vertex.normal[1] << ", " << vertex.normal[2] << ")";
+			output << " M=(" << vertex.mapping[0] << ", " << vertex.mapping[1] << ")";
 			
 			return output;
 		}
 		
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2C4 & vertex) {
 			output << (BasicVertexP3N3M2 &)vertex;
-			output << "C = " << vertex.color[0] << ", " << vertex.color[1] << ", " << vertex.color[2] << ", " << vertex.color[3] << std::endl;
+			output << " C=(" << vertex.color[0] << ", " << vertex.color[1] << ", " << vertex.color[2] << ", " << vertex.color[3] << ")";
 			
 			return output;
 		}
 		
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2C4W2 & vertex) {
 			output << (BasicVertexP3N3M2C4 &)vertex;
-			output << "W = " << vertex.weights[0] << ", " << vertex.weights[1] << std::endl;
+			output << " W=(" << vertex.weights[0] << ", " << vertex.weights[1] << ")";
+			
+			return output;
+		}
+		
+		std::ostream & operator<<(std::ostream & output, Axis & axis) {
+			output << axis.name;
+			output << " T=(" << axis.translation[0] << ", " << axis.translation[1] << ", " << axis.translation[2] << ")";
+			output << " R=(" << axis.rotation[0] << ", " << axis.rotation[1] << ", " << axis.rotation[2] << ", " << axis.rotation[3] << ")";
 			
 			return output;
 		}
@@ -91,15 +108,16 @@ namespace TaggedModelFormat {
 			else if (layout == "triangle-strip")
 				mesh_block->layout = Mesh::TRIANGLE_STRIP;
 			
-			Context child(*this);
+			Context child(this);
 			
 			// Parse expressions
 			child.parse();
 			
 			mesh_block->indices_offset = child.lookup("indices");
 			mesh_block->vertices_offset = child.lookup("vertices");
+			mesh_block->axes_offset = child.lookup("axes");
 			
-			std::cerr << "Mesh: " << mesh_block->indices_offset << " => " << mesh_block->vertices_offset << std::endl;
+			std::cerr << "Mesh: " << mesh_block->indices_offset << ", " << mesh_block->vertices_offset << ", " << mesh_block->axes_offset << std::endl;
 			
 			return mesh_block;
 		}
@@ -109,18 +127,22 @@ namespace TaggedModelFormat {
 			std::string symbol;
 			
 			while (input.good()) {
+				std::istream::pos_type current = input.tellg();
+				
+				input >> symbol;
+				
+				if (symbol == "end") {
+					break;
+				}
+				
+				input.seekg(current);
 				ElementT value;
 				
 				input >> value;
 				//std::cerr << "(parse items) <- " << value << std::endl;
 				
 				if (input.fail()) {
-					input.clear();
-					
-					assert(input >> symbol);
-					assert(symbol == "end");
-					
-					break;
+					throw std::runtime_error("Could not parse item");
 				}
 				
 				//std::cerr << "Appending value : " << value << std::endl;
@@ -129,28 +151,36 @@ namespace TaggedModelFormat {
 			}
 		}
 		
-		template <typename ElementT>
-		OffsetT Context::parse_indices() {
-			std::vector<ElementT> items;
-			parse_items(_input, items);
+		OffsetT Context::parse_dictionary() {
+			Context child(this);
+			child.parse();
 			
-			std::size_t buffer_size = sizeof(ElementT) * items.size();
-			auto indices_block = _writer->append<Indices<ElementT>>(buffer_size);
-			memcpy(indices_block->indices, items.data(), buffer_size);
+			auto dictionary_block = _writer->append<Dictionary>(sizeof(NamedOffset) * child._names.size());
 			
-			return indices_block;
+			std::size_t i = 0;
+			for (auto pair : child._names) {
+				NamedOffset named_offset;
+				strncpy((char *)named_offset.name, pair.first.c_str(), 32);
+				named_offset.offset = pair.second;
+				
+				std::cerr << "Dictionary " << named_offset.name << " = " << named_offset.offset << std::endl;
+				
+				dictionary_block->entries[i++] = named_offset;
+			}
+			
+			return dictionary_block;
 		}
 		
-		template <typename ElementT>
-		OffsetT Context::parse_vertices() {
-			std::vector<ElementT> items;
+		template <typename BlockT>
+		OffsetT Context::parse_block() {
+			std::vector<typename BlockT::ElementT> items;
 			parse_items(_input, items);
 			
-			std::size_t buffer_size = sizeof(ElementT) * items.size();
-			auto vertices_block = _writer->append<Vertices<ElementT>>(buffer_size);
-			memcpy(vertices_block->vertices, items.data(), buffer_size);
+			std::size_t buffer_size = sizeof(typename BlockT::ElementT) * items.size();
+			auto block = _writer->append<BlockT>(buffer_size);
+			memcpy(block->end(sizeof(BlockT)), items.data(), buffer_size);
 			
-			return vertices_block;
+			return block;
 		}
 		
 		OffsetT Context::parse_array() {
@@ -161,17 +191,21 @@ namespace TaggedModelFormat {
 			std::cerr << "Value type = " << value_type << std::endl;
 			
 			if (value_type == "2u") {
-				return parse_indices<uint16_t>();
+				return parse_block<Indices<uint16_t>>();
 			} else if (value_type == "4u") {
-				return parse_indices<uint32_t>();
+				return parse_block<Indices<uint32_t>>();
 			} else if (value_type == "3p3n2m") {
-				return parse_vertices<BasicVertexP3N3M2>();
+				return parse_block<Vertices<BasicVertexP3N3M2>>();
+			} else if (value_type == "axis") {
+				return parse_block<Axes>();
 			}
 			
 			throw std::runtime_error("Could not parse input");
 		}
 		
-		void Context::parse() {			
+		void Context::parse() {
+			std::cerr << "-> Entering parse" << std::endl;
+			
 			while (_input.good()) {
 				std::string symbol, name;
 				
@@ -180,7 +214,7 @@ namespace TaggedModelFormat {
 				//std::cerr << "(parse) <- " << symbol << std::endl;
 				
 				if (_input.eof() || symbol == "end") {
-					return;
+					break;
 				}
 				
 				// Check to see if this node has a name:
@@ -193,22 +227,28 @@ namespace TaggedModelFormat {
 					//std::cerr << "(parse name) <- " << symbol << std::endl;
 				}
 				
-				std::cerr << "Parsing " << symbol << " for " << name << std::endl;
+				std::cerr << "Parsing " << symbol << " named " << name << std::endl;
 				
 				OffsetT offset = 0;
 				if (symbol.front() == '$') {
 					// Lookup the offset - no parsing required:
 					offset = lookup(std::string(symbol.begin() + 1, symbol.end()));
+					
+					std::cerr << "Found offset " << offset << " for name " << symbol << std::endl;
 				} else if (symbol == "mesh") {
 					offset = parse_mesh();	
 				} else if (symbol == "array") {
 					offset = parse_array();
+				} else if (symbol == "dictionary") {
+					offset = parse_dictionary();
 				}
 				
 				if (named) {
 					_names[name] = offset;
 				}
 			}
+			
+			std::cerr << "<- Exiting parse; names defined = " << _names.size() << std::endl;
 		}
 		
 		void serialize(std::istream & input, std::ostream & output) {
@@ -225,6 +265,8 @@ namespace TaggedModelFormat {
 				context.parse();
 				
 				header->top_offset = context.lookup("top");
+				
+				std::cerr << "Top block at offset " << header->top_offset << std::endl;
 			}
 			
 			{

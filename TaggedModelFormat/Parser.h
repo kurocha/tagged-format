@@ -22,10 +22,12 @@ namespace TaggedModelFormat {
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2 & vertex);
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2C4 & vertex);
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2C4W2 & vertex);
+		std::istream & operator>>(std::istream & input, Axis & axis);
 		
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2 & vertex);
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2C4 & vertex);
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2C4W2 & vertex);
+		std::ostream & operator<<(std::ostream & output, Axis & axis);
 		
 		class Context {
 		public:
@@ -37,11 +39,10 @@ namespace TaggedModelFormat {
 			NamesMapT _names;
 			Context * _parent;
 			
-			template <typename ElementT>
-			OffsetT parse_indices();
+			template <typename BlockT>
+			OffsetT parse_block();
 			
-			template <typename ElementT>
-			OffsetT parse_vertices();			
+			OffsetT parse_dictionary();
 			
 		public:
 			Context(Writer * writer, std::istream & input);

@@ -32,6 +32,10 @@ namespace TaggedModelFormat {
 		void * end() {
 			return (ByteT *)this + size;
 		}
+		
+		void * end(std::size_t offset) {
+			return (ByteT *)this + offset;
+		}
 	};
 	
 	struct Header : public Block {
@@ -41,18 +45,27 @@ namespace TaggedModelFormat {
 	
 	template<>
 	struct BlockTraits<Header> {
-		static const uint32_t TAG = 'tmv1';
+		static const uint32_t TAG = 'tmv2';
 	};
 		
 	struct Mesh : public Block {
+		// These definitions map directly to the equivalent OpenGL constants.
 		enum Layout {
-			TRIANGLES = 1, 
-			TRIANGLE_STRIP
+			POINTS = 0,
+			LINES = 1,
+			LINE_LOOP = 2,
+			LINE_STRIP = 3,
+			TRIANGLES = 4,
+			TRIANGLE_STRIP = 5,
+			TRIANGLE_FAN = 6
 		};
 		
-		uint64_t layout;
+		Layout layout;
 		OffsetT indices_offset;
 		OffsetT vertices_offset;
+		OffsetT axes_offset;
+		
+		static std::string name_for_layout(Layout layout);
 	};
 	
 	template<>
@@ -169,6 +182,44 @@ namespace TaggedModelFormat {
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3N3M2C4W2>> {
 		static const uint32_t TAG = '3326';
+	};
+	
+	struct Axis {
+		unsigned char name[32];
+		float32 translation[3];
+		// Stored as a quaternion:
+		float32 rotation[4];
+	};
+	
+	struct Axes : public Block {
+		typedef Axis ElementT;
+		
+		Axis axes[0];
+		
+		Axis * axis_named(std::string name);
+	};
+	
+	template<>
+	struct BlockTraits<Axes> {
+		static const uint32_t TAG = 'axes';
+	};
+	
+	struct NamedOffset {
+		unsigned char name[32];
+		OffsetT offset;
+	};
+	
+	struct Dictionary : public Block {
+		typedef NamedOffset ElementT;
+		
+		NamedOffset entries[0];
+		
+		OffsetT offset_named(std::string name);
+	};
+	
+	template<>
+	struct BlockTraits<Dictionary> {
+		static const uint32_t TAG = 'dict';
 	};
 	
 	std::string tag_name(uint32_t tag);

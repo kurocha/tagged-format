@@ -35,6 +35,7 @@ bl_info = {
 import bpy
 
 from bpy.props import StringProperty, BoolProperty
+from collections import defaultdict
 
 def face_to_triangles(face):
 	triangles = []
@@ -104,45 +105,81 @@ class Vertices(object):
 		for item in self.vertices:
 			yield item
 
-def write_tagged_model_text(filepath):
-	scene = bpy.context.scene
+def flipped_coordinates(coordinates, flip):
+	if flip:
+		coordinates[1] = 1.0 - coordinates[1]
+	
+	return coordinates
+
+def write_mesh(output, data_object, flip_uv_coordinates, axes):
+	output.write("{0}: mesh triangles\n".format(data_object.name))
+	mesh = data_object.to_mesh(bpy.context.scene, True, "PREVIEW")
+	
+	vertices = Vertices()
+	triangles = []
+	world_matrix = data_object.matrix_world
+	uv_coordinates = mesh.uv_textures[0]
+	for index, face in enumerate(mesh.faces):
+		for triangle in face_to_triangles(face):
+			# Get the 3 vertices				
+			face_vertices = [Vertex(mesh.vertices[triangle[i]], flipped_coordinates(uv_coordinates.data[index].uv[i], flip_uv_coordinates), face) for i in range(3)]
+			triangles.append([vertices.get(vertex) for vertex in face_vertices])
+	
+	output.write("\tindices: array 2u\n")
+	for triangle in triangles:
+		output.write("\t\t{0} {1} {2}\n".format(*triangle))
+	output.write("\tend\n")
+	
+	output.write("\tvertices: array 3p3n2m\n")
+	
+	for vertex in vertices:
+		position = world_matrix * vertex.position()
+		normal = world_matrix * vertex.normal()
+		mapping = vertex.mapping()
+		
+		output.write("\t\t{0} {1} {2}\n".format(
+			" ".join([str(i) for i in position]), 
+			" ".join([str(i) for i in normal]),
+			" ".join([str(i) for i in mapping])
+		))
+	output.write("\tend\n")
+	
+	if axes:
+		output.write("\taxes: array axis\n")
+		
+		for axis in axes:
+			output.write("\t\t{0} {1} {2}\n".format(
+				axis.name,
+				" ".join([str(i) for i in axis.location]),
+				" ".join([str(i) for i in axis.rotation_quaternion])
+			))
+		
+		output.write("\tend\n")
+		
+	output.write("end\n\n")
+	bpy.data.meshes.remove(mesh)
+
+def write_tagged_model_text(filepath, flip_uv_coordinates):
 	output = open(filepath, "w")
 	
+	# Object name => axes
+	axes = defaultdict(list)
+	names = []
+	
+	# Build axes information
 	for data_object in bpy.context.selected_objects:
-		output.write("top: mesh triangles\n")
-		mesh = data_object.to_mesh(scene, True, "PREVIEW")
-		
-		vertices = Vertices()
-		triangles = []
-		world_matrix = data_object.matrix_world
-		uv_coordinates = mesh.uv_textures[0]
-		for index, face in enumerate(mesh.faces):
-			for triangle in face_to_triangles(face):
-				# Get the 3 vertices
-				face_vertices = [Vertex(mesh.vertices[triangle[i]], uv_coordinates.data[index].uv[i], face) for i in range(3)]
-				triangles.append([vertices.get(vertex) for vertex in face_vertices])
-		
-		output.write("\tindices: array 2u\n")
-		for triangle in triangles:
-			output.write("\t\t{0} {1} {2}\n".format(*triangle))
-		output.write("\tend\n")
-		
-		output.write("\tvertices: array 3p3n2m\n")
-		
-		for vertex in vertices:
-			position = world_matrix * vertex.position()
-			normal = world_matrix * vertex.normal()
-			mapping = vertex.mapping()
-			
-			output.write("\t\t{0} {1} {2}\n".format(
-				" ".join([str(i) for i in position]), 
-				" ".join([str(i) for i in normal]),
-				" ".join([str(i) for i in mapping])
-			))
-		output.write("\tend\n")
-		
-		output.write("end\n")
-		bpy.data.meshes.remove(mesh)
+		if data_object.type == 'EMPTY':
+			axes[data_object.parent].append(data_object)
+	
+	for data_object in bpy.context.selected_objects:
+		if data_object.type == 'MESH':
+			write_mesh(output, data_object, flip_uv_coordinates, axes.get(data_object))
+			names.append(data_object.name)
+	
+	output.write("top: dictionary\n")
+	for name in names:
+		output.write("\t{0}: ${0}\n".format(name))
+	output.write("end\n")
 	
 	output.close()
 
@@ -168,14 +205,14 @@ class TMFExporter(bpy.types.Operator):
 			default=True,
 			)
 
-	triangulate = BoolProperty(
-			name="Triangulate",
-			description="Triangulate quads",
+	flip_uv_coordinates = BoolProperty(
+			name="Flip UV Coordinates",
+			description="Flip the UV coordinates vertically for systems where the image origin is the upper left",
 			default=True,
 			)
 
 	def execute(self, context):
-		write_tagged_model_text(self.filepath)
+		write_tagged_model_text(self.filepath, self.flip_uv_coordinates)
 
 		return {'FINISHED'}
 
