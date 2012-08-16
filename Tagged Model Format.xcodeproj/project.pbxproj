@@ -12,7 +12,7 @@
 		7E062CC41500794200A6505E /* Writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E062CC21500794200A6505E /* Writer.cpp */; };
 		7E062CC51500794200A6505E /* Writer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E062CC31500794200A6505E /* Writer.h */; };
 		7E062CC91500797000A6505E /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E062CC71500797000A6505E /* Buffer.h */; };
-		7E062CD21500806700A6505E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E062CD11500806700A6505E /* main.cpp */; };
+		7E062CD21500806700A6505E /* tmf-tool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E062CD11500806700A6505E /* tmf-tool.cpp */; };
 		7E062CD8150080E100A6505E /* Reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E062CBD150073F800A6505E /* Reader.cpp */; };
 		7E062CD9150080E100A6505E /* Writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E062CC21500794200A6505E /* Writer.cpp */; };
 		7E062CDB1500CAAF00A6505E /* Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E062CDA1500CAAF00A6505E /* Block.cpp */; };
@@ -34,7 +34,7 @@
 		7E062CC31500794200A6505E /* Writer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Writer.h; sourceTree = "<group>"; };
 		7E062CC71500797000A6505E /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
 		7E062CCE1500806700A6505E /* tmf-tool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "tmf-tool"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7E062CD11500806700A6505E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		7E062CD11500806700A6505E /* tmf-tool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "tmf-tool.cpp"; sourceTree = "<group>"; };
 		7E062CDA1500CAAF00A6505E /* Block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Block.cpp; sourceTree = "<group>"; };
 		7E062CF21504B24C00A6505E /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		7E062CF31504B24C00A6505E /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
@@ -75,15 +75,17 @@
 				7E062CF31504B24C00A6505E /* Parser.h */,
 				7E062CF21504B24C00A6505E /* Parser.cpp */,
 			);
-			path = "Tagged Model Format";
+			name = "Tagged Model Format";
+			path = src;
 			sourceTree = "<group>";
 		};
 		7E062CD01500806700A6505E /* TMF Tool */ = {
 			isa = PBXGroup;
 			children = (
-				7E062CD11500806700A6505E /* main.cpp */,
+				7E062CD11500806700A6505E /* tmf-tool.cpp */,
 			);
-			path = "TMF Tool";
+			name = "TMF Tool";
+			path = src;
 			sourceTree = "<group>";
 		};
 		7E98161E1500735800F4C17E = {
@@ -199,7 +201,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E062CD21500806700A6505E /* main.cpp in Sources */,
+				7E062CD21500806700A6505E /* tmf-tool.cpp in Sources */,
 				7E062CD8150080E100A6505E /* Reader.cpp in Sources */,
 				7E062CD9150080E100A6505E /* Writer.cpp in Sources */,
 				7E062CDC1500CB2C00A6505E /* Block.cpp in Sources */,
