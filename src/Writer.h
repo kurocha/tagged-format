@@ -14,6 +14,7 @@
 
 namespace TaggedModelFormat {
 	
+	/// A simple output buffer for writing blocks of data.
 	class IWriteBuffer {
 	public:
 		virtual ~IWriteBuffer();
@@ -48,7 +49,7 @@ namespace TaggedModelFormat {
 		}
 	};
 	
-#pragma mark -
+//MARK: -
 		
 	class Writer {
 	protected:

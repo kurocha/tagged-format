@@ -14,7 +14,7 @@ namespace TaggedModelFormat {
 		
 	}
 	
-#pragma mark -
+//MARK: -
 	
 	Writer::Writer(IWriteBuffer * write_buffer) : _write_buffer(write_buffer) {	
 		

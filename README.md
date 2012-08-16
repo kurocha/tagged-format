@@ -1,4 +1,4 @@
-Tagged Model Format
+Tagged Model Format                                                 {#index}
 ===================
 
 * Author: Samuel G. D. Williams (<http://www.oriontransfer.co.nz>)
@@ -6,6 +6,23 @@ Tagged Model Format
 * Released under the MIT license.
 
 The Tagged Model Format is a simple text/binary format for model related data (e.g. indices, vertices). It is designed to be very simple and to act as a bridge between typical rendering formats (e.g. vertex arrays) and model editors (e.g. Blender).
+
+Build and Install
+-----------------
+
+Use CMake to build and install Tagged Model Format:
+
+	$ cd tagged-model-format
+	$ mkdir build
+	$ cd build
+	$ cmake ..
+	$ make
+	$ make install
+
+You can also get some basic API documentation by running
+
+	$ make doc
+	$ open src/docs/html/index.html
 
 File Format Structure
 ---------------------

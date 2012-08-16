@@ -11,9 +11,9 @@
 #include <assert.h>
 #include <vector>
 
-#include "../TaggedModelFormat/Parser.h"
-#include "../TaggedModelFormat/Reader.h"
-#include "../TaggedModelFormat/MemoryBuffer.h"
+#include "Parser.h"
+#include "Reader.h"
+#include "MemoryBuffer.h"
 
 namespace {
 	using namespace TaggedModelFormat;

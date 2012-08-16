@@ -77,7 +77,7 @@ namespace TaggedModelFormat {
 			return output;
 		}
 		
-#pragma mark -
+//MARK: -
 	
 		Context::Context(Writer * writer, std::istream & input) : _writer(writer), _input(input), _parent(nullptr) {
 		}
