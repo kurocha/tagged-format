@@ -1,4 +1,4 @@
-top: mesh triangles
+cube: mesh triangles
 	indices: array 2u
 		0 1 2
 		2 3 0
@@ -23,4 +23,11 @@ top: mesh triangles
 		-1.0000003576278687 -0.9999996423721313 1.0 -0.5773491859436035 -0.5773491859436035 0.5773491859436035 0 0
 		-0.9999999403953552 1.0 1.0 -0.5773491859436035 0.5773491859436035 0.5773491859436035 0 0
 	end
+	axes: array axis
+		foo 0 0 0 0 0 0 1
+	end
+end
+
+top: dictionary
+	apples: $cube
 end
