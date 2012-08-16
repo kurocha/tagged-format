@@ -1,20 +1,26 @@
 #!BPY
-#  ***** GPL LICENSE BLOCK *****
 #
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
+# Copyright (c) 2010, 2011 Samuel G. D. Williams. <http://www.oriontransfer.co.nz>
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#  All rights reserved.
-#  ***** GPL LICENSE BLOCK *****
+
 """
 This script exports a Mesh to a Tagged Model File Format (TMFF).
 
@@ -24,8 +30,8 @@ The tagged model file format is very simple binary data which stores an index li
 bl_info = {
 	"name": "Tagged Model Format (.tagged-model-*)",
 	"author": "Samuel Williams",
-	"version": (0, 2),
-	"blender": (2, 5, 8),
+	"version": (0, 3),
+	"blender": (2, 6, 3),
 	"location": "File > Export > Tagged Model File Format (.tagged-model-*)",
 	"description": "Import-Export Tagged Model File Format",
 	"warning": "",
@@ -37,6 +43,22 @@ import bpy
 from bpy.props import StringProperty, BoolProperty
 from collections import defaultdict
 
+# Why isn't this a built in? Reminds me of why I love Ruby so much.
+def flatten(l, ltypes=(list, tuple)):
+	ltype = type(l)
+	l = list(l)
+	i = 0
+	while i < len(l):
+		while isinstance(l[i], ltypes):
+			if not l[i]:
+				l.pop(i)
+				i -= 1
+				break
+			else:
+				l[i:i + 1] = l[i]
+		i += 1
+	return ltype(l)
+
 def face_to_triangles(face):
 	triangles = []
 	if len(face.vertices) == 4:
@@ -47,46 +69,6 @@ def face_to_triangles(face):
 
 	return triangles
 
-class Vertex(object):
-	def __init__(self, vertex, mapping, face):
-		self._vertex = vertex
-		self._mapping = mapping
-		self._face = face
-	
-	def position(self):
-		return self._vertex.co
-	
-	def normal(self):
-		return self._vertex.normal
-		#return self._face.normal
-	
-	def mapping(self):
-		return self._mapping
-	
-	def __hash__(self):
-		return hash(self.__key__())
-	
-	def __eq__(self, other):
-		return self.__key__() == other.__key__()
-	
-	def __ne__(self, other):
-		return self.__key__() != other.__key__()
-	
-	def __lt__(self, other):
-		return self.__key__() < other.__key__()
-	
-	def __le__(self, other):
-		return self.__key__() <= other.__key__()
-	
-	def __gt__(self, other):
-		return self.__key__() > other.__key__()
-	
-	def __ge__(self, other):
-		return self.__key__() >= other.__key__()
-	
-	def __key__(self):
-		return (tuple(self.position()), tuple(self.normal()), tuple(self.mapping()),)
-
 class Vertices(object):
 	def __init__(self):
 		self.vertices = []
@@ -96,7 +78,7 @@ class Vertices(object):
 		if vertex in self.indices:
 			return self.indices[vertex]
 
-		index = self.indices[vertex] = len(self.vertices)		
+		index = self.indices[vertex] = len(self.vertices)
 		self.vertices.append(vertex)
 		
 		return index
@@ -115,17 +97,40 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 	output.write("{0}: mesh triangles\n".format(data_object.name))
 	mesh = data_object.to_mesh(bpy.context.scene, True, "PREVIEW")
 
+	# From Blender 2.6.3, we now need to use tessfaces:
+	mesh.update(calc_tessface=True)
+
 	# Transform the mesh data into world coordinates:
 	world_matrix = data_object.matrix_world
 	mesh.transform(world_matrix)
 	
 	vertices = Vertices()
 	triangles = []
-	uv_coordinates = mesh.uv_textures[0]
-	for index, face in enumerate(mesh.faces):
+	
+	# We might not have uv_coordinates, so we check here:
+	if mesh.tessface_uv_textures:
+		vertex_format = "3p3n2m"
+		uv_coordinates = mesh.tessface_uv_textures[0]
+		
+		def generate_vertex(index, triangle, offset):
+			return (
+				tuple(mesh.vertices[triangle[offset]].co),
+				tuple(flipped_coordinates(uv_coordinates.data[index].uv[offset], flip_uv_coordinates)),
+				tuple(mesh.vertices[triangle[offset]].normal),
+			)
+	else:
+		vertex_format = "3p3n"
+		
+		def generate_vertex(index, triangle, offset):
+			return (
+				tuple(mesh.vertices[triangle[offset]].co),
+				tuple(mesh.vertices[triangle[offset]].normal),
+			)
+	
+	for index, face in enumerate(mesh.tessfaces):
 		for triangle in face_to_triangles(face):
-			# Get the 3 vertices				
-			face_vertices = [Vertex(mesh.vertices[triangle[i]], flipped_coordinates(uv_coordinates.data[index].uv[i], flip_uv_coordinates), face) for i in range(3)]
+			face_vertices = [generate_vertex(index, triangle, offset) for offset in range(3)]
+			
 			triangles.append([vertices.get(vertex) for vertex in face_vertices])
 	
 	output.write("\tindices: array 2u\n")
@@ -133,14 +138,10 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 		output.write("\t\t{0} {1} {2}\n".format(*triangle))
 	output.write("\tend\n")
 	
-	output.write("\tvertices: array 3p3n2m\n")
+	output.write("\tvertices: array {0}\n".format(vertex_format))
 	
 	for vertex in vertices:
-		output.write("\t\t{0} {1} {2}\n".format(
-			" ".join([str(i) for i in vertex.position()]),
-			" ".join([str(i) for i in vertex.normal()]),
-			" ".join([str(i) for i in vertex.mapping()])
-		))
+		output.write("\t\t{0}\n".format(" ".join([str(value) for value in flatten(vertex)])))
 	output.write("\tend\n")
 	
 	axes = [axis for axis in data_object.children if axis.type == 'EMPTY']
