@@ -86,7 +86,13 @@ Caveats
 
 The binary format is platform specific. It would be possible to adjust data ordering (e.g. endian) however this goes against the spirit of TMF: a simple loader that provides platform and application specific data that can be quickly loaded into the graphics card.
 
-In the case where you need some form of platform independence, integrate the tmf-tool into your compiler toolchain to produce target-specific binary versions of your model data.
+In the case where you need some form of platform independence, integrate the `tmf-tool` into your application development toolchain to produce target-specific binary versions of your model data.
+
+Future Work
+-----------
+
+- Provide target specific options to `tmf-tool` for generating platform specific (e.g. endian) binary data.
+- Develop a simple Cocoa application for visualising the model data structure and rendering meshes.
 
 License
 -------
