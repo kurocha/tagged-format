@@ -190,11 +190,4 @@ int main(int argc, const char * argv[]) {
 			i += 1;
 		}
 	}
-	
-	if (argc == 1) {
-		std::ifstream input("/Users/samuel/Documents/Programming/Graphics/TaggedModelFormat/TMF Tool/cube.tagged-model-text");
-		std::ofstream output("dump.tagged-model-binary");
-		
-		Parser::serialize(input, output);
-	}
 }
