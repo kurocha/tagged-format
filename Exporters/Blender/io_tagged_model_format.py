@@ -111,13 +111,16 @@ def flipped_coordinates(coordinates, flip):
 	
 	return coordinates
 
-def write_mesh(output, data_object, flip_uv_coordinates, axes):
+def write_mesh(output, data_object, flip_uv_coordinates):
 	output.write("{0}: mesh triangles\n".format(data_object.name))
 	mesh = data_object.to_mesh(bpy.context.scene, True, "PREVIEW")
+
+	# Transform the mesh data into world coordinates:
+	world_matrix = data_object.matrix_world
+	mesh.transform(world_matrix)
 	
 	vertices = Vertices()
 	triangles = []
-	world_matrix = data_object.matrix_world
 	uv_coordinates = mesh.uv_textures[0]
 	for index, face in enumerate(mesh.faces):
 		for triangle in face_to_triangles(face):
@@ -133,23 +136,20 @@ def write_mesh(output, data_object, flip_uv_coordinates, axes):
 	output.write("\tvertices: array 3p3n2m\n")
 	
 	for vertex in vertices:
-		position = world_matrix * vertex.position()
-		normal = world_matrix * vertex.normal()
-		mapping = vertex.mapping()
-		
 		output.write("\t\t{0} {1} {2}\n".format(
-			" ".join([str(i) for i in position]), 
-			" ".join([str(i) for i in normal]),
-			" ".join([str(i) for i in mapping])
+			" ".join([str(i) for i in vertex.position()]),
+			" ".join([str(i) for i in vertex.normal()]),
+			" ".join([str(i) for i in vertex.mapping()])
 		))
 	output.write("\tend\n")
 	
-	if axes:
+	axes = [axis for axis in data_object.children if axis.type == 'EMPTY']
+	if len(axes):
 		output.write("\taxes: array axis\n")
 		
 		for axis in axes:
 			output.write("\t\t{0} {1} {2}\n".format(
-				axis.name,
+				axis.name.rsplit('.', 2)[0],
 				" ".join([str(i) for i in axis.location]),
 				" ".join([str(i) for i in axis.rotation_quaternion])
 			))
@@ -162,18 +162,10 @@ def write_mesh(output, data_object, flip_uv_coordinates, axes):
 def write_tagged_model_text(filepath, flip_uv_coordinates):
 	output = open(filepath, "w")
 	
-	# Object name => axes
-	axes = defaultdict(list)
 	names = []
-	
-	# Build axes information
-	for data_object in bpy.context.selected_objects:
-		if data_object.type == 'EMPTY':
-			axes[data_object.parent].append(data_object)
-	
 	for data_object in bpy.context.selected_objects:
 		if data_object.type == 'MESH':
-			write_mesh(output, data_object, flip_uv_coordinates, axes.get(data_object))
+			write_mesh(output, data_object, flip_uv_coordinates)
 			names.append(data_object.name)
 	
 	output.write("top: dictionary\n")
