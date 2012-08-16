@@ -16,7 +16,8 @@
 #include <map>
 
 namespace TaggedModelFormat {
-		
+
+	/// Supports text format parsing, used in particular for the tmf-tool.
 	namespace Parser {
 		
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2 & vertex);

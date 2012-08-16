@@ -12,7 +12,8 @@
 #include "Block.h"
 
 namespace TaggedModelFormat {
-	
+
+	/// Provides support for reading blocks from a given data buffer.
 	class Reader {
 	protected:
 		Buffer _buffer;
@@ -24,13 +25,18 @@ namespace TaggedModelFormat {
 		
 		Header * header();
 		
-		// If this returns true, all data is flipped (e.g. reversed).
+		/// If this returns true, all data is flipped (e.g. reversed).
+		/// This function is not implemented correctly and generally reverse byte order is not handled correctly yet.
 		bool flipped();
-		
+
+		/// @returns a human readable tag name.
 		std::string tag_name(uint32_t tag);
-		
+
+		/// @returns a pointer to the block at a given offset.
 		Block * block_at_offset(OffsetT offset);
-		
+
+		/// Read a given block of a specific type from a given offset. Provides basic sanity checking.
+		/// @returns nullptr in the event that the block is not the correct type.
 		template <typename BlockT>
 		BlockT * block_at_offset(OffsetT offset) {
 			Block * block = block_at_offset(offset);

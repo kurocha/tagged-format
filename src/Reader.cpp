@@ -28,7 +28,7 @@ namespace TaggedModelFormat {
 		
 		return _header;
 	}
-	
+
 	bool Reader::flipped() {
 		Header * header = this->header();
 		

@@ -12,7 +12,8 @@
 #include "Writer.h"
 
 namespace TaggedModelFormat {
-	
+
+	/// An expandable memory buffer that can be read and written to disk.
 	class MemoryBuffer : public virtual IWriteBuffer {
 	protected:
 		void * _begin;

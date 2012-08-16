@@ -25,7 +25,9 @@ namespace TaggedModelFormat {
 		/// Dereference an offset into the buffer:
 		virtual void * fetch(OffsetT offset) = 0;
 	};
-	
+
+	/// Used for writing data at a given offset, but can be implicitly cast to an offset.
+	/// Rather than work directly with pointers, this wrapper assists with writing data to a particular offset in a buffer.
 	template <typename BlockT>
 	class BufferedOffset {
 	protected:
@@ -43,7 +45,8 @@ namespace TaggedModelFormat {
 		BlockT * operator->() {
 			return (BlockT *)_write_buffer->fetch(_offset);
 		}
-		
+
+		/// Return the offset of the block.
 		operator OffsetT() {
 			return _offset;
 		}

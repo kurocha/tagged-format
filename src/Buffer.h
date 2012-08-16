@@ -12,10 +12,14 @@
 #include <stdint.h>
 
 namespace TaggedModelFormat {
-	
+
+	/// A memory offset to a specific block.
 	typedef uint64_t OffsetT;
+
+	/// An 8-bit byte data-type.
 	typedef unsigned char ByteT;
-	
+
+	/// A simple memory buffer with a given size.
 	struct Buffer {
 		const void * begin;
 		OffsetT size;
