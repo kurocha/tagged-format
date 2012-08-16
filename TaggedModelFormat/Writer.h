@@ -1,6 +1,6 @@
 //
 //  Writer.h
-//  TaggedModelFormat
+//  This file is part of the "Tagged Model Format" project, and is released under the MIT license.
 //
 //  Created by Samuel Williams on 2/03/12.
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.

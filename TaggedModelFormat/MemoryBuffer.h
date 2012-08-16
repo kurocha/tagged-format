@@ -1,6 +1,6 @@
 //
 //  MemoryBuffer.h
-//  This file is part of the "TaggedModelFormat" project, and is released under the MIT license.
+//  This file is part of the "Tagged Model Format" project, and is released under the MIT license.
 //
 //  Created by Samuel Williams on 6/03/12.
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
