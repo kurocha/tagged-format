@@ -38,7 +38,7 @@ namespace TaggedModelFormat {
 		}
 	}
 	
-	bool compare_names(std::string a, unsigned char b[32]) {
+	static bool compare_names(std::string a, unsigned char b[32]) {
 		if (a.size() > 32) return false;
 		
 		return strncmp(a.c_str(), (const char *)b, 32) == 0;
