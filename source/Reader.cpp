@@ -20,12 +20,12 @@ namespace TaggedModelFormat {
 	Header * Reader::header() {
 		if (!_header) {
 			_header = (Header *)_buffer.begin;
-						
-			if (_header->magic != 42) {
-				return nullptr;
-			}
 		}
-		
+
+		if (_header->magic != 42) {
+			return nullptr;
+		}
+
 		return _header;
 	}
 
