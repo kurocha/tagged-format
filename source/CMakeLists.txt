@@ -39,6 +39,7 @@ install(
 		Parser.h
 		Reader.h
 		Writer.h
+		Alignment.h
 	DESTINATION "include/TaggedModelFormat/"
 )
 

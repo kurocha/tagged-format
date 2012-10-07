@@ -30,7 +30,7 @@ namespace TaggedModelFormat {
 		bool flipped();
 
 		/// @returns a human readable tag name.
-		std::string tag_name(uint32_t tag);
+		std::string tag_name(TagT tag);
 
 		/// @returns a pointer to the block at a given offset.
 		Block * block_at_offset(OffsetT offset);

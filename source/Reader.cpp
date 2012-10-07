@@ -39,7 +39,7 @@ namespace TaggedModelFormat {
 		return true;
 	}
 	
-	std::string Reader::tag_name(uint32_t tag) {
+	std::string Reader::tag_name(TagT tag) {
 		unsigned char name[4];
 
 		for (std::size_t i = 1; i <= 4; i += 1) {

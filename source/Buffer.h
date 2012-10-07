@@ -9,12 +9,12 @@
 #ifndef _TAGGED_MODEL_FORMAT_BUFFER_H
 #define _TAGGED_MODEL_FORMAT_BUFFER_H
 
-#include <stdint.h>
+#include "Alignment.h"
 
 namespace TaggedModelFormat {
 
 	/// A memory offset to a specific block.
-	typedef uint64_t OffsetT;
+	typedef Aligned<uint64_t>::TypeT OffsetT;
 
 	/// An 8-bit byte data-type.
 	typedef unsigned char ByteT;

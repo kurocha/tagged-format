@@ -16,11 +16,20 @@
 
 namespace TaggedModelFormat {
 	
+	typedef Aligned<uint32_t>::TypeT TagT;
+	typedef Aligned<uint32_t>::TypeT MagicT;
+	
 	/// A standard 32-bit floating point data-type.
-	typedef float float32;
+	typedef Aligned<float>::TypeT float32;
 	
 	/// A standard 64-bit floating point data-type.
-	typedef double float64;
+	typedef Aligned<double>::TypeT float64;
+	
+	/// For blocks that end with a list of elements, this returns the number of elements in the block.
+	template <typename BlockT>
+	std::size_t element_count (BlockT * block) {
+		return (block->size - sizeof(BlockT)) / sizeof(typename BlockT::ElementT);
+	}
 	
 	template <typename BlockT>
 	struct BlockTraits {
@@ -29,7 +38,7 @@ namespace TaggedModelFormat {
 	/// A generic block header.
 	struct Block {
 		/// The blog identifier.
-		uint32_t tag;
+		TagT tag;
 		
 		// Total size of block including this structure.
 		OffsetT size;
@@ -48,7 +57,7 @@ namespace TaggedModelFormat {
 	/// The header typically used at the start of the binary file.
 	struct Header : public Block {
 		/// A version identifier, typically 42.
-		uint32_t magic;
+		MagicT magic;
 		
 		/// The offset to the top block.
 		OffsetT top_offset;
@@ -56,7 +65,7 @@ namespace TaggedModelFormat {
 	
 	template<>
 	struct BlockTraits<Header> {
-		static const uint32_t TAG = 'tmv2';
+		static const TagT TAG = 'tmv2';
 	};
 	
 	/// A mesh block contains indices, vertices and axes.
@@ -73,7 +82,7 @@ namespace TaggedModelFormat {
 		};
 		
 		/// Provides a hint regarding the layout of the indices and vertices.
-		Layout layout;
+		Aligned<Layout>::TypeT layout;
 		
 		/// The offset of the indices block.
 		OffsetT indices_offset;
@@ -90,18 +99,20 @@ namespace TaggedModelFormat {
 	
 	template<>
 	struct BlockTraits<Mesh> {
-		static const uint32_t TAG = 'mesh';
+		static const TagT TAG = 'mesh';
 	};
 	
 	/// Reference an external resource. Implementation defined.
 	struct External : public Block {
+		typedef unsigned char ElementT;
+		
 		/// Null terminated URL referencing external resource.
 		unsigned char url[0];
 	};
 	
 	template<>
 	struct BlockTraits<External> {
-		static const uint32_t TAG = 'extr';
+		static const TagT TAG = 'extr';
 	};
 	
 	/// A list of indicies, typically an array of uint16_t or unit32_t.
@@ -114,17 +125,17 @@ namespace TaggedModelFormat {
 	
 	template<>
 	struct BlockTraits<Indices<uint16_t>> {
-		static const uint32_t TAG = 'ind2';
+		static const TagT TAG = 'ind2';
 	};
 	
 	template<>
 	struct BlockTraits<Indices<uint32_t>> {
-		static const uint32_t TAG = 'ind4';
+		static const TagT TAG = 'ind4';
 	};
 	
 	template<>
 	struct BlockTraits<Indices<uint64_t>> {
-		static const uint32_t TAG = 'ind8';
+		static const TagT TAG = 'ind8';
 	};
 	
 	/// A list of vertices, typically BasicVertexP3N3M2.
@@ -150,12 +161,12 @@ namespace TaggedModelFormat {
 	
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP2>> {
-		static const uint32_t TAG = '2000';
+		static const TagT TAG = '2000';
 	};
 	
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP2C4>> {
-		static const uint32_t TAG = '2400';
+		static const TagT TAG = '2400';
 	};
 	
 	/// For 3D lines and structures.
@@ -171,12 +182,12 @@ namespace TaggedModelFormat {
 	
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3>> {
-		static const uint32_t TAG = '3000';
+		static const TagT TAG = '3000';
 	};
 	
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3C4>> {
-		static const uint32_t TAG = '3400';
+		static const TagT TAG = '3400';
 	};
 	
 	/// For triangle mesh.
@@ -198,17 +209,17 @@ namespace TaggedModelFormat {
 
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3N3M2>> {
-		static const uint32_t TAG = '3320';
+		static const TagT TAG = '3320';
 	};
 	
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3N3M2C4>> {
-		static const uint32_t TAG = '3324';
+		static const TagT TAG = '3324';
 	};
 	
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3N3M2C4W2>> {
-		static const uint32_t TAG = '3326';
+		static const TagT TAG = '3326';
 	};
 	
 	/// A named axis is used to align meshes together.
@@ -232,7 +243,7 @@ namespace TaggedModelFormat {
 	
 	template<>
 	struct BlockTraits<Axes> {
-		static const uint32_t TAG = 'axes';
+		static const TagT TAG = 'axes';
 	};
 	
 	struct NamedOffset {
@@ -253,11 +264,11 @@ namespace TaggedModelFormat {
 	
 	template<>
 	struct BlockTraits<Dictionary> {
-		static const uint32_t TAG = 'dict';
+		static const TagT TAG = 'dict';
 	};
 	
 	/// Return a human readable name for the given tag.
-	std::string tag_name(uint32_t tag);
+	std::string tag_name(TagT tag);
 	
 	/// Reset a data block with the correct tag and size based on type.
 	template <typename BlockT>
