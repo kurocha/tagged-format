@@ -115,8 +115,8 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 		def generate_vertex(index, triangle, offset):
 			return (
 				tuple(mesh.vertices[triangle[offset]].co),
-				tuple(flipped_coordinates(uv_coordinates.data[index].uv[offset], flip_uv_coordinates)),
 				tuple(mesh.vertices[triangle[offset]].normal),
+				tuple(flipped_coordinates(uv_coordinates.data[index].uv[offset], flip_uv_coordinates)),
 			)
 	else:
 		vertex_format = "3p3n"
