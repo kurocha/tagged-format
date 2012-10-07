@@ -9,6 +9,7 @@
 #include "Parser.h"
 #include "MemoryBuffer.h"
 
+#include <iostream>
 #include <sstream>
 #include <vector>
 #include <assert.h>

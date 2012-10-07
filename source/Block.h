@@ -11,7 +11,7 @@
 
 #include "Buffer.h"
 
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace TaggedModelFormat {

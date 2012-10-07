@@ -11,7 +11,7 @@
 
 #include "Writer.h"
 
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <map>
 
