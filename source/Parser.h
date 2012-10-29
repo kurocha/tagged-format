@@ -1,6 +1,6 @@
 //
 //  Parser.h
-//  This file is part of the "Tagged Model Format" project, and is released under the MIT license.
+//  This file is part of the "Tagged Format" project, and is released under the MIT license.
 //
 //  Created by Samuel Williams on 5/03/12.
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
@@ -9,13 +9,15 @@
 #ifndef _TAGGED_MODEL_FORMAT_PARSER_H
 #define _TAGGED_MODEL_FORMAT_PARSER_H
 
+#include "Mesh.h"
+#include "Axes.h"
 #include "Writer.h"
 
 #include <iosfwd>
 #include <string>
 #include <map>
 
-namespace TaggedModelFormat {
+namespace TaggedFormat {
 
 	/// Supports text format parsing, used in particular for the tmf-tool.
 	namespace Parser {
@@ -23,12 +25,12 @@ namespace TaggedModelFormat {
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2 & vertex);
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2C4 & vertex);
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2C4W2 & vertex);
-		std::istream & operator>>(std::istream & input, Axis & axis);
+		std::istream & operator>>(std::istream & input, NamedAxis & axis);
 		
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2 & vertex);
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2C4 & vertex);
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2C4W2 & vertex);
-		std::ostream & operator<<(std::ostream & output, Axis & axis);
+		std::ostream & operator<<(std::ostream & output, NamedAxis & axis);
 		
 		class Context {
 		public:
@@ -43,7 +45,7 @@ namespace TaggedModelFormat {
 			template <typename BlockT>
 			OffsetT parse_block();
 			
-			OffsetT parse_dictionary();
+			OffsetT parse_offset_table();
 			
 		public:
 			Context(Writer * writer, std::istream & input);

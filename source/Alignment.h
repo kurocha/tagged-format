@@ -12,7 +12,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace TaggedModelFormat {
+namespace TaggedFormat {
 
 	/// A helper for aligned data, defaulting to 32-bit boundaries:
 	template <typename _TypeT, std::size_t _Alignment = 4>

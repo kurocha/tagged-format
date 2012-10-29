@@ -1,6 +1,6 @@
 //
 //  Parser.cpp
-//  This file is part of the "TaggedModelFormat" project, and is released under the MIT license.
+//  This file is part of the "TaggedFormat" project, and is released under the MIT license.
 //
 //  Created by Samuel Williams on 5/03/12.
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
@@ -9,13 +9,15 @@
 #include "Parser.h"
 #include "MemoryBuffer.h"
 
+#include "Table.h"
+
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <assert.h>
 #include <string.h>
 
-namespace TaggedModelFormat {
+namespace TaggedFormat {
 	namespace Parser {
 		
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2 & vertex) {
@@ -40,7 +42,7 @@ namespace TaggedModelFormat {
 			return input;
 		}
 		
-		std::istream & operator>>(std::istream & input, Axis & axis) {
+		std::istream & operator>>(std::istream & input, NamedAxis & axis) {
 			input >> axis.name;
 			input >> axis.translation[0] >> axis.translation[1] >> axis.translation[2];
 			input >> axis.rotation[0] >> axis.rotation[1] >> axis.rotation[2] >> axis.rotation[3];
@@ -70,7 +72,7 @@ namespace TaggedModelFormat {
 			return output;
 		}
 		
-		std::ostream & operator<<(std::ostream & output, Axis & axis) {
+		std::ostream & operator<<(std::ostream & output, NamedAxis & axis) {
 			output << axis.name;
 			output << " T=(" << axis.translation[0] << ", " << axis.translation[1] << ", " << axis.translation[2] << ")";
 			output << " R=(" << axis.rotation[0] << ", " << axis.rotation[1] << ", " << axis.rotation[2] << ", " << axis.rotation[3] << ")";
@@ -152,11 +154,11 @@ namespace TaggedModelFormat {
 			}
 		}
 		
-		OffsetT Context::parse_dictionary() {
+		OffsetT Context::parse_offset_table() {
 			Context child(this);
 			child.parse();
 			
-			auto dictionary_block = _writer->append<Dictionary>(sizeof(NamedOffset) * child._names.size());
+			auto dictionary_block = _writer->append<OffsetTable>(sizeof(OffsetTable::ElementT) * child._names.size());
 			
 			std::size_t i = 0;
 			for (auto pair : child._names) {
@@ -164,7 +166,7 @@ namespace TaggedModelFormat {
 				strncpy((char *)named_offset.name, pair.first.c_str(), 32);
 				named_offset.offset = pair.second;
 				
-				std::cerr << "Dictionary " << named_offset.name << " = " << named_offset.offset << std::endl;
+				std::cerr << "Table " << named_offset.name << " = " << named_offset.offset << std::endl;
 				
 				dictionary_block->entries[i++] = named_offset;
 			}
@@ -241,7 +243,7 @@ namespace TaggedModelFormat {
 				} else if (symbol == "array") {
 					offset = parse_array();
 				} else if (symbol == "dictionary") {
-					offset = parse_dictionary();
+					offset = parse_offset_table();
 				}
 				
 				if (named) {
@@ -253,7 +255,7 @@ namespace TaggedModelFormat {
 		}
 		
 		void serialize(std::istream & input, std::ostream & output) {
-			using namespace TaggedModelFormat;
+			using namespace TaggedFormat;
 			
 			// Initialize memory buffer:
 			MemoryBuffer memory_buffer(1024);

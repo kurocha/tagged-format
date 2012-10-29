@@ -1,6 +1,6 @@
 //
 //  Reader.cpp
-//  This file is part of the "TaggedModelFormat" project, and is released under the MIT license.
+//  This file is part of the "TaggedFormat" project, and is released under the MIT license.
 //
 //  Created by Samuel Williams on 2/03/12.
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
@@ -9,7 +9,7 @@
 #include "Reader.h"
 #include <string>
 
-namespace TaggedModelFormat {
+namespace TaggedFormat {
 	
 	Reader::Reader(Buffer buffer) : _buffer(buffer), _header(nullptr) {		
 	}

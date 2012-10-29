@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(TMF)
+project(TaggedFormat)
 
 # set(CMAKE_CXX_FLAGS "-g -Wall -Os -std=c++11 -stdlib=libc++")
 

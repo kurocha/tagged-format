@@ -1,6 +1,6 @@
 //
-//  main.cpp
-//  This file is part of the "Tagged Model Format" project, and is released under the MIT license.
+//  tf-convert.cpp
+//  This file is part of the "Tagged Format" project, and is released under the MIT license.
 //
 //  Created by Samuel Williams on 2/03/12.
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
@@ -13,10 +13,11 @@
 
 #include "Parser.h"
 #include "Reader.h"
+#include "Table.h"
 #include "MemoryBuffer.h"
 
 namespace {
-	using namespace TaggedModelFormat;
+	using namespace TaggedFormat;
 	
 	template <typename ElementT>
 	std::ostream & operator<<(std::ostream & output, std::vector<ElementT> & items) {
@@ -40,7 +41,7 @@ namespace {
 	void dump_block(Reader * reader, BlockT * block, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 
-		using TaggedModelFormat::Parser::operator<<;
+		using TaggedFormat::Parser::operator<<;
 				
 		std::vector<typename BlockT::ElementT> items((typename BlockT::ElementT *)block->end(sizeof(BlockT)), (typename BlockT::ElementT *)block->end());
 		
@@ -58,7 +59,7 @@ namespace {
 		if (!NEWLINE) output << std::endl;
 	}
 	
-	void dump_dictionary(Reader * reader, Dictionary * block, std::ostream & output, std::size_t indentation) {
+	void dump_dictionary(Reader * reader, OffsetTable * block, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 		
 		std::vector<NamedOffset> items(block->entries, (NamedOffset *)block->end());
@@ -131,8 +132,8 @@ namespace {
 				dump_mesh(reader, (Mesh *)block, output, indentation + 1);
 				break;
 			
-			case BlockTraits<Dictionary>::TAG:
-				dump_dictionary(reader, (Dictionary *)block, output, indentation + 1);
+			case BlockTraits<OffsetTable>::TAG:
+				dump_dictionary(reader, (OffsetTable *)block, output, indentation + 1);
 				break;
 				
 			TMF_BLOCK_CASE(Axes, true)
@@ -157,7 +158,7 @@ namespace {
 }
 
 int main(int argc, const char * argv[]) {
-	using namespace TaggedModelFormat;
+	using namespace TaggedFormat;
 	
 	for (std::size_t i = 0; i < argc; i += 1) {
 		std::string argument = argv[i];

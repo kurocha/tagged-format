@@ -1,6 +1,6 @@
 //
 //  Buffer.h
-//  This file is part of the "Tagged Model Format" project, and is released under the MIT license.
+//  This file is part of the "Tagged Format" project, and is released under the MIT license.
 //
 //  Created by Samuel Williams on 2/03/12.
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
@@ -11,7 +11,7 @@
 
 #include "Alignment.h"
 
-namespace TaggedModelFormat {
+namespace TaggedFormat {
 
 	/// A memory offset to a specific block.
 	typedef Aligned<uint64_t>::TypeT OffsetT;

@@ -1,6 +1,6 @@
 //
 //  Reader.h
-//  This file is part of the "Tagged Model Format" project, and is released under the MIT license.
+//  This file is part of the "Tagged Format" project, and is released under the MIT license.
 //
 //  Created by Samuel Williams on 2/03/12.
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
@@ -11,7 +11,7 @@
 
 #include "Block.h"
 
-namespace TaggedModelFormat {
+namespace TaggedFormat {
 
 	/// Provides support for reading blocks from a given data buffer.
 	class Reader {

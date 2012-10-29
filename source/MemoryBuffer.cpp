@@ -1,6 +1,6 @@
 //
 //  MemoryBuffer.cpp
-//  This file is part of the "TaggedModelFormat" project, and is released under the MIT license.
+//  This file is part of the "TaggedFormat" project, and is released under the MIT license.
 //
 //  Created by Samuel Williams on 6/03/12.
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
@@ -15,7 +15,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-namespace TaggedModelFormat {
+namespace TaggedFormat {
 	
 	void MemoryBuffer::resize(std::size_t size) {
 		if (size < _capacity) {
