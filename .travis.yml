@@ -1,5 +1,5 @@
 language: cpp
-script: mkdir build ; cd build ; CXXFLAGS="-std=c++11 -g -Wall" cmake ../ ; make ; ./test-runner --on-failure ./dump-backtrace
+script: rake
 compiler:
     - g++-4.7
 before_script:
