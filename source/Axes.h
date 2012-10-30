@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef __TAGGED_MODEL_FORMAT_AXES_H
-#define __TAGGED_MODEL_FORMAT_AXES_H
+#ifndef __TAGGED_FORMAT_AXES_H
+#define __TAGGED_FORMAT_AXES_H
 
 #include "Table.h"
 

@@ -173,7 +173,7 @@
 			dependencies = (
 			);
 			name = TaggedFormat;
-			productName = TaggedModelFormat;
+			productName = TaggedFormat;
 			productReference = 7E062CB7150073C800A6505E /* libTaggedFormat.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};

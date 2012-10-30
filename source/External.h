@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef __TAGGED_MODEL_FORMAT_EXTERNAL_H
-#define __TAGGED_MODEL_FORMAT_EXTERNAL_H
+#ifndef __TAGGED_FORMAT_EXTERNAL_H
+#define __TAGGED_FORMAT_EXTERNAL_H
 
 #include "Block.h"
 
@@ -26,4 +26,4 @@ namespace TaggedFormat {
 	};
 }
 
-#endif /* defined(__Tagged_Model_Format__External__) */
+#endif

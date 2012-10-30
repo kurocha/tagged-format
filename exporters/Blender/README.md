@@ -1,21 +1,17 @@
 Blender Exporter
 ================
 
-* Author: Samuel G. D. Williams (<http://www.oriontransfer.co.nz>)
-* Copyright (C) 2010, 2011 Samuel G. D. Williams.
-* Released under the MIT license.
-
-The Blender Exporter provides a text based exporter for the TMF file format.
+The Blender Exporter provides a script to export Mesh data to Tagged Format text.
 
 Install
 -------
 
-From within Blender, click `File` -> `User Preferences`. On the window that opens, select the `Addons` tab. At the bottom of that window, click `Install Addon...` and find the file `io_tagged_model_format.py` which is included as part of the Blender exporter. Once the addon has been installed, enable it by checking the checkbox on the right hand side. Finally, click `Save As Default` otherwise the plugin will not be loaded again when you restart Blender.
+From within Blender, click `File` -> `User Preferences`. On the window that opens, select the `Addons` tab. At the bottom of that window, click `Install Addon...` and find the file `io_tagged_format.py` which is included as part of the Blender exporter. Once the addon has been installed, enable it by checking the checkbox on the right hand side. Finally, click `Save As Default` otherwise the plugin will not be loaded again when you restart Blender.
 
 Export
 ------
 
-To export a mesh, make sure it is the currently selected mesh. Then, select `File` -> `Export` -> `Tagged Model Format (.tagged-model-format)`.
+To export a mesh, make sure it is the currently selected mesh. Then, select `File` -> `Export` -> `Tagged Format (.tft)`.
 
 The exporter currently supports exporting multiple objects. Each object has vertices exported as either `3p3n2m` or `3p3n` format.
 
@@ -25,12 +21,13 @@ It is recommended that you modify the exporter code for your exact requirements.
 
 ### Axes ###
 
-I often use attachment points to connect and animate models. In TMF parlance, these are called Axes. To add these from Blender, from the `Add` menu, select `Empty`. This adds a 3-D axis which can be manipulated. During export, these axes will be bundled along with the mesh data which can then be accessed programatically.
+I often use attachment points to connect and animate models. In parlance, these are called Axes. To add these from Blender, from the `Add` menu, select `Empty`. This adds a 3-D axis which can be manipulated. During export, these axes will be bundled along with the mesh data which can then be accessed programatically.
 
-License
--------
+## License
 
-Copyright (c) 2010, 2011 Samuel G. D. Williams. <http://www.oriontransfer.co.nz>
+Released under the MIT license.
+
+Copyright, 2012, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef __TAGGED_MODEL_FORMAT_MESH_H
-#define __TAGGED_MODEL_FORMAT_MESH_H
+#ifndef __TAGGED_FORMAT_MESH_H
+#define __TAGGED_FORMAT_MESH_H
 
 #include "Block.h"
 

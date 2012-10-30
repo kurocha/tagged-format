@@ -1,9 +1,5 @@
-Tagged Format                                                 {#index}
+Tagged Format
 =============
-
-* Author: Samuel G. D. Williams (<http://www.oriontransfer.co.nz>)
-* Copyright (C) 2010, 2011 Samuel G. D. Williams.
-* Released under the MIT license.
 
 The Tagged Format is a simple generic text/binary format. It is primarily designed for storing and accessing
 game data in binary format for quick loading.
@@ -11,6 +7,8 @@ game data in binary format for quick loading.
 It supports a variety of different purposes, but is primarily designed for geometry. It is designed to be a 
 very simple and to act as a bridge between typical rendering formats (e.g. vertex arrays) and model editors 
 (e.g. Blender).
+
+[![Build Status](https://secure.travis-ci.org/ioquatix/tagged-format.png)](http://travis-ci.org/ioquatix/tagged-format)
 
 Build and Install
 -----------------
@@ -20,7 +18,7 @@ Use CMake to build and install Tagged Format:
 	$ cd tagged-format
 	$ mkdir build
 	$ cd build
-	$ cmake ..
+	$ CXXFLAGS="-std=c++11 -stdlib=libc++" cmake ../
 	$ make
 	$ make install
 
@@ -131,10 +129,11 @@ Future Work
 - Provide target specific options to `tf-convert` for generating platform specific (e.g. endian) binary data.
 - Develop a simple Cocoa application for visualising the model data structure and rendering meshes.
 
-License
--------
+## License
 
-Copyright (c) 2010, 2011 Samuel G. D. Williams. <http://www.oriontransfer.co.nz>
+Released under the MIT license.
+
+Copyright, 2012, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

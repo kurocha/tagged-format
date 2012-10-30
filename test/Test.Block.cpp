@@ -2,8 +2,8 @@
 #include "UnitTest.h"
 #include "Block.h"
 
-UnitTest::Suite test_block_suite {
-	"Block Suit",
+UnitTest::Suite test_blocks_suite {
+	"Test Blocks",
 	
 	{"Data type sizes and alignments",
 		[](UnitTest::Examiner * examiner) {

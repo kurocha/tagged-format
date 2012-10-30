@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef __TAGGED_MODEL_FORMAT_DICTIONARY_H
-#define __TAGGED_MODEL_FORMAT_DICTIONARY_H
+#ifndef __TAGGED_FORMAT_DICTIONARY_H
+#define __TAGGED_FORMAT_DICTIONARY_H
 
 #include "Block.h"
 #include <cstring>

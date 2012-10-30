@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef _TAGGED_MODEL_FORMAT_PARSER_H
-#define _TAGGED_MODEL_FORMAT_PARSER_H
+#ifndef _TAGGED_FORMAT_PARSER_H
+#define _TAGGED_FORMAT_PARSER_H
 
 #include "Mesh.h"
 #include "Axes.h"

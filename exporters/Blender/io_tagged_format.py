@@ -22,18 +22,18 @@
 #
 
 """
-This script exports a Mesh to a Tagged Model File Format (TMFF).
+This script exports a Mesh to a Tagged Format text file.
 
-The tagged model file format is very simple binary data which stores an index list along with an array of vertices. Each vertex (by default) includes the position, normal and mapping (UV texture coordinates).
+The tagged format is very simple storage system which stores an index list along with an array of vertices. Each vertex (by default) includes the position, normal and mapping (UV texture coordinates).
 """
 
 bl_info = {
-	"name": "Tagged Model Format (.tagged-model-*)",
+	"name": "Tagged Format (.tagged-*)",
 	"author": "Samuel Williams",
 	"version": (0, 3),
-	"blender": (2, 6, 3),
-	"location": "File > Export > Tagged Model File Format (.tagged-model-*)",
-	"description": "Import-Export Tagged Model File Format",
+	"blender": (2, 6, 4),
+	"location": "File > Export > Tagged Format (.tagged-*)",
+	"description": "Import-Export Tagged Format",
 	"warning": "",
 	"category": "Import-Export"
 }
@@ -160,7 +160,7 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 	output.write("end\n\n")
 	bpy.data.meshes.remove(mesh)
 
-def write_tagged_model_text(filepath, flip_uv_coordinates):
+def write_tagged_format_text(filepath, flip_uv_coordinates):
 	output = open(filepath, "w")
 	
 	names = []
@@ -176,10 +176,10 @@ def write_tagged_model_text(filepath, flip_uv_coordinates):
 	
 	output.close()
 
-class TMFExporter(bpy.types.Operator):
+class TaggedFormatMeshExporter(bpy.types.Operator):
 	'''Save triangle mesh data'''
-	bl_idname = "export.tagged_model_text"
-	bl_label = "Export Tagged Model"
+	bl_idname = "export.tagged_format_mesh"
+	bl_label = "Export Tagged Format Mesh"
 
 	filepath = StringProperty(
 			subtype='FILE_PATH',
@@ -205,19 +205,19 @@ class TMFExporter(bpy.types.Operator):
 			)
 
 	def execute(self, context):
-		write_tagged_model_text(self.filepath, self.flip_uv_coordinates)
+		write_tagged_format_text(self.filepath, self.flip_uv_coordinates)
 
 		return {'FINISHED'}
 
 	def invoke(self, context, event):
 		if not self.filepath:
-			self.filepath = bpy.path.ensure_ext(bpy.data.filepath, ".tagged-model-text")
+			self.filepath = bpy.path.ensure_ext(bpy.data.filepath, ".tft")
 		wm = context.window_manager
 		wm.fileselect_add(self)
 		return {'RUNNING_MODAL'}
 
 def menu_export(self, context):
-	self.layout.operator(TMFExporter.bl_idname, text="Tagged Model Format (.tagged-model-text)")
+	self.layout.operator(TaggedFormatMeshExporter.bl_idname, text="Tagged Format (.tft)")
 
 def register():
 	bpy.utils.register_module(__name__)

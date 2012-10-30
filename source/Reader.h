@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef _TAGGED_MODEL_FORMAT_READER_H
-#define _TAGGED_MODEL_FORMAT_READER_H
+#ifndef _TAGGED_FORMAT_READER_H
+#define _TAGGED_FORMAT_READER_H
 
 #include "Block.h"
 
