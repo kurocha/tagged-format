@@ -14,8 +14,9 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <assert.h>
-#include <string.h>
+#include <stdexcept>
+#include <cassert>
+#include <cstring>
 
 namespace TaggedFormat {
 	namespace Parser {
@@ -163,7 +164,7 @@ namespace TaggedFormat {
 			std::size_t i = 0;
 			for (auto pair : child._names) {
 				NamedOffset named_offset;
-				strncpy((char *)named_offset.name, pair.first.c_str(), 32);
+				std::strncpy((char *)named_offset.name, pair.first.c_str(), 32);
 				named_offset.offset = pair.second;
 				
 				std::cerr << "Table " << named_offset.name << " = " << named_offset.offset << std::endl;
@@ -181,7 +182,7 @@ namespace TaggedFormat {
 			
 			std::size_t buffer_size = sizeof(typename BlockT::ElementT) * items.size();
 			auto block = _writer->append<BlockT>(buffer_size);
-			memcpy(block->end(sizeof(BlockT)), items.data(), buffer_size);
+			std::memcpy(block->end(sizeof(BlockT)), items.data(), buffer_size);
 			
 			return block;
 		}
