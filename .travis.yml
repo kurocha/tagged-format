@@ -1,6 +1,6 @@
 language: cpp
-script: mkdir build ; cd build ; CXXFLAGS="-std=c++11 -stdlib=libc++ -g -Wall" cmake ../ ; make ; ./test-runner --on-failure ./dump-backtrace
+script: mkdir build ; cd build ; CXXFLAGS="-std=c++11 -g -Wall" cmake ../ ; make ; ./test-runner --on-failure ./dump-backtrace
 compiler:
-    - clang
+    - gcc-4.7
 before_script:
     - cd test
