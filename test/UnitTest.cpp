@@ -12,6 +12,7 @@
 
 #include <unistd.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 namespace UnitTest {
 	const char * VERSION = "1.0.0";
