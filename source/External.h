@@ -22,7 +22,7 @@ namespace TaggedFormat {
 
 	template<>
 	struct BlockTraits<External> {
-		static const TagT TAG = 'extr';
+		static const TagT TAG = tag_from_identifier("extr");
 	};
 }
 

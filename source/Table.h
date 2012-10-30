@@ -64,7 +64,7 @@ namespace TaggedFormat {
 
 	template<>
 	struct BlockTraits<OffsetTable> {
-		static const TagT TAG = 'oftb';
+		static const TagT TAG = tag_from_identifier("oftb");
 	};
 }
 

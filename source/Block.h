@@ -36,6 +36,10 @@ namespace TaggedFormat {
 		return sizeof(BlockT) + (sizeof(typename BlockT::ElementT) * i) < block->size;
 	}
 	
+	constexpr TagT tag_from_identifier(const char identifier[4]) {
+		return (identifier[0] << 24) | (identifier[1] << 16) | (identifier[2] << 8) | identifier[3];
+	}
+	
 	template <typename BlockT>
 	struct BlockTraits {
 	};
@@ -70,7 +74,7 @@ namespace TaggedFormat {
 	
 	template<>
 	struct BlockTraits<Header> {
-		static const TagT TAG = 'tmv2';
+		static const TagT TAG = tag_from_identifier("tmv2");
 	};
 	
 	/// Return a human readable name for the given tag.

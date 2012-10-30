@@ -160,8 +160,10 @@ namespace {
 int main(int argc, const char * argv[]) {
 	using namespace TaggedFormat;
 	
-	for (std::size_t i = 0; i < argc; i += 1) {
-		std::string argument = argv[i];
+	std::vector<std::string> arguments(argv+1, argv+argc);
+	
+	for (std::size_t i = 0; i < arguments.size(); i += 1) {
+		auto & argument = arguments[i];
 		
 		if (argument == "--help") {
 			std::cerr << argv[0] << " Copyright 2012 Samuel Williams. No warranty." << std::endl;
@@ -170,10 +172,10 @@ int main(int argc, const char * argv[]) {
 		}
 		
 		else if (argument == "--text-to-binary") {
-			assert(i + 2 < argc);
+			assert(i + 2 < arguments.size());
 			
-			std::ifstream input(argv[i+1]);
-			std::ofstream output(argv[i+2]);
+			std::ifstream input(arguments[i+1]);
+			std::ofstream output(arguments[i+2]);
 			
 			Parser::serialize(input, output);
 			
@@ -181,10 +183,10 @@ int main(int argc, const char * argv[]) {
 		}
 		
 		else if (argument == "--dump-binary") {
-			assert(i + 1 < argc);
+			assert(i + 1 < arguments.size());
 			
 			MemoryBuffer memory_buffer;
-			memory_buffer.read_from_file(argv[i+1]);
+			memory_buffer.read_from_file(arguments[i+1]);
 			
 			dump(memory_buffer.buffer(), std::cout);
 			

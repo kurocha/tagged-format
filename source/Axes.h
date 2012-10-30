@@ -27,7 +27,7 @@ namespace TaggedFormat {
 
 	template<>
 	struct BlockTraits<Axes> {
-		static const TagT TAG = 'axes';
+		static const TagT TAG = tag_from_identifier("axes");
 	};
 }
 

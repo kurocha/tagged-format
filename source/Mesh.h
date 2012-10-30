@@ -46,7 +46,7 @@ namespace TaggedFormat {
 
 	template<>
 	struct BlockTraits<Mesh> {
-		static const TagT TAG = 'mesh';
+		static const TagT TAG = tag_from_identifier("mesh");
 	};
 
 	/// A list of indicies, typically an array of uint16_t or unit32_t.
@@ -59,17 +59,17 @@ namespace TaggedFormat {
 
 	template<>
 	struct BlockTraits<Indices<uint16_t>> {
-		static const TagT TAG = 'ind2';
+		static const TagT TAG = tag_from_identifier("ind2");
 	};
 
 	template<>
 	struct BlockTraits<Indices<uint32_t>> {
-		static const TagT TAG = 'ind4';
+		static const TagT TAG = tag_from_identifier("ind4");
 	};
 
 	template<>
 	struct BlockTraits<Indices<uint64_t>> {
-		static const TagT TAG = 'ind8';
+		static const TagT TAG = tag_from_identifier("ind8");
 	};
 
 	/// A list of vertices, typically BasicVertexP3N3M2.
@@ -95,12 +95,12 @@ namespace TaggedFormat {
 
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP2>> {
-		static const TagT TAG = '2000';
+		static const TagT TAG = tag_from_identifier("2000");
 	};
 
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP2C4>> {
-		static const TagT TAG = '2400';
+		static const TagT TAG = tag_from_identifier("2400");
 	};
 
 	/// For 3D lines and structures.
@@ -116,12 +116,12 @@ namespace TaggedFormat {
 
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3>> {
-		static const TagT TAG = '3000';
+		static const TagT TAG = tag_from_identifier("3000");
 	};
 
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3C4>> {
-		static const TagT TAG = '3400';
+		static const TagT TAG = tag_from_identifier("3400");
 	};
 
 	/// For triangle mesh.
@@ -143,17 +143,17 @@ namespace TaggedFormat {
 
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3N3M2>> {
-		static const TagT TAG = '3320';
+		static const TagT TAG = tag_from_identifier("3320");
 	};
 
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3N3M2C4>> {
-		static const TagT TAG = '3324';
+		static const TagT TAG = tag_from_identifier("3324");
 	};
 
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3N3M2C4W2>> {
-		static const TagT TAG = '3326';
+		static const TagT TAG = tag_from_identifier("3326");
 	};
 }
 
