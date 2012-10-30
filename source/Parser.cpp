@@ -21,9 +21,15 @@
 namespace TaggedFormat {
 	namespace Parser {
 		
-		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2 & vertex) {
+		std::istream & operator>>(std::istream & input, BasicVertexP3N3 & vertex) {
 			input >> vertex.position[0] >> vertex.position[1] >> vertex.position[2];
 			input >> vertex.normal[0] >> vertex.normal[1] >> vertex.normal[2];
+			
+			return input;
+		}
+		
+		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2 & vertex) {
+			input >> (BasicVertexP3N3 &)vertex;
 			input >> vertex.mapping[0] >> vertex.mapping[1];
 			
 			return input;
@@ -51,9 +57,15 @@ namespace TaggedFormat {
 			return input;
 		}
 		
-		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2 & vertex) {
+		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3 & vertex) {
 			output << "P=(" << vertex.position[0] << ", " << vertex.position[1] << ", " << vertex.position[2] << ")";
 			output << " N=(" << vertex.normal[0] << ", " << vertex.normal[1] << ", " << vertex.normal[2] << ")";
+			
+			return output;
+		}
+		
+		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2 & vertex) {
+			output << (BasicVertexP3N3 &)vertex;
 			output << " M=(" << vertex.mapping[0] << ", " << vertex.mapping[1] << ")";
 			
 			return output;
@@ -200,6 +212,8 @@ namespace TaggedFormat {
 				return parse_block<Indices<uint32_t>>();
 			} else if (value_type == "3p3n2m") {
 				return parse_block<Vertices<BasicVertexP3N3M2>>();
+			} else if (value_type == "3p3n") {
+				return parse_block<Vertices<BasicVertexP3N3>>();
 			} else if (value_type == "axis") {
 				return parse_block<Axes>();
 			}

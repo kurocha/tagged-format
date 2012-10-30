@@ -108,15 +108,14 @@ namespace TaggedFormat {
 		float32 position[3];
 	};
 
-	/// For 3D lines and structures with per-vertex colour.
-	struct BasicVertexP3C4 {
-		float32 position[3];
-		float32 color[4];
-	};
-
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3>> {
 		static const TagT TAG = tag_from_identifier("3000");
+	};
+
+	/// For 3D lines and structures with per-vertex colour.
+	struct BasicVertexP3C4 : public BasicVertexP3 {
+		float32 color[4];
 	};
 
 	template<>
@@ -124,10 +123,17 @@ namespace TaggedFormat {
 		static const TagT TAG = tag_from_identifier("3400");
 	};
 
-	/// For triangle mesh.
-	struct BasicVertexP3N3M2 {
-		float32 position[3];
+	struct BasicVertexP3N3 : public BasicVertexP3 {
 		float32 normal[3];
+	};
+	
+	template<>
+	struct BlockTraits<Vertices<BasicVertexP3N3>> {
+		static const TagT TAG = tag_from_identifier("3300");
+	};
+
+	/// For triangle mesh.
+	struct BasicVertexP3N3M2 : public BasicVertexP3N3 {
 		float32 mapping[2];
 	};
 

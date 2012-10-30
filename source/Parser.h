@@ -22,11 +22,13 @@ namespace TaggedFormat {
 	/// Supports text format parsing, used in particular for the tmf-tool.
 	namespace Parser {
 		
+		std::istream & operator>>(std::istream & input, BasicVertexP3N3 & vertex);
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2 & vertex);
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2C4 & vertex);
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2C4W2 & vertex);
 		std::istream & operator>>(std::istream & input, NamedAxis & axis);
 		
+		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3 & vertex);
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2 & vertex);
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2C4 & vertex);
 		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2C4W2 & vertex);
