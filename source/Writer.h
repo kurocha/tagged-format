@@ -10,7 +10,7 @@
 #define _TAGGED_MODEL_FORMAT_WRITER_H
 
 #include "Block.h"
-#include <string>
+#include <cstring>
 
 namespace TaggedFormat {
 	
@@ -53,12 +53,12 @@ namespace TaggedFormat {
 	};
 	
 //MARK: -
-		
+	
 	class Writer {
 	protected:
 		IWriteBuffer * _write_buffer;
 		
-	public:		
+	public:
 		Writer(IWriteBuffer * write_buffer);
 		virtual ~Writer();
 		
@@ -72,8 +72,8 @@ namespace TaggedFormat {
 			OffsetT offset = _write_buffer->append(block.size);
 			
 			void * start = _write_buffer->fetch(offset);
-			memcpy(start, &block, sizeof(BlockT));
-						
+			std::memcpy(start, &block, sizeof(BlockT));
+			
 			return BufferedOffset<BlockT>(offset, _write_buffer);
 		}
 	};
