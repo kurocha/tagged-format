@@ -3,4 +3,8 @@ script: mkdir build ; cd build ; CXXFLAGS="-std=c++11 -g -Wall" cmake ../ ; make
 compiler:
     - gcc-4.7
 before_script:
+    - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test  
+    - sudo apt-get update  
+    - sudo apt-get install gcc-4.7
+    - export CXX=gcc-4.7
     - cd test
