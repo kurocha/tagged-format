@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+require 'tempfile'
+
+GDB_BACKTRACE_SCRIPT = <<-EOF
+set pagination 0
+
+echo Printing backtrace from point of failure:
+thread apply all backtrace
+EOF
+
+script = Tempfile.new('gdb-backtrace')
+script.write(GDB_BACKTRACE_SCRIPT)
+script.close
+
+pid = Process.ppid
+
+command = ["gdb", "-p", Process.ppid.to_s, "-silent", "-batch", "-x", script.path]
+system(*command)
