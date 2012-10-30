@@ -8,7 +8,6 @@
 
 #include "UnitTest.h"
 #include <iostream>
-#include <regex>
 
 #include <unistd.h>
 #include <signal.h>
@@ -64,13 +63,19 @@ namespace UnitTest {
 		
 	}
 	
-	std::vector<std::string> split(const std::string & input, const std::regex & regex) {
-		// passing -1 as the submatch index parameter performs splitting
-		std::sregex_token_iterator 
-			first{input.begin(), input.end(), regex, -1},
-			last;
-		
-		return {first, last};
+	/// This function is typically used for parsing OpenGL extension strings.
+	template <typename OutT>
+	void split(const std::string & input, const char divider, OutT result) {
+		std::size_t pos = 0, next = 0;
+
+		do {
+			next = input.find(divider, pos);
+
+			std::string bit(&input[pos], (next == std::string::npos) ? (input.size() - pos) : (next - pos));
+			*result++ = bit;
+
+			pos = next + 1;
+		} while (next != std::string::npos);
 	}
 	
 	void run(const std::string & command) {
@@ -79,7 +84,8 @@ namespace UnitTest {
 		if (child) {
 			waitpid(child, NULL, 0);
 		} else {
-			std::vector<std::string> arguments = split(command, std::regex("\\s+"));
+			std::vector<std::string> arguments;
+			split(command, ' ', std::back_inserter(arguments));
 
 			std::vector<const char *> argv;
 			for (auto & argument : arguments)
