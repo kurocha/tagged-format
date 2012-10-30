@@ -9,7 +9,9 @@
 #include "UnitTest.h"
 #include <iostream>
 #include <regex>
+
 #include <unistd.h>
+#include <signal.h>
 
 namespace UnitTest {
 	const char * VERSION = "1.0.0";
