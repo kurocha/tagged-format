@@ -10,6 +10,7 @@
 #define __TAGGED_MODEL_FORMAT_DICTIONARY_H
 
 #include "Block.h"
+#include <cstring>
 
 namespace TaggedFormat {
 	template <std::size_t NAME_LENGTH = 32>
@@ -20,7 +21,7 @@ namespace TaggedFormat {
 			if (pattern.size() > NAME_LENGTH)
 				return false;
 			else
-				return strncmp(pattern.c_str(), (const char *)name, NAME_LENGTH) == 0;
+				return std::strncmp(pattern.c_str(), (const char *)name, NAME_LENGTH) == 0;
 		}
 	};
 
