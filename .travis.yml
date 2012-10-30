@@ -4,7 +4,7 @@ compiler:
     - g++-4.7
 before_script:
     - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test  
-    - sudo apt-get update  
-    - sudo apt-get install g++-4.7
+    - sudo apt-get -qq update  
+    - sudo apt-get -qq install g++-4.7
     - export CXX=g++-4.7
     - cd test
