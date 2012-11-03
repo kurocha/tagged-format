@@ -17,7 +17,7 @@ namespace TaggedFormat {
 		/// The translation of the axis, if any.
 		float32 translation[3];
 
-		/// The initial rotation of the axis, if any. Stored as a quaternion.
+		/// The initial rotation of the axis, if any. Stored as a quaternion (x y z w).
 		float32 rotation[4];
 	};
 

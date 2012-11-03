@@ -206,13 +206,13 @@ namespace TaggedFormat {
 			//std::cerr << "(parse array) <- " << value_type << std::endl;
 			std::cerr << "Value type = " << value_type << std::endl;
 			
-			if (value_type == "2u") {
+			if (value_type == "u2") {
 				return parse_block<Indices<uint16_t>>();
-			} else if (value_type == "4u") {
+			} else if (value_type == "u4") {
 				return parse_block<Indices<uint32_t>>();
-			} else if (value_type == "3p3n2m") {
+			} else if (value_type == "p3n3m2") {
 				return parse_block<Vertices<BasicVertexP3N3M2>>();
-			} else if (value_type == "3p3n") {
+			} else if (value_type == "p3n3") {
 				return parse_block<Vertices<BasicVertexP3N3>>();
 			} else if (value_type == "axis") {
 				return parse_block<Axes>();
@@ -257,7 +257,7 @@ namespace TaggedFormat {
 					offset = parse_mesh();	
 				} else if (symbol == "array") {
 					offset = parse_array();
-				} else if (symbol == "dictionary") {
+				} else if (symbol == "offset-table") {
 					offset = parse_offset_table();
 				}
 				

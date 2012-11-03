@@ -93,6 +93,9 @@ def flipped_coordinates(coordinates, flip):
 	
 	return coordinates
 
+def convert_wxyz_quaternion(q):
+	return [q[1], q[2], q[3], q[0]]
+
 def write_mesh(output, data_object, flip_uv_coordinates):
 	output.write("{0}: mesh triangles\n".format(data_object.name))
 	mesh = data_object.to_mesh(bpy.context.scene, True, "PREVIEW")
@@ -109,7 +112,7 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 	
 	# We might not have uv_coordinates, so we check here:
 	if mesh.tessface_uv_textures:
-		vertex_format = "3p3n2m"
+		vertex_format = "p3n3m2"
 		uv_coordinates = mesh.tessface_uv_textures[0]
 		
 		def generate_vertex(index, triangle, offset):
@@ -119,7 +122,7 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 				tuple(flipped_coordinates(uv_coordinates.data[index].uv[offset], flip_uv_coordinates)),
 			)
 	else:
-		vertex_format = "3p3n"
+		vertex_format = "p3n3"
 		
 		def generate_vertex(index, triangle, offset):
 			return (
@@ -133,7 +136,7 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 			
 			triangles.append([vertices.get(vertex) for vertex in face_vertices])
 	
-	output.write("\tindices: array 2u\n")
+	output.write("\tindices: array u2\n")
 	for triangle in triangles:
 		output.write("\t\t{0} {1} {2}\n".format(*triangle))
 	output.write("\tend\n")
@@ -152,7 +155,7 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 			output.write("\t\t{0} {1} {2}\n".format(
 				axis.name.rsplit('.', 2)[0],
 				" ".join([str(i) for i in axis.location]),
-				" ".join([str(i) for i in axis.rotation_quaternion])
+				" ".join([str(i) for i in convert_wxyz_quaternion(axis.rotation_quaternion)])
 			))
 		
 		output.write("\tend\n")
