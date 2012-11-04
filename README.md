@@ -44,7 +44,7 @@ file has a header which includes an offset to the top block. By default, a varie
 in the specification, including a `Table`, `Mesh`, `Axis`, a variety of vertex formats and `External` 
 references.
 
-The Tagged text format is well defined and is compiled to a binary format using the included `tftool`, much 
+The Tagged text format is well defined and is compiled to a binary format using the included `tf-convert`, much 
 like how an assembler converts symbolic code to binary machine code.
 
 Tagged Format Tool
@@ -57,11 +57,11 @@ used.
 Here is an example of a simple 10x10 square made by two triangles:
 
 	top: mesh triangles
-		indices: array 2u
+		indices: array u2
 			0 1 2 3
 		end
 
-		vertices: array 3p3n2m
+		vertices: array p3n3m2
 			 0  0 0 0 0 1 0 0
 			 0 10 0 0 0 1 0 1
 			10  0 0 0 0 1 1 0

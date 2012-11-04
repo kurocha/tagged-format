@@ -1,9 +1,9 @@
 top: mesh triangles
-	indices: array 2u
+	indices: array u2
 		0 1 2 3
 	end
 
-	vertices: array 3p3n2m
+	vertices: array p3n3m2
 		 0  0 0 0 0 1 0 0
 		 0 10 0 0 0 1 0 1
 		10  0 0 0 0 1 1 0
