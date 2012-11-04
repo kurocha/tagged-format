@@ -71,11 +71,11 @@ Here is an example of a simple 10x10 square made by two triangles:
 
 To assemble this to the binary TMF format, simply run:
 
-	tf-convert --text-to-binary input.tt output.tb
+	tf-convert --text-to-binary input.tft output.tfb
 
 You can check the results by running:
 
-	$ tf-convert --dump-binary output.tb
+	$ tf-convert --dump-binary output.tfb
 	<tmv2; 32 bytes; magic = 42>
 	[mesh; 48 bytes; offset = 32]
 		layout = triangles
@@ -97,7 +97,7 @@ Rendering
 Loading the file is very simple and fast as data can be loaded almost directly into graphics memory. Use the 
 `TaggedFormat::Reader` to load a model from a data buffer (typically loaded from disk using `mmap`).
 
-	Model model = load_model(state->resource_loader, "base/models/baseplate.tb");
+	Model model = load_model(state->resource_loader, "base/models/baseplate.tfb");
 
 	// Read header:
 	auto header = model.reader.header();
