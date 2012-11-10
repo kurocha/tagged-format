@@ -1,0 +1,3 @@
+[submodule "tagged-format-0.2.0"]
+	path = tagged-format-0.2.0
+	url = https://github.com/ioquatix/tagged-format
