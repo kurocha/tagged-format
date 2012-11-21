@@ -11,7 +11,8 @@ define_package "tagged-format-0.2.1" do |package|
 		top = Teapot::Build.top(Pathname.new(__FILE__).dirname)
 		
 		top.add_directory('source')
+		top.add_directory('test')
 		
-		top.execute(:install, environment.flatten)
+		top.execute(:install, environment)
 	end
 end
