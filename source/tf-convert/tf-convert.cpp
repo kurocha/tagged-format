@@ -11,10 +11,10 @@
 #include <assert.h>
 #include <vector>
 
-#include "Parser.h"
-#include "Reader.h"
-#include "Table.h"
-#include "MemoryBuffer.h"
+#include <TaggedFormat/Parser.h>
+#include <TaggedFormat/Reader.h>
+#include <TaggedFormat/Table.h>
+#include <TaggedFormat/MemoryBuffer.h>
 
 namespace {
 	using namespace TaggedFormat;
