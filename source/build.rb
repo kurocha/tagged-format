@@ -1,10 +1,10 @@
 
 add_library 'TaggedFormat' do
-	def sources
+	def sources(environment)
 		FileList[root, 'TaggedFormat/**/*.cpp']
 	end
 	
-	def headers
+	def headers(environment)
 		FileList[root, 'TaggedFormat/**/*.h']
 	end
 end
@@ -14,7 +14,7 @@ add_executable("tf-convert") do
 		linkflags ["-lTaggedFormat"]
 	end
 	
-	def sources
+	def sources(environment)
 		FileList[root, "tf-convert/**/*.cpp"]
 	end
 end

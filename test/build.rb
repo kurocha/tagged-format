@@ -4,7 +4,7 @@ add_executable("tagged-format-test-runner") do
 		linkflags ["-lUnitTest", "-lTaggedFormat"]
 	end
 	
-	def sources
+	def sources(environment)
 		FileList[root, "**/*.cpp"]
 	end
 end
