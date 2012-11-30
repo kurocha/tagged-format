@@ -44,13 +44,13 @@ file has a header which includes an offset to the top block. By default, a varie
 in the specification, including a `Table`, `Mesh`, `Axis`, a variety of vertex formats and `External` 
 references.
 
-The Tagged text format is well defined and is compiled to a binary format using the included `tf-convert`, much 
+The Tagged text format is well defined and is compiled to a binary format using the included `tagged-format-convert`, much 
 like how an assembler converts symbolic code to binary machine code.
 
 Tagged Format Tool
 ------------------
 
-Included in this implementation is the `tf-convert` which converts a text format into a binary format. The text 
+Included in this implementation is the `tagged-format-convert` which converts a text format into a binary format. The text 
 format is primarily used as an export format and is typically converted into the binary format before being
 used.
 
@@ -71,11 +71,11 @@ Here is an example of a simple 10x10 square made by two triangles:
 
 To assemble this to the binary TMF format, simply run:
 
-	tf-convert --text-to-binary input.tft output.tfb
+	tagged-format-convert --text-to-binary input.tft output.tfb
 
 You can check the results by running:
 
-	$ tf-convert --dump-binary output.tfb
+	$ tagged-format-convert --dump-binary output.tfb
 	<tmv2; 32 bytes; magic = 42>
 	[mesh; 48 bytes; offset = 32]
 		layout = triangles
@@ -120,13 +120,13 @@ The binary format is platform specific. It would be possible to adjust data orde
 this goes against the spirit of the Tagged binary format: a simple loader that provides platform and 
 application specific data that can be quickly loaded into the graphics card.
 
-In the case where you need some form of platform independence, integrate the `tf-convert` into your application
+In the case where you need some form of platform independence, integrate the `tagged-format-convert` into your application
 development toolchain to produce target-specific binary versions of your model data.
 
 Future Work
 -----------
 
-- Provide target specific options to `tf-convert` for generating platform specific (e.g. endian) binary data.
+- Provide target specific options to `tagged-format-convert` for generating platform specific (e.g. endian) binary data.
 - Develop a simple Cocoa application for visualising the model data structure and rendering meshes.
 
 ## License

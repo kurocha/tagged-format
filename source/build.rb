@@ -9,12 +9,12 @@ add_library 'TaggedFormat' do
 	end
 end
 
-add_executable("tf-convert") do
+add_executable("tagged-format-convert") do
 	configure do
 		linkflags ["-lTaggedFormat"]
 	end
 	
 	def sources(environment)
-		FileList[root, "tf-convert/**/*.cpp"]
+		FileList[root, "TaggedFormat-Converter/**/*.cpp"]
 	end
 end
