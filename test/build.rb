@@ -5,6 +5,6 @@ add_executable("tagged-format-test-runner") do
 	end
 	
 	def sources
-		Pathname.glob(root + "**/*.cpp")
+		FileList[root, "**/*.cpp"]
 	end
 end

@@ -1,11 +1,11 @@
 
 add_library 'TaggedFormat' do
 	def sources
-		Pathname.glob(root + 'TaggedFormat/**/*.cpp')
+		FileList[root, 'TaggedFormat/**/*.cpp']
 	end
 	
 	def headers
-		Pathname.glob(root + 'TaggedFormat/**/*.h')
+		FileList[root, 'TaggedFormat/**/*.h']
 	end
 end
 
@@ -15,6 +15,6 @@ add_executable("tf-convert") do
 	end
 	
 	def sources
-		Pathname.glob(root + "tf-convert/**/*.cpp")
+		FileList[root, "tf-convert/**/*.cpp"]
 	end
 end
