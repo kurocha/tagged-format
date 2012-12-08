@@ -6,21 +6,27 @@
 required_version "0.5"
 
 define_target "tagged-format" do |target|
-	
 	target.install do |environment|
-		top = Teapot::Build.top(package.path)
+		Teapot::Build.install_directory(package.path, 'source', environment)
+	end
+	
+	target.depends :platform
+	target.depends "Language/C++11"
+	
+	target.provides "Library/TaggedFormat" do
+		append linkflags "-lTaggedFormat"
+	end
+end
 
-		top.add_directory('source')
-		top.add_directory('test')
-		
-		top.execute(:install, environment)
+define_target "tagged-format-tests" do |target|
+	target.install do |environment|
+		Teapot::Build.install_directory(package.path, 'test', environment)
 	end
 	
 	target.depends :platform
 	target.depends "Language/C++11"
 	target.depends "Library/UnitTest"
+	target.depends "Library/TaggedFormat"
 	
-	target.provides "Library/TaggedFormat" do
-		append linkflags "-lTaggedFormat"
-	end
+	target.provides "Test/TaggedFormat"
 end

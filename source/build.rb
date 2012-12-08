@@ -1,20 +1,22 @@
 
-add_library 'TaggedFormat' do
-	def sources(environment)
+compile_library 'TaggedFormat' do
+	def source_files(environment)
 		FileList[root, 'TaggedFormat/**/*.cpp']
 	end
-	
-	def headers(environment)
+end
+
+copy_headers do
+	def source_files(environment)
 		FileList[root, 'TaggedFormat/**/*.h']
 	end
 end
 
-add_executable("tagged-format-convert") do
+compile_executable("tagged-format-convert") do
 	configure do
 		linkflags ["-lTaggedFormat"]
 	end
 	
-	def sources(environment)
+	def source_files(environment)
 		FileList[root, "TaggedFormat-Converter/**/*.cpp"]
 	end
 end
