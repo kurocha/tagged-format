@@ -39,6 +39,10 @@ namespace TaggedFormat {
 	constexpr TagT tag_from_identifier(const char identifier[4]) {
 		return (identifier[0] << 24) | (identifier[1] << 16) | (identifier[2] << 8) | identifier[3];
 	}
+
+	inline std::string identifier_from_tag(const TagT & tag) {
+		return std::string((char*)&tag, (char*)&tag + 4);
+	}
 	
 	template <typename BlockT>
 	struct BlockTraits {
@@ -60,6 +64,10 @@ namespace TaggedFormat {
 		/// @returns a pointer to a specific offset from the start of the block.
 		void * end(std::size_t offset) {
 			return (ByteT *)this + offset;
+		}
+
+		std::string tag_name() {
+			return identifier_from_tag(tag);
 		}
 	};
 	
