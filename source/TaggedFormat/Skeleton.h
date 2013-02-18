@@ -85,7 +85,7 @@ namespace TaggedFormat {
 
 	template<>
 	struct BlockTraits<Animation> {
-		static const TagT TAG = tag_from_identifier("skan");
+		static const TagT TAG = tag_from_identifier("anim");
 	};
 
 	struct BoneKeyFrames : public Block {
