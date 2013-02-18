@@ -9,25 +9,25 @@
 
 namespace TaggedFormat {
 	const char * BasicSkeletonText =
-	"Model-animation: array bone-key-frame\n"
-	"	1 linear 0.0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1\n"
-	"	1 linear 30.0 1 0 0 0 0 1 0 0 0 0 1 0 0 10 0 1\n"
-	"end\n"
-	"Model-skeleton: skeleton\n"
-	"	weights: array b2w2\n"
-	"		0 1 0.25 0.75\n"
-	"	end\n"
-	"	bones: array bone\n"
-	"		0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1\n"
-	"		0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 10 1\n"
-	"	end\n"
-	"	sequences: offset-table\n"
-	"		default: animation 15.0 30.0\n"
-	"			key-frames: $Model-animation\n"
-	"		end\n"
-	"	end\n"
-	"end\n"
-	"top: $Model-skeleton\n";
+		"Model-animation: array bone-key-frame\n"
+		"	1 linear 0.0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1\n"
+		"	1 linear 30.0 1 0 0 0 0 1 0 0 0 0 1 0 0 10 0 1\n"
+		"end\n"
+		"Model-skeleton: skeleton\n"
+		"	weights: array b2w2\n"
+		"		0 1 0.25 0.75\n"
+		"	end\n"
+		"	bones: array bone\n"
+		"		0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1\n"
+		"		0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 10 1\n"
+		"	end\n"
+		"	sequences: offset-table\n"
+		"		default: animation 15.0 30.0\n"
+		"			key-frames: $Model-animation\n"
+		"		end\n"
+		"	end\n"
+		"end\n"
+		"top: $Model-skeleton\n";
 
 	std::array<float32, 16> IdentityMatrix = {
 		{1, 0, 0, 0,

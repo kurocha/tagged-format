@@ -20,7 +20,6 @@
 
 namespace TaggedFormat {
 	namespace Parser {
-
 		std::istream & operator>>(std::istream & input, float32 (&matrix)[16]) {
 			for (std::size_t i = 0; i < 16 && input.good(); i += 1) {
 				input >> matrix[i];
