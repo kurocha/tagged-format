@@ -142,11 +142,6 @@ namespace TaggedFormat {
 		float32 color[4];
 	};
 
-	/// For triangle mesh with per-vertex colour and weights.
-	struct BasicVertexP3N3M2C4W2 : public BasicVertexP3N3M2C4 {
-		uint32_t weights[2];
-	};
-
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3N3M2>> {
 		static const TagT TAG = tag_from_identifier("3320");
@@ -155,11 +150,6 @@ namespace TaggedFormat {
 	template<>
 	struct BlockTraits<Vertices<BasicVertexP3N3M2C4>> {
 		static const TagT TAG = tag_from_identifier("3324");
-	};
-
-	template<>
-	struct BlockTraits<Vertices<BasicVertexP3N3M2C4W2>> {
-		static const TagT TAG = tag_from_identifier("3326");
 	};
 }
 

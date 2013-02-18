@@ -20,6 +20,22 @@
 
 namespace TaggedFormat {
 	namespace Parser {
+
+		std::istream & operator>>(std::istream & input, float32 (&matrix)[16]) {
+			for (std::size_t i = 0; i < 16 && input.good(); i += 1) {
+				input >> matrix[i];
+			}
+
+			return input;
+		}
+
+		std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[16]) {
+			for (std::size_t i = 0; i < 16 && output.good(); i += 1) {
+				output << matrix[i];
+			}
+
+			return output;
+		}
 		
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3 & vertex) {
 			input >> vertex.position[0] >> vertex.position[1] >> vertex.position[2];
@@ -41,14 +57,7 @@ namespace TaggedFormat {
 			
 			return input;
 		}
-		
-		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2C4W2 & vertex) {
-			input >> (BasicVertexP3N3M2C4 &)vertex;
-			input >> vertex.weights[0] >> vertex.weights[1];
-			
-			return input;
-		}
-		
+
 		std::istream & operator>>(std::istream & input, NamedAxis & axis) {
 			input >> axis.name;
 			input >> axis.translation[0] >> axis.translation[1] >> axis.translation[2];
@@ -56,42 +65,104 @@ namespace TaggedFormat {
 			
 			return input;
 		}
+
+		std::istream & operator>>(std::istream & input, Weights<2>::Vertex & vertex) {
+			input >> vertex.bones[0] >> vertex.bones[1];
+			input >> vertex.weights[0] >> vertex.weights[1];
+			
+			return input;
+		}
+
+		std::istream & operator>>(std::istream & input, Weights<4>::Vertex & vertex) {
+			input >> vertex.bones[0] >> vertex.bones[1] >> vertex.bones[2] >> vertex.bones[3];
+			input >> vertex.weights[0] >> vertex.weights[1] >> vertex.weights[2] >> vertex.weights[3];
+			
+			return input;
+		}
+
+		std::istream & operator>>(std::istream & input, Bones::Bone & bone) {
+			input >> bone.parent;
+			input >> bone.transform;
+
+			return input;
+		}
+
+		std::istream & operator>>(std::istream & input, BoneKeyFrames::Frame & frame) {
+			input >> frame.bone;
+
+			{
+				std::string interpolation_method;
+				input >> interpolation_method;
+
+				if (interpolation_method == "bezier")
+					frame.interpolation = BoneKeyFrames::Interpolation::BEZIER;
+				else
+					frame.interpolation = BoneKeyFrames::Interpolation::LINEAR;
+			}
+
+			input >> frame.time;
+
+			for (std::size_t i = 0; i < 16 && input.good(); i += 1) {
+				input >> frame.transform[i];
+			}
+
+			return input;
+		}
 		
-		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3 & vertex) {
+		std::ostream & operator<<(std::ostream & output, const BasicVertexP3N3 & vertex) {
 			output << "P=(" << vertex.position[0] << ", " << vertex.position[1] << ", " << vertex.position[2] << ")";
 			output << " N=(" << vertex.normal[0] << ", " << vertex.normal[1] << ", " << vertex.normal[2] << ")";
 			
 			return output;
 		}
 		
-		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2 & vertex) {
+		std::ostream & operator<<(std::ostream & output, const BasicVertexP3N3M2 & vertex) {
 			output << (BasicVertexP3N3 &)vertex;
 			output << " M=(" << vertex.mapping[0] << ", " << vertex.mapping[1] << ")";
 			
 			return output;
 		}
 		
-		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2C4 & vertex) {
+		std::ostream & operator<<(std::ostream & output, const BasicVertexP3N3M2C4 & vertex) {
 			output << (BasicVertexP3N3M2 &)vertex;
 			output << " C=(" << vertex.color[0] << ", " << vertex.color[1] << ", " << vertex.color[2] << ", " << vertex.color[3] << ")";
 			
 			return output;
 		}
-		
-		std::ostream & operator<<(std::ostream & output, BasicVertexP3N3M2C4W2 & vertex) {
-			output << (BasicVertexP3N3M2C4 &)vertex;
-			output << " W=(" << vertex.weights[0] << ", " << vertex.weights[1] << ")";
-			
-			return output;
-		}
-		
-		std::ostream & operator<<(std::ostream & output, NamedAxis & axis) {
+
+		std::ostream & operator<<(std::ostream & output, const NamedAxis & axis) {
 			output << axis.name;
 			output << " T=(" << axis.translation[0] << ", " << axis.translation[1] << ", " << axis.translation[2] << ")";
 			output << " R=(" << axis.rotation[0] << ", " << axis.rotation[1] << ", " << axis.rotation[2] << ", " << axis.rotation[3] << ")";
 			
 			return output;
 		}
+
+		std::ostream & operator<<(std::ostream & output, const Weights<2>::Vertex & vertex) {
+			output << " B=(" << vertex.bones[0] << ", " << vertex.bones[1] << ")";
+			output << " W=(" << vertex.weights[0] << ", " << vertex.weights[1] << ")";
+			
+			return output;
+		}
+
+		std::ostream & operator<<(std::ostream & output, const Weights<4>::Vertex & vertex) {
+			output << " B=(" << vertex.bones[0] << ", " << vertex.bones[1] << ", " << vertex.bones[2] << ", " << vertex.bones[3] << ")";
+			output << " W=(" << vertex.weights[0] << ", " << vertex.weights[1] << ", " << vertex.weights[2] << ", " << vertex.weights[3] << ")";
+			
+			return output;
+		}
+
+		std::ostream & operator<<(std::ostream & output, const Bones::Bone & bone) {
+			output << " Bone=(" << bone.parent << " -> " << bone.transform << ")";
+
+			return output;
+		}
+
+		std::ostream & operator<<(std::ostream & output, BoneKeyFrames::Frame & frame) {
+			output << " Frame=(" << frame.bone << " @ " << frame.time << "[" << BoneKeyFrames::name_for_interpolation(frame.interpolation) << "]" << " -> " << frame.transform << ")";
+
+			return output;
+		}		
 		
 //MARK: -
 	
@@ -125,8 +196,6 @@ namespace TaggedFormat {
 				mesh_block->layout = Mesh::TRIANGLE_STRIP;
 			
 			Context child(this);
-			
-			// Parse expressions
 			child.parse();
 			
 			mesh_block->indices_offset = child.lookup("indices");
@@ -136,6 +205,36 @@ namespace TaggedFormat {
 			std::cerr << "Mesh: " << mesh_block->indices_offset << ", " << mesh_block->vertices_offset << ", " << mesh_block->axes_offset << std::endl;
 			
 			return mesh_block;
+		}
+
+		OffsetT Context::parse_skeleton() {
+			auto skeleton_block = _writer->append<Skeleton>();
+
+			Context child(this);
+			child.parse();
+
+			skeleton_block->weights_offset = child.lookup("weights");
+			skeleton_block->bones_offset = child.lookup("bones");
+			skeleton_block->sequences_offset = child.lookup("sequences");
+
+			std::cerr << "Skeleton: " << skeleton_block->weights_offset << ", " << skeleton_block->bones_offset << ", " << skeleton_block->sequences_offset << std::endl;
+
+			return skeleton_block;
+		}
+
+		OffsetT Context::parse_animation() {
+			auto animation_block = _writer->append<Animation>();
+
+			_input >> animation_block->start_time >> animation_block->end_time;
+
+			Context child(this);
+			child.parse();
+
+			animation_block->key_frames_offset = child.lookup("key-frames");
+
+			std::cerr << "Animation: " << animation_block->start_time << " -> " << animation_block->end_time << std::endl;
+
+			return animation_block;
 		}
 		
 		template <typename ElementT>
@@ -216,6 +315,14 @@ namespace TaggedFormat {
 				return parse_block<Vertices<BasicVertexP3N3>>();
 			} else if (value_type == "axis") {
 				return parse_block<Axes>();
+			} else if (value_type == "b2w2") {
+				return parse_block<Weights<2>>();
+			} else if (value_type == "b4w4") {
+				return parse_block<Weights<4>>();
+			} else if (value_type == "bone") {
+				return parse_block<Bones>();
+			} else if (value_type == "bone-key-frame") {
+				return parse_block<BoneKeyFrames>();
 			}
 			
 			throw std::runtime_error("Could not parse input");
@@ -259,8 +366,12 @@ namespace TaggedFormat {
 					offset = parse_array();
 				} else if (symbol == "offset-table") {
 					offset = parse_offset_table();
+				} else if (symbol == "skeleton") {
+					offset = parse_skeleton();
+				} else if (symbol == "animation") {
+					offset = parse_animation();
 				}
-				
+
 				if (named) {
 					_names[name] = offset;
 				}
@@ -269,12 +380,11 @@ namespace TaggedFormat {
 			std::cerr << "<- Exiting parse; names defined = " << _names.size() << std::endl;
 		}
 		
-		void serialize(std::istream & input, std::ostream & output) {
+		void serialize(std::istream & input, MemoryBuffer & output) {
 			using namespace TaggedFormat;
 			
 			// Initialize memory buffer:
-			MemoryBuffer memory_buffer(1024);
-			Writer writer(&memory_buffer);
+			Writer writer(&output);
 			auto header = writer.header();
 			
 			{
@@ -283,10 +393,20 @@ namespace TaggedFormat {
 				context.parse();
 				
 				header->top_offset = context.lookup("top");
+
+				if (header->top_offset == 0) {
+					std::cerr << "Warning: Could not find block for top offset!" << std::endl;
+				}
 				
 				std::cerr << "Top block at offset " << header->top_offset << std::endl;
 			}
-			
+		}
+
+		void serialize(std::istream & input, std::ostream & output) {
+			MemoryBuffer memory_buffer(1024);
+
+			serialize(input, memory_buffer);
+
 			{
 				// Write buffer to output:
 				Buffer buffer = memory_buffer.buffer();
