@@ -37,7 +37,7 @@ namespace TaggedFormat {
 	}
 	
 	constexpr TagT tag_from_identifier(const char identifier[4]) {
-		return (identifier[0] << 24) | (identifier[1] << 16) | (identifier[2] << 8) | identifier[3];
+		return (identifier[3] << 24) | (identifier[2] << 16) | (identifier[1] << 8) | identifier[0];
 	}
 
 	inline std::string identifier_from_tag(const TagT & tag) {
