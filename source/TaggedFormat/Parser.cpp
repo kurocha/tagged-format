@@ -20,6 +20,8 @@
 
 namespace TaggedFormat {
 	namespace Parser {
+		// *** Matrix I/O ***
+		
 		std::istream & operator>>(std::istream & input, float32 (&matrix)[16]) {
 			for (std::size_t i = 0; i < 16 && input.good(); i += 1) {
 				input >> matrix[i];
@@ -35,6 +37,8 @@ namespace TaggedFormat {
 
 			return output;
 		}
+
+		// *** Vertex I/O ***
 		
 		std::istream & operator>>(std::istream & input, BasicVertexP3N3 & vertex) {
 			input >> vertex.position[0] >> vertex.position[1] >> vertex.position[2];
@@ -236,6 +240,40 @@ namespace TaggedFormat {
 
 			return animation_block;
 		}
+
+		OffsetT Context::parse_geometry_instance()
+		{
+			auto geometry_instance_block = _writer->append<GeometryInstance>();
+
+			Context child(this);
+			child.parse();
+
+			geometry_instance_block->mesh_offset = child.lookup("mesh");
+			geometry_instance_block->skeleton_offset = child.lookup("skeleton");
+			geometry_instance_block->material_offset = child.lookup("material");
+
+			return geometry_instance_block;
+		}
+
+		OffsetT Context::parse_node() {
+			std::string name;
+			float32 transform[16];
+
+			_input >> name >> transform;
+
+			Context child(this);
+			child.parse();
+
+			std::size_t buffer_size = sizeof(Node::ElementT) * child._offsets.size();
+			auto node_block = _writer->append<Node>(buffer_size);
+
+			node_block->name = name;
+			std::copy(transform, transform+16, node_block->transform);
+
+			std::memcpy(node_block->end(sizeof(Node)), child._offsets.data(), buffer_size);
+
+			return node_block;
+		}
 		
 		template <typename ElementT>
 		void parse_items(std::istream & input, std::vector<ElementT> & items) {
@@ -370,11 +408,17 @@ namespace TaggedFormat {
 					offset = parse_skeleton();
 				} else if (symbol == "animation") {
 					offset = parse_animation();
+				} else if (symbol == "node") {
+					offset = parse_node();
+				} else if (symbol == "geometry-instance") {
+					offset = parse_geometry_instance();
 				}
 
 				if (named) {
 					_names[name] = offset;
 				}
+
+				_offsets.push_back(offset);
 			}
 			
 			std::cerr << "<- Exiting parse; names defined = " << _names.size() << std::endl;

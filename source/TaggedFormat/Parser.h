@@ -12,11 +12,15 @@
 #include "Mesh.h"
 #include "Skeleton.h"
 #include "Axes.h"
+#include "Scene.h"
+
 #include "Writer.h"
 
 #include <iosfwd>
 #include <string>
+
 #include <map>
+#include <vector>
 
 namespace TaggedFormat {
 
@@ -48,16 +52,19 @@ namespace TaggedFormat {
 		std::ostream & operator<<(std::istream & input, const Weights<4>::Vertex & vertex);
 		std::ostream & operator<<(std::istream & input, const Bones::Bone & bone);
 		std::ostream & operator<<(std::istream & input, const BoneKeyFrames::Frame & frame);
-
 		
 		class Context {
 		public:
 			typedef std::map<std::string, OffsetT> NamesMapT;
+			typedef std::vector<OffsetT> OffsetsT;
 			
 		protected:
 			Writer * _writer;
 			std::istream & _input;
+
 			NamesMapT _names;
+			OffsetsT _offsets;
+
 			Context * _parent;
 			
 			template <typename BlockT>
@@ -73,9 +80,13 @@ namespace TaggedFormat {
 			
 			OffsetT parse_mesh();
 			OffsetT parse_array();
+
 			OffsetT parse_skeleton();
 			OffsetT parse_animation();
-			
+
+			OffsetT parse_geometry_instance();
+			OffsetT parse_node();
+
 			void parse();
 		};
 
