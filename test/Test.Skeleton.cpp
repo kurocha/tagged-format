@@ -18,8 +18,8 @@ namespace TaggedFormat {
 		"		0 1 0.25 0.75\n"
 		"	end\n"
 		"	bones: array bone\n"
-		"		0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1\n"
-		"		0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 10 1\n"
+		"		BoneA 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1\n"
+		"		BoneB 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 10 1\n"
 		"	end\n"
 		"	sequences: offset-table\n"
 		"		default: animation 15.0 30.0\n"
@@ -66,6 +66,9 @@ namespace TaggedFormat {
 				examiner.check_equal(element_count(bones), 2);
 				examiner.check_equal(bones->bones[0].parent, 0);
 				examiner.check_equal(bones->bones[1].parent, 0);
+
+				examiner.check_equal(bones->bones[0].name, "BoneA");
+				examiner.check_equal(bones->bones[1].name, "BoneB");
 
 				for (std::size_t i = 0; i < 16; i += 1)
 					examiner.check_equal(IdentityMatrix[i], bones->bones[0].transform[i]);

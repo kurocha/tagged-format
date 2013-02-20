@@ -59,6 +59,9 @@ namespace TaggedFormat {
 	struct Bones : public Block {
 		/// A list of indicies, typically an array of uint16_t or unit32_t.
 		struct Bone : public Block {
+			// An optional bone name.
+			FixedString<> name;
+
 			// The index of the parent node.
 			BoneID parent;
 

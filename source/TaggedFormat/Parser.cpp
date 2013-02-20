@@ -80,6 +80,7 @@ namespace TaggedFormat {
 		}
 
 		std::istream & operator>>(std::istream & input, Bones::Bone & bone) {
+			input >> bone.name;
 			input >> bone.parent;
 			input >> bone.transform;
 
