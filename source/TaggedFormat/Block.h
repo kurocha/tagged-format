@@ -82,7 +82,7 @@ namespace TaggedFormat {
 	
 	template<>
 	struct BlockTraits<Header> {
-		static const TagT TAG = tag_from_identifier("tmv2");
+		static const TagT TAG = tag_from_identifier("hdr3");
 	};
 	
 	/// Return a human readable name for the given tag.
