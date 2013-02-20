@@ -24,6 +24,60 @@ namespace TaggedFormat {
 	
 	/// A standard 64-bit floating point data-type.
 	typedef Aligned<double>::TypeT float64;
+
+	/// A fixed string typically used for holding names or references:
+	template <std::size_t N = 32>
+	struct FixedString {
+		char value[N];
+
+		void assign(const std::string & other) {
+			std::strncpy(value, other.c_str(), N);
+		}
+
+		int compare(const std::string & other) const {
+			if (other.size() > N)
+				return -1;
+			else
+				return std::strncmp(other.c_str(), (const char *)value, N);
+		}
+
+		bool operator==(const std::string & other) const {
+			return compare(other) == 0;
+		}
+
+		const std::string & operator=(const std::string & other) {
+			assign(other);
+
+			return other;
+		}
+
+		operator std::string () const {
+			std::size_t length = 0;
+
+			while (length < N && value[length]) {
+				length++;
+			}
+
+			return std::string(value, value+length);
+		}
+	};
+
+	template <std::size_t N>
+	std::istream & operator>>(std::istream & input, FixedString<N> & fixed_string) {
+		std::string other;
+		input >> other;
+		
+		fixed_string.assign(other);
+
+		return input;
+	}
+
+	template <std::size_t N>
+	std::ostream & operator<<(std::ostream & output, const FixedString<N> & fixed_string) {
+		output << (std::string)(fixed_string);
+
+		return output;
+	}
 	
 	/// For blocks that end with a list of elements, this returns the number of elements in the block.
 	template <typename BlockT>
