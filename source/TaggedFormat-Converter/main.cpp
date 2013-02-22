@@ -119,20 +119,20 @@ namespace {
 		}
 		
 #define TMF_BLOCK_CASE(BlockT, NEWLINE) \
-			case BlockTraits<BlockT>::TAG: \
+			case BlockT::TAG: \
 				dump_block<BlockT, NEWLINE>(reader, (BlockT *)block, output, indentation + 1); \
 				break;
 		
 		switch (block->tag) {
-			case BlockTraits<Header>::TAG:
+			case Header::TAG:
 				dump_header(reader, (Header *)block, output, indentation + 1);
 				break;
 				
-			case BlockTraits<Mesh>::TAG:
+			case Mesh::TAG:
 				dump_mesh(reader, (Mesh *)block, output, indentation + 1);
 				break;
 			
-			case BlockTraits<OffsetTable>::TAG:
+			case OffsetTable::TAG:
 				dump_dictionary(reader, (OffsetTable *)block, output, indentation + 1);
 				break;
 				

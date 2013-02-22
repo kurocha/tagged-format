@@ -106,7 +106,7 @@ namespace TaggedFormat {
 	struct Block {
 		/// The blog identifier.
 		TagT tag;
-		
+
 		// Total size of block including this structure.
 		OffsetT size;
 		
@@ -127,25 +127,22 @@ namespace TaggedFormat {
 	
 	/// The header typically used at the start of the binary file.
 	struct Header : public Block {
+		static const TagT TAG = tag_from_identifier("HDR3");
+		
 		/// A version identifier, typically 42.
 		MagicT magic;
 		
 		/// The offset to the top block.
 		OffsetT top_offset;
 	};
-	
-	template<>
-	struct BlockTraits<Header> {
-		static const TagT TAG = tag_from_identifier("hdr3");
-	};
-	
+		
 	/// Return a human readable name for the given tag.
 	std::string tag_name(TagT tag);
 	
 	/// Reset a data block with the correct tag and size based on type.
 	template <typename BlockT>
 	void clear(BlockT & block, OffsetT capacity = 0) {
-		block.tag = BlockTraits<BlockT>::TAG;
+		block.tag = BlockT::TAG;
 		block.size = sizeof(BlockT) + capacity;
 	}
 }

@@ -14,15 +14,12 @@
 namespace TaggedFormat {
 	/// Reference an external resource. Implementation defined.
 	struct External : public Block {
+		static const TagT TAG = tag_from_identifier("EXRN");
+
 		typedef unsigned char ElementT;
 
 		/// Null terminated URL referencing external resource.
 		unsigned char url[0];
-	};
-
-	template<>
-	struct BlockTraits<External> {
-		static const TagT TAG = tag_from_identifier("extr");
 	};
 }
 

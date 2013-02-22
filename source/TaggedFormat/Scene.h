@@ -24,6 +24,8 @@ namespace TaggedFormat {
 	*/
 
 	struct Node : public Block {
+		static const TagT TAG = tag_from_identifier("NODE");
+
 		typedef OffsetT ElementT;
 
 		/// The node name, if any.
@@ -36,20 +38,12 @@ namespace TaggedFormat {
 		OffsetT children[0];
 	};
 
-	template <>
-	struct BlockTraits<Node> {
-		static const TagT TAG = tag_from_identifier("node");
-	};
-
 	struct GeometryInstance : public Block {
+		static const TagT TAG = tag_from_identifier("#GEO");
+
 		OffsetT mesh_offset;
 		OffsetT skeleton_offset;
 		OffsetT material_offset;
-	};
-
-	template <>
-	struct BlockTraits<GeometryInstance> {
-		static const TagT TAG = tag_from_identifier("#geo");
 	};
 }
 

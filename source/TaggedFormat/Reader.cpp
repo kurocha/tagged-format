@@ -32,7 +32,7 @@ namespace TaggedFormat {
 	bool Reader::flipped() {
 		Header * header = this->header();
 		
-		if (header->tag == BlockTraits<Header>::TAG) {
+		if (header->tag == Header::TAG) {
 			return false;
 		}
 		

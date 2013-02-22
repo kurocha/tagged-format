@@ -14,6 +14,8 @@
 namespace TaggedFormat {
 	/// A mesh block contains indices, vertices and axes.
 	struct Mesh : public Block {
+		static const TagT TAG = tag_from_identifier("MESH");
+		
 		// These definitions map directly to the equivalent OpenGL constants.
 		enum Layout {
 			POINTS = 0,
@@ -44,11 +46,6 @@ namespace TaggedFormat {
 		static std::string name_for_layout(Layout layout);
 	};
 
-	template<>
-	struct BlockTraits<Mesh> {
-		static const TagT TAG = tag_from_identifier("mesh");
-	};
-
 	/// A list of indicies, typically an array of uint16_t or unit32_t.
 	template <typename IndexT>
 	struct Indices : public Block {
@@ -57,24 +54,19 @@ namespace TaggedFormat {
 		IndexT indices[0];
 	};
 
-	template<>
-	struct BlockTraits<Indices<uint16_t>> {
-		static const TagT TAG = tag_from_identifier("ind2");
+	struct Indices16 : public Indices<uint16_t> {
+		static const TagT TAG = tag_from_identifier("IN16");
 	};
 
-	template<>
-	struct BlockTraits<Indices<uint32_t>> {
-		static const TagT TAG = tag_from_identifier("ind4");
-	};
-
-	template<>
-	struct BlockTraits<Indices<uint64_t>> {
-		static const TagT TAG = tag_from_identifier("ind8");
+	struct Indices32 : public Indices<uint32_t>  {
+		static const TagT TAG = tag_from_identifier("IN32");
 	};
 
 	/// A list of vertices, typically BasicVertexP3N3M2.
 	template <typename VertexT>
 	struct Vertices : public Block {
+		static const TagT TAG = VertexT::TAG;
+
 		typedef VertexT ElementT;
 
 		VertexT vertices[0];
@@ -84,72 +76,44 @@ namespace TaggedFormat {
 
 	/// For 2D lines and structures.
 	struct BasicVertexP2 {
+		static const TagT TAG = tag_from_identifier("2000");
+		
 		float32 position[2];
 	};
 
 	/// For 2D lines and structures with per-vertex colour.
 	struct BasicVertexP2C4 {
+		static const TagT TAG = tag_from_identifier("2400");
+
 		float32 position[2];
 		float32 color[4];
 	};
 
-	template<>
-	struct BlockTraits<Vertices<BasicVertexP2>> {
-		static const TagT TAG = tag_from_identifier("2000");
-	};
-
-	template<>
-	struct BlockTraits<Vertices<BasicVertexP2C4>> {
-		static const TagT TAG = tag_from_identifier("2400");
-	};
-
 	/// For 3D lines and structures.
 	struct BasicVertexP3 {
+		static const TagT TAG = tag_from_identifier("3000");
+
 		float32 position[3];
 	};
 
-	template<>
-	struct BlockTraits<Vertices<BasicVertexP3>> {
-		static const TagT TAG = tag_from_identifier("3000");
-	};
-
-	/// For 3D lines and structures with per-vertex colour.
-	struct BasicVertexP3C4 : public BasicVertexP3 {
-		float32 color[4];
-	};
-
-	template<>
-	struct BlockTraits<Vertices<BasicVertexP3C4>> {
-		static const TagT TAG = tag_from_identifier("3400");
-	};
-
 	struct BasicVertexP3N3 : public BasicVertexP3 {
-		float32 normal[3];
-	};
-	
-	template<>
-	struct BlockTraits<Vertices<BasicVertexP3N3>> {
 		static const TagT TAG = tag_from_identifier("3300");
+
+		float32 normal[3];
 	};
 
 	/// For triangle mesh.
 	struct BasicVertexP3N3M2 : public BasicVertexP3N3 {
+		static const TagT TAG = tag_from_identifier("3320");
+
 		float32 mapping[2];
 	};
 
 	/// For triangle mesh with per-vertex colour.
 	struct BasicVertexP3N3M2C4 : public BasicVertexP3N3M2 {
-		float32 color[4];
-	};
-
-	template<>
-	struct BlockTraits<Vertices<BasicVertexP3N3M2>> {
-		static const TagT TAG = tag_from_identifier("3320");
-	};
-
-	template<>
-	struct BlockTraits<Vertices<BasicVertexP3N3M2C4>> {
 		static const TagT TAG = tag_from_identifier("3324");
+
+		float32 color[4];
 	};
 }
 

@@ -50,6 +50,8 @@ namespace TaggedFormat {
 	};
 
 	struct OffsetTable : public Table<> {
+		static const TagT TAG = tag_from_identifier("#TBL");
+
 		/// Get an offset with a given name.
 		/// @returns 0 if offset with the given name was found.
 		OffsetT offset_named(std::string name) {
@@ -60,11 +62,6 @@ namespace TaggedFormat {
 			else
 				return 0;
 		}
-	};
-
-	template<>
-	struct BlockTraits<OffsetTable> {
-		static const TagT TAG = tag_from_identifier("oftb");
 	};
 }
 

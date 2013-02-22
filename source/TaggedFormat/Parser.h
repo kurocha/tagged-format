@@ -36,23 +36,31 @@ namespace TaggedFormat {
 		std::istream & operator>>(std::istream & input, NamedAxis & axis);
 
 		// Skeletons
-		std::istream & operator>>(std::istream & input, Weights<2>::Vertex & vertex);
-		std::istream & operator>>(std::istream & input, Weights<4>::Vertex & vertex);
 		std::istream & operator>>(std::istream & input, Bones::Bone & bone);
-		std::istream & operator>>(std::istream & input, BoneKeyFrames::Frame & frame);
+		std::istream & operator>>(std::istream & input, SkeletonBoneKeyFrame::Frame & frame);
 
-		// *** Structured Output ***
-		std::ostream & operator<<(std::ostream & output, const BasicVertexP3N3 & vertex);
-		std::ostream & operator<<(std::ostream & output, const BasicVertexP3N3M2 & vertex);
-		std::ostream & operator<<(std::ostream & output, const BasicVertexP3N3M2C4 & vertex);
-		std::ostream & operator<<(std::ostream & output, const NamedAxis & axis);
+		class DataType {
+		};
 
-		// Skeletons
-		std::ostream & operator<<(std::istream & input, const Weights<2>::Vertex & vertex);
-		std::ostream & operator<<(std::istream & input, const Weights<4>::Vertex & vertex);
-		std::ostream & operator<<(std::istream & input, const Bones::Bone & bone);
-		std::ostream & operator<<(std::istream & input, const BoneKeyFrames::Frame & frame);
-		
+		using DataTypePtr = std::shared_ptr<DataType>;
+
+		class BlockTemplate {
+		protected:
+			TagT _tag;
+			std::string _name;
+			std::vector<DataTypePtr> _structure;
+
+		public:
+			BlockTemplate(TagT tag, std::string name, std::vector<DataTypePtr> structure);
+			virtual ~BlockTemplate();
+
+			TagT tag() const { return _tag; }
+			const std::string & name() const { return _name; }
+			const std::vector<DataTypePtr> & structure() const { return _structure; }
+
+			static std::shared_ptr<BlockTemplate> parse(std::istream & input);
+		};
+
 		class Context {
 		public:
 			typedef std::map<std::string, OffsetT> NamesMapT;

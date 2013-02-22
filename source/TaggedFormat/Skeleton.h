@@ -10,12 +10,15 @@
 #define __TAGGED_FORMAT_SKELETON_H
 
 #include "Block.h"
+#include "Mesh.h"
 
 namespace TaggedFormat {
 	typedef Aligned<uint16_t, 16>::TypeT BoneID;
 
 	/// A skeleton block contains weights, bones and animation sequences.
 	struct Skeleton : public Block {
+		static const TagT TAG = tag_from_identifier("SKEL");
+
 		/// The offset of the per-vertex weights block.
 		OffsetT weights_offset;
 
@@ -26,39 +29,18 @@ namespace TaggedFormat {
 		OffsetT sequences_offset;
 	};
 
-	template<>
-	struct BlockTraits<Skeleton> {
-		static const TagT TAG = tag_from_identifier("skel");
-	};
+	struct VertexP3N3M2B4 : public BasicVertexP3N3M2 {
+		static const TagT TAG = tag_from_identifier("3324");
 
-	/// A list of indicies, typically an array of uint16_t or unit32_t.
-	template <std::size_t COUNT = 4>
-	struct Weights : public Block {
-		/// Per-vertex weight information:
-		struct Vertex {
-			BoneID bones[COUNT];
-			float32 weights[COUNT];
-		};
-
-		typedef Vertex ElementT;
-
-		/// We have COUNT weights per vertex, organised in parallel.
-		Vertex vertices[0];
-	};
-
-	template<>
-	struct BlockTraits<Weights<2>> {
-		static const TagT TAG = tag_from_identifier("b2w2");
-	};
-
-	template<>
-	struct BlockTraits<Weights<4>> {
-		static const TagT TAG = tag_from_identifier("b4w4");
+		BoneID bones[4];
+		float32 weights[4];
 	};
 
 	struct Bones : public Block {
+		static const TagT TAG = tag_from_identifier("BONE");
+
 		/// A list of indicies, typically an array of uint16_t or unit32_t.
-		struct Bone : public Block {
+		struct Bone {
 			// An optional bone name.
 			FixedString<> name;
 
@@ -74,24 +56,18 @@ namespace TaggedFormat {
 		Bone bones[0];
 	};
 
-	template<>
-	struct BlockTraits<Bones> {
-		static const TagT TAG = tag_from_identifier("bnes");
-	};
-
 	struct Animation : public Block {
+		static const TagT TAG = tag_from_identifier("ANIM");
+
 		float32 start_time;
 		float32 end_time;
 
 		OffsetT key_frames_offset;
 	};
 
-	template<>
-	struct BlockTraits<Animation> {
-		static const TagT TAG = tag_from_identifier("anim");
-	};
-
-	struct BoneKeyFrames : public Block {
+	struct SkeletonBoneKeyFrame : public Block {
+		static const TagT TAG = tag_from_identifier("KEYF");
+	
 		enum class Interpolation : Aligned<uint16_t>::TypeT {
 			LINEAR = 0,
 			BEZIER = 1
@@ -110,11 +86,6 @@ namespace TaggedFormat {
 		typedef Frame ElementT;
 
 		Frame frames[0];
-	};
-
-	template<>
-	struct BlockTraits<BoneKeyFrames> {
-		static const TagT TAG = tag_from_identifier("bnkf");
 	};
 }
 

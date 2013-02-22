@@ -69,20 +69,6 @@ namespace TaggedFormat {
 			return input;
 		}
 
-		std::istream & operator>>(std::istream & input, Weights<2>::Vertex & vertex) {
-			input >> vertex.bones[0] >> vertex.bones[1];
-			input >> vertex.weights[0] >> vertex.weights[1];
-			
-			return input;
-		}
-
-		std::istream & operator>>(std::istream & input, Weights<4>::Vertex & vertex) {
-			input >> vertex.bones[0] >> vertex.bones[1] >> vertex.bones[2] >> vertex.bones[3];
-			input >> vertex.weights[0] >> vertex.weights[1] >> vertex.weights[2] >> vertex.weights[3];
-			
-			return input;
-		}
-
 		std::istream & operator>>(std::istream & input, Bones::Bone & bone) {
 			input >> bone.name;
 			input >> bone.parent;
@@ -91,7 +77,7 @@ namespace TaggedFormat {
 			return input;
 		}
 
-		std::istream & operator>>(std::istream & input, BoneKeyFrames::Frame & frame) {
+		std::istream & operator>>(std::istream & input, SkeletonBoneKeyFrame::Frame & frame) {
 			input >> frame.bone;
 
 			{
@@ -99,9 +85,9 @@ namespace TaggedFormat {
 				input >> interpolation_method;
 
 				if (interpolation_method == "bezier")
-					frame.interpolation = BoneKeyFrames::Interpolation::BEZIER;
+					frame.interpolation = SkeletonBoneKeyFrame::Interpolation::BEZIER;
 				else
-					frame.interpolation = BoneKeyFrames::Interpolation::LINEAR;
+					frame.interpolation = SkeletonBoneKeyFrame::Interpolation::LINEAR;
 			}
 
 			input >> frame.time;
@@ -142,28 +128,14 @@ namespace TaggedFormat {
 			return output;
 		}
 
-		std::ostream & operator<<(std::ostream & output, const Weights<2>::Vertex & vertex) {
-			output << " B=(" << vertex.bones[0] << ", " << vertex.bones[1] << ")";
-			output << " W=(" << vertex.weights[0] << ", " << vertex.weights[1] << ")";
-			
-			return output;
-		}
-
-		std::ostream & operator<<(std::ostream & output, const Weights<4>::Vertex & vertex) {
-			output << " B=(" << vertex.bones[0] << ", " << vertex.bones[1] << ", " << vertex.bones[2] << ", " << vertex.bones[3] << ")";
-			output << " W=(" << vertex.weights[0] << ", " << vertex.weights[1] << ", " << vertex.weights[2] << ", " << vertex.weights[3] << ")";
-			
-			return output;
-		}
-
 		std::ostream & operator<<(std::ostream & output, const Bones::Bone & bone) {
 			output << " Bone=(" << bone.parent << " -> " << bone.transform << ")";
 
 			return output;
 		}
 
-		std::ostream & operator<<(std::ostream & output, BoneKeyFrames::Frame & frame) {
-			output << " Frame=(" << frame.bone << " @ " << frame.time << "[" << BoneKeyFrames::name_for_interpolation(frame.interpolation) << "]" << " -> " << frame.transform << ")";
+		std::ostream & operator<<(std::ostream & output, SkeletonBoneKeyFrame::Frame & frame) {
+			output << " Frame=(" << frame.bone << " @ " << frame.time << "[" << SkeletonBoneKeyFrame::name_for_interpolation(frame.interpolation) << "]" << " -> " << frame.transform << ")";
 
 			return output;
 		}		
@@ -344,23 +316,19 @@ namespace TaggedFormat {
 			std::cerr << "Value type = " << value_type << std::endl;
 			
 			if (value_type == "u2") {
-				return parse_block<Indices<uint16_t>>();
+				return parse_block<Indices16>();
 			} else if (value_type == "u4") {
-				return parse_block<Indices<uint32_t>>();
+				return parse_block<Indices32>();
 			} else if (value_type == "p3n3m2") {
 				return parse_block<Vertices<BasicVertexP3N3M2>>();
 			} else if (value_type == "p3n3") {
 				return parse_block<Vertices<BasicVertexP3N3>>();
 			} else if (value_type == "axis") {
 				return parse_block<Axes>();
-			} else if (value_type == "b2w2") {
-				return parse_block<Weights<2>>();
-			} else if (value_type == "b4w4") {
-				return parse_block<Weights<4>>();
 			} else if (value_type == "bone") {
 				return parse_block<Bones>();
 			} else if (value_type == "bone-key-frame") {
-				return parse_block<BoneKeyFrames>();
+				return parse_block<SkeletonBoneKeyFrame>();
 			}
 			
 			throw std::runtime_error("Could not parse input");

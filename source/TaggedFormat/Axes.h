@@ -23,10 +23,6 @@ namespace TaggedFormat {
 
 	/// A block containing a list of named axes.
 	struct Axes : public Table<NamedAxis> {
-	};
-
-	template<>
-	struct BlockTraits<Axes> {
 		static const TagT TAG = tag_from_identifier("axes");
 	};
 }

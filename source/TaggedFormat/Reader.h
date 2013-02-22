@@ -42,7 +42,7 @@ namespace TaggedFormat {
 			Block * block = block_at_offset(offset);
 			
 			// Basic error checking:
-			if (block->tag != BlockTraits<BlockT>::TAG) {
+			if (block->tag != BlockT::TAG) {
 				return nullptr;
 			}
 			

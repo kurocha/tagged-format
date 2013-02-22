@@ -14,9 +14,6 @@ namespace TaggedFormat {
 		"	1 linear 30.0 1 0 0 0 0 1 0 0 0 0 1 0 0 10 0 1\n"
 		"end\n"
 		"Model-skeleton: skeleton\n"
-		"	weights: array b2w2\n"
-		"		0 1 0.25 0.75\n"
-		"	end\n"
 		"	bones: array bone\n"
 		"		BoneA 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1\n"
 		"		BoneB 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 10 1\n"
@@ -51,15 +48,6 @@ namespace TaggedFormat {
 				Skeleton * skeleton = reader.block_at_offset<Skeleton>(reader.header()->top_offset);
 				examiner.check(skeleton);
 
-				Weights<2> * weights = reader.block_at_offset<Weights<2>>(skeleton->weights_offset);
-				examiner.check(weights);
-
-				examiner.check_equal(element_count(weights), 1);
-				examiner.check_equal(weights->vertices[0].bones[0], 0);
-				examiner.check_equal(weights->vertices[0].bones[1], 1);
-				examiner.check_equal(weights->vertices[0].weights[0], 0.25);
-				examiner.check_equal(weights->vertices[0].weights[1], 0.75);
-
 				Bones * bones = reader.block_at_offset<Bones>(skeleton->bones_offset);
 				examiner.check(bones);
 
@@ -84,7 +72,7 @@ namespace TaggedFormat {
 				examiner.check_equal(animation->end_time, 30.0);
 
 				OffsetT bone_key_frames_offset = animation->key_frames_offset;
-				BoneKeyFrames * bone_key_frames = reader.block_at_offset<BoneKeyFrames>(bone_key_frames_offset);
+				SkeletonBoneKeyFrame * bone_key_frames = reader.block_at_offset<SkeletonBoneKeyFrame>(bone_key_frames_offset);
 				examiner.check(bone_key_frames);
 
 				examiner.check_equal(element_count(bone_key_frames), 2);
