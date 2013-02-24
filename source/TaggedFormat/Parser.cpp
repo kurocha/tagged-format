@@ -22,6 +22,10 @@ namespace TaggedFormat
 {
 	namespace Parser
 	{
+		InvalidSequenceError::InvalidSequenceError(const std::string & message) : std::runtime_error(message)
+		{
+		}
+
 		// Integral input helper
 		template <typename IntegralT = uint8_t>
 		struct Integer {
@@ -83,13 +87,13 @@ namespace TaggedFormat
 		// *** Vertex I/O ***
 
 		std::istream & operator>>(std::istream & input, Index16 & index) {
-			input >> index.offset;
+			input >> index.value;
 			
 			return input;
 		}
 
 		std::istream & operator>>(std::istream & input, Index32 & index) {
-			input >> index.offset;
+			input >> index.value;
 			
 			return input;
 		}
@@ -232,8 +236,6 @@ namespace TaggedFormat
 			mesh_block->vertices_offset = child.lookup("vertices");
 			mesh_block->axes_offset = child.lookup("axes");
 			
-			std::cerr << "Mesh: " << mesh_block->indices_offset << ", " << mesh_block->vertices_offset << ", " << mesh_block->axes_offset << std::endl;
-			
 			return mesh_block;
 		}
 
@@ -247,8 +249,6 @@ namespace TaggedFormat
 			skeleton_block->bones_offset = child.lookup("bones");
 			skeleton_block->sequences_offset = child.lookup("sequences");
 
-			std::cerr << "Skeleton: " << skeleton_block->weights_offset << ", " << skeleton_block->bones_offset << ", " << skeleton_block->sequences_offset << std::endl;
-
 			return skeleton_block;
 		}
 
@@ -261,8 +261,6 @@ namespace TaggedFormat
 			child.parse();
 
 			animation_block->key_frames_offset = child.lookup("key-frames");
-
-			std::cerr << "Animation: " << animation_block->start_time << " -> " << animation_block->end_time << std::endl;
 
 			return animation_block;
 		}
@@ -321,7 +319,7 @@ namespace TaggedFormat
 				//std::cerr << "(parse items) <- " << value << std::endl;
 				
 				if (input.fail()) {
-					throw std::runtime_error("Could not parse item");
+					throw InvalidSequenceError("Could not parse item");
 				}
 				
 				//std::cerr << "Appending value : " << value << std::endl;
@@ -342,7 +340,7 @@ namespace TaggedFormat
 				entries[i].name = pair.first;
 				entries[i].offset = pair.second;
 				
-				std::cerr << "Table " << entries[i].name << " = " << entries[i].offset << std::endl;
+				//std::cerr << "Table " << entries[i].name << " = " << entries[i].offset << std::endl;
 				
 				i += 1;
 			}
@@ -371,10 +369,12 @@ namespace TaggedFormat
 				return parse_block<Array<Index16>>();
 			} else if (value_type == "index32") {
 				return parse_block<Array<Index32>>();
-			} else if (value_type == "vertex-p3n3m2") {
-				return parse_block<Array<VertexP3N3M2>>();
 			} else if (value_type == "vertex-p3n3") {
 				return parse_block<Array<VertexP3N3>>();
+			} else if (value_type == "vertex-p3n3m2") {
+				return parse_block<Array<VertexP3N3M2>>();
+			} else if (value_type == "vertex-p3n3m2b4") {
+				return parse_block<Array<VertexP3N3M2B4>>();
 			} else if (value_type == "axis") {
 				return parse_block<Axes>();
 			} else if (value_type == "skeleton-bone") {
@@ -383,11 +383,11 @@ namespace TaggedFormat
 				return parse_block<Array<SkeletonAnimationKeyFrame>>();
 			}
 			
-			throw std::runtime_error("Could not parse input");
+			throw InvalidSequenceError("Could not parse input");
 		}
 		
 		void Context::parse() {
-			std::cerr << "-> Entering parse" << std::endl;
+			//std::cerr << "-> Entering parse" << std::endl;
 			
 			while (_input.good()) {
 				std::string symbol, name;
@@ -410,14 +410,14 @@ namespace TaggedFormat
 					//std::cerr << "(parse name) <- " << symbol << std::endl;
 				}
 				
-				std::cerr << "Parsing " << symbol << " named " << name << std::endl;
-				
+				//std::cerr << "Parsing " << symbol << " named " << name << std::endl;
+
 				OffsetT offset = 0;
 				if (symbol.front() == '$') {
 					// Lookup the offset - no parsing required:
 					offset = lookup(std::string(symbol.begin() + 1, symbol.end()));
 					
-					std::cerr << "Found offset " << offset << " for name " << symbol << std::endl;
+					//std::cerr << "Found offset " << offset << " for name " << symbol << std::endl;
 				} else if (symbol == "mesh") {
 					offset = parse_mesh();	
 				} else if (symbol == "array") {
@@ -426,12 +426,14 @@ namespace TaggedFormat
 					offset = parse_offset_table();
 				} else if (symbol == "skeleton") {
 					offset = parse_skeleton();
-				} else if (symbol == "animation") {
+				} else if (symbol == "skeleton-animation") {
 					offset = parse_animation();
 				} else if (symbol == "node") {
 					offset = parse_node();
 				} else if (symbol == "geometry-instance") {
 					offset = parse_geometry_instance();
+				} else {
+					throw InvalidSequenceError("Could not parse input");
 				}
 
 				if (named) {
@@ -441,7 +443,7 @@ namespace TaggedFormat
 				_offsets.push_back(offset);
 			}
 			
-			std::cerr << "<- Exiting parse; names defined = " << _names.size() << std::endl;
+			//std::cerr << "<- Exiting parse; names defined = " << _names.size() << std::endl;
 		}
 		
 		void serialize(std::istream & input, MemoryBuffer & output) {
@@ -462,7 +464,7 @@ namespace TaggedFormat
 					std::cerr << "Warning: Could not find block for top offset!" << std::endl;
 				}
 				
-				std::cerr << "Top block at offset " << header->top_offset << std::endl;
+				//std::cerr << "Top block at offset " << header->top_offset << std::endl;
 			}
 		}
 

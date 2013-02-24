@@ -29,6 +29,11 @@ namespace TaggedFormat
 	/// Supports text format parsing, used in particular for the tmf-tool.
 	namespace Parser
 	{
+		class InvalidSequenceError : public std::runtime_error {
+		public:
+			explicit InvalidSequenceError(const std::string & message);
+		};
+
 		class Context {
 		public:
 			typedef std::map<std::string, OffsetT> NamesMapT;

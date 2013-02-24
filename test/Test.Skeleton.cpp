@@ -19,7 +19,7 @@ namespace TaggedFormat {
 		"		BoneB 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 10 1\n"
 		"	end\n"
 		"	sequences: offset-table\n"
-		"		default: animation 15.0 30.0\n"
+		"		default: skeleton-animation 15.0 30.0\n"
 		"			key-frames: $Model-animation\n"
 		"		end\n"
 		"	end\n"

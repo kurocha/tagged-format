@@ -54,7 +54,7 @@ namespace TaggedFormat {
 				examiner.check_equal(indices->count(), 12);
 
 				for (std::size_t i = 0; i != indices->count(); i += 1) {
-					examiner.check_equal(indices->at(i).offset, i);
+					examiner.check_equal(indices->at(i).value, i);
 				}
 
 				auto vertices = reader.array_at_offset<VertexP3N3M2>(mesh->vertices_offset);

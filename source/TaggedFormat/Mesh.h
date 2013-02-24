@@ -49,13 +49,13 @@ namespace TaggedFormat {
 	struct Index16 {
 		static const TagT TAG = tag_from_identifier("IN16");
 
-		uint16_t offset;
+		uint16_t value;
 	};
 
 	struct Index32 {
 		static const TagT TAG = tag_from_identifier("IN32");
 
-		uint32_t offset;
+		uint32_t value;
 	};
 
 	/// For 2D lines and structures.
