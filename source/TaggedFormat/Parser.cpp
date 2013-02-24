@@ -365,23 +365,21 @@ namespace TaggedFormat
 		OffsetT Context::parse_array() {
 			std::string value_type, symbol;
 			
-			assert(_input >> value_type);
-			//std::cerr << "(parse array) <- " << value_type << std::endl;
-			std::cerr << "Value type = " << value_type << std::endl;
+			_input >> value_type;
 			
-			if (value_type == "indices16") {
+			if (value_type == "index16") {
 				return parse_block<Array<Index16>>();
-			} else if (value_type == "indices32") {
+			} else if (value_type == "index32") {
 				return parse_block<Array<Index32>>();
 			} else if (value_type == "vertex-p3n3m2") {
 				return parse_block<Array<VertexP3N3M2>>();
-			} else if (value_type == "p3n3") {
+			} else if (value_type == "vertex-p3n3") {
 				return parse_block<Array<VertexP3N3>>();
 			} else if (value_type == "axis") {
 				return parse_block<Axes>();
-			} else if (value_type == "bone") {
+			} else if (value_type == "skeleton-bone") {
 				return parse_block<Array<SkeletonBone>>();
-			} else if (value_type == "bone-key-frame") {
+			} else if (value_type == "skeleton-animation-key-frame") {
 				return parse_block<Array<SkeletonAnimationKeyFrame>>();
 			}
 			

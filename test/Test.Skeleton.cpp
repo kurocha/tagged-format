@@ -9,12 +9,12 @@
 
 namespace TaggedFormat {
 	const char * BasicSkeletonText =
-		"Model-animation: array bone-key-frame\n"
+		"Model-animation: array skeleton-animation-key-frame\n"
 		"	1 linear 0.0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1\n"
 		"	1 linear 30.0 1 0 0 0 0 1 0 0 0 0 1 0 0 10 0 1\n"
 		"end\n"
 		"Model-skeleton: skeleton\n"
-		"	bones: array bone\n"
+		"	bones: array skeleton-bone\n"
 		"		BoneA 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1\n"
 		"		BoneB 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 10 1\n"
 		"	end\n"
