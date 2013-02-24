@@ -11,85 +11,10 @@
 
 #include "Buffer.h"
 
-#include <iosfwd>
+#include <iostream>
 #include <string>
 
 namespace TaggedFormat {
-	
-	typedef Aligned<uint32_t>::TypeT TagT;
-	typedef Aligned<uint32_t>::TypeT MagicT;
-	
-	/// A standard 32-bit floating point data-type.
-	typedef Aligned<float>::TypeT float32;
-	
-	/// A standard 64-bit floating point data-type.
-	typedef Aligned<double>::TypeT float64;
-
-	/// A fixed string typically used for holding names or references:
-	template <std::size_t N = 32>
-	struct FixedString {
-		char value[N];
-
-		void assign(const std::string & other) {
-			std::strncpy(value, other.c_str(), N);
-		}
-
-		int compare(const std::string & other) const {
-			if (other.size() > N)
-				return -1;
-			else
-				return std::strncmp(other.c_str(), (const char *)value, N);
-		}
-
-		bool operator==(const std::string & other) const {
-			return compare(other) == 0;
-		}
-
-		const std::string & operator=(const std::string & other) {
-			assign(other);
-
-			return other;
-		}
-
-		operator std::string () const {
-			std::size_t length = 0;
-
-			while (length < N && value[length]) {
-				length++;
-			}
-
-			return std::string(value, value+length);
-		}
-	};
-
-	template <std::size_t N>
-	std::istream & operator>>(std::istream & input, FixedString<N> & fixed_string) {
-		std::string other;
-		input >> other;
-		
-		fixed_string.assign(other);
-
-		return input;
-	}
-
-	template <std::size_t N>
-	std::ostream & operator<<(std::ostream & output, const FixedString<N> & fixed_string) {
-		output << (std::string)(fixed_string);
-
-		return output;
-	}
-	
-	/// For blocks that end with a list of elements, this returns the number of elements in the block.
-	template <typename BlockT>
-	std::size_t element_count (BlockT * block) {
-		return (block->size - sizeof(BlockT)) / sizeof(typename BlockT::ElementT);
-	}
-
-	template <typename BlockT>
-	bool within(BlockT * block, std::size_t i) {
-		return sizeof(BlockT) + (sizeof(typename BlockT::ElementT) * i) < block->size;
-	}
-	
 	constexpr TagT tag_from_identifier(const char identifier[4]) {
 		return (identifier[3] << 24) | (identifier[2] << 16) | (identifier[1] << 8) | identifier[0];
 	}
@@ -98,10 +23,6 @@ namespace TaggedFormat {
 		return std::string((char*)&tag, (char*)&tag + 4);
 	}
 	
-	template <typename BlockT>
-	struct BlockTraits {
-	};
-	
 	/// A generic block header.
 	struct Block {
 		/// The blog identifier.
@@ -109,7 +30,7 @@ namespace TaggedFormat {
 
 		// Total size of block including this structure.
 		OffsetT size;
-		
+
 		/// @returns a pointer to the end of the block in memory based on its size.
 		void * end() {
 			return (ByteT *)this + size;
@@ -120,6 +41,7 @@ namespace TaggedFormat {
 			return (ByteT *)this + offset;
 		}
 
+		/// Return a human readable name for the given tag.
 		std::string tag_name() {
 			return identifier_from_tag(tag);
 		}
@@ -135,9 +57,6 @@ namespace TaggedFormat {
 		/// The offset to the top block.
 		OffsetT top_offset;
 	};
-		
-	/// Return a human readable name for the given tag.
-	std::string tag_name(TagT tag);
 	
 	/// Reset a data block with the correct tag and size based on type.
 	template <typename BlockT>
@@ -145,6 +64,46 @@ namespace TaggedFormat {
 		block.tag = BlockT::TAG;
 		block.size = sizeof(BlockT) + capacity;
 	}
+
+	struct Reference {
+		static const TagT TAG = tag_from_identifier("#REF");
+
+		OffsetT offset;
+
+		/// Implicit cast to OffsetT for convenience.
+		operator OffsetT () const {
+			return offset;
+		}
+	};
+
+	template <typename _ElementT, typename DerivedT = Block>
+	struct Array : public Block {
+		typedef _ElementT ElementT;
+		static const TagT TAG = ElementT::TAG;
+
+		/// A helper method to calculate the size required for allocation
+		static std::size_t array_size(std::size_t count) {
+			return sizeof(ElementT) * count;
+		}
+
+		/// Number of elements in the array:
+		std::size_t count () {
+			return (size - sizeof(DerivedT)) / sizeof(ElementT);
+		}
+
+		/// Return the end of the structure, where the array elements are stored.
+		ElementT * items() {
+			return (ElementT *)end(sizeof(DerivedT));
+		}
+
+		ElementT & at(std::size_t index) {
+			if (index < count()) {
+				return *(items() + index);
+			} else {
+				throw std::out_of_range("Invalid index for element array!");
+			}
+		}
+	};
 }
 
 #endif

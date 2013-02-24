@@ -13,7 +13,7 @@
 #include "Mesh.h"
 
 namespace TaggedFormat {
-	typedef Aligned<uint16_t, 16>::TypeT BoneID;
+	typedef uint8_t BoneID;
 
 	/// A skeleton block contains weights, bones and animation sequences.
 	struct Skeleton : public Block {
@@ -29,34 +29,28 @@ namespace TaggedFormat {
 		OffsetT sequences_offset;
 	};
 
-	struct VertexP3N3M2B4 : public BasicVertexP3N3M2 {
+	/// A vertex with support for 4 bones:
+	struct VertexP3N3M2B4 : public VertexP3N3M2 {
 		static const TagT TAG = tag_from_identifier("3324");
 
-		BoneID bones[4];
-		float32 weights[4];
+		alignas(1) BoneID bones[4];
+		alignas(4) float32 weights[4];
 	};
 
-	struct Bones : public Block {
+	struct SkeletonBone {
 		static const TagT TAG = tag_from_identifier("BONE");
 
-		/// A list of indicies, typically an array of uint16_t or unit32_t.
-		struct Bone {
-			// An optional bone name.
-			FixedString<> name;
+		// An optional bone name.
+		FixedString<> name;
 
-			// The index of the parent node.
-			BoneID parent;
+		// The index of the parent node.
+		alignas(4) BoneID parent;
 
-			/// The bind pose transform from the parent to the child bone.
-			float32 transform[16];
-		};
-
-		typedef Bone ElementT;
-
-		Bone bones[0];
+		/// The bind pose transform from the parent to the child bone.
+		float32 transform[16];
 	};
 
-	struct Animation : public Block {
+	struct SkeletonAnimation : public Block {
 		static const TagT TAG = tag_from_identifier("ANIM");
 
 		float32 start_time;
@@ -65,27 +59,22 @@ namespace TaggedFormat {
 		OffsetT key_frames_offset;
 	};
 
-	struct SkeletonBoneKeyFrame : public Block {
+	struct SkeletonAnimationKeyFrame : public Block {
 		static const TagT TAG = tag_from_identifier("KEYF");
-	
-		enum class Interpolation : Aligned<uint16_t>::TypeT {
+
+		enum class Interpolation : Aligned<uint8_t>::TypeT {
 			LINEAR = 0,
 			BEZIER = 1
 		};
 
 		static std::string name_for_interpolation(Interpolation interpolation);
 
-		struct Frame {
-			BoneID bone;
-			Interpolation interpolation;
 
-			float32 time;
-			float32 transform[16];
-		};
+		BoneID bone;
+		Interpolation interpolation;
 
-		typedef Frame ElementT;
-
-		Frame frames[0];
+		float32 time;
+		float32 transform[16];
 	};
 }
 

@@ -38,8 +38,8 @@ namespace TaggedFormat {
 				examiner.check(node);
 				examiner.check_equal(node->name, "root");
 
-				examiner.check_equal(element_count(node), 1);
-				OffsetT instance_offset = node->children[0];
+				examiner.check_equal(node->count(), 1);
+				OffsetT instance_offset = node->at(0);
 
 				GeometryInstance * geometry_instance = reader.block_at_offset<GeometryInstance>(instance_offset);
 				examiner.check_equal(24, geometry_instance->mesh_offset);

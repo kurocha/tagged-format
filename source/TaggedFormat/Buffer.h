@@ -9,18 +9,13 @@
 #ifndef _TAGGED_FORMAT_BUFFER_H
 #define _TAGGED_FORMAT_BUFFER_H
 
-#include "Alignment.h"
+#include "Types.h"
 
-namespace TaggedFormat {
-
-	/// A memory offset to a specific block.
-	typedef Aligned<uint64_t>::TypeT OffsetT;
-
-	/// An 8-bit byte data-type.
-	typedef unsigned char ByteT;
-
+namespace TaggedFormat
+{
 	/// A simple memory buffer with a given size.
-	struct Buffer {
+	struct Buffer
+	{
 		const void * begin;
 		OffsetT size;
 		
@@ -28,7 +23,6 @@ namespace TaggedFormat {
 			return (ByteT *)begin + offset;
 		}
 	};
-	
 }
 
 #endif

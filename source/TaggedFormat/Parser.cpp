@@ -18,8 +18,50 @@
 #include <cassert>
 #include <cstring>
 
-namespace TaggedFormat {
-	namespace Parser {
+namespace TaggedFormat
+{
+	namespace Parser
+	{
+		// Integral input helper
+		template <typename IntegralT = uint8_t>
+		struct Integer {
+			IntegralT * value;
+		};
+
+		template <typename IntegralT>
+		std::istream & operator>>(std::istream & input, Integer<IntegralT> & integer) {
+			input >> integer.value;
+
+			return input;
+		}
+
+		template <typename IntegralT>
+		std::ostream & operator<<(std::ostream & output, const Integer<IntegralT> & integer) {
+			output << integer.value;
+
+			return output;
+		}
+
+		std::istream & operator>>(std::istream & input, const Integer<uint8_t> & integer) {
+			uint16_t value = 0;
+			input >> value;
+			*integer.value = value;
+
+			return input;
+		}
+
+		std::ostream & operator<<(std::ostream & output, const Integer<uint8_t> & integer) {
+			uint16_t value = *integer.value;
+			output << value;
+
+			return output;
+		}
+
+		template <typename IntegralT>
+		Integer<IntegralT> integral(IntegralT & value) {
+			return Integer<IntegralT>{&value};
+		}
+
 		// *** Matrix I/O ***
 		
 		std::istream & operator>>(std::istream & input, float32 (&matrix)[16]) {
@@ -39,23 +81,35 @@ namespace TaggedFormat {
 		}
 
 		// *** Vertex I/O ***
+
+		std::istream & operator>>(std::istream & input, Index16 & index) {
+			input >> index.offset;
+			
+			return input;
+		}
+
+		std::istream & operator>>(std::istream & input, Index32 & index) {
+			input >> index.offset;
+			
+			return input;
+		}
 		
-		std::istream & operator>>(std::istream & input, BasicVertexP3N3 & vertex) {
+		std::istream & operator>>(std::istream & input, VertexP3N3 & vertex) {
 			input >> vertex.position[0] >> vertex.position[1] >> vertex.position[2];
 			input >> vertex.normal[0] >> vertex.normal[1] >> vertex.normal[2];
 			
 			return input;
 		}
 		
-		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2 & vertex) {
-			input >> (BasicVertexP3N3 &)vertex;
+		std::istream & operator>>(std::istream & input, VertexP3N3M2 & vertex) {
+			input >> (VertexP3N3 &)vertex;
 			input >> vertex.mapping[0] >> vertex.mapping[1];
 			
 			return input;
 		}
 		
-		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2C4 & vertex) {
-			input >> (BasicVertexP3N3M2 &)vertex;
+		std::istream & operator>>(std::istream & input, VertexP3N3M2C4 & vertex) {
+			input >> (VertexP3N3M2 &)vertex;
 			input >> vertex.color[0] >> vertex.color[1] >> vertex.color[2] >> vertex.color[3];
 			
 			return input;
@@ -69,15 +123,15 @@ namespace TaggedFormat {
 			return input;
 		}
 
-		std::istream & operator>>(std::istream & input, Bones::Bone & bone) {
+		std::istream & operator>>(std::istream & input, SkeletonBone & bone) {
 			input >> bone.name;
-			input >> bone.parent;
+			input >> integral(bone.parent);
 			input >> bone.transform;
 
 			return input;
 		}
 
-		std::istream & operator>>(std::istream & input, SkeletonBoneKeyFrame::Frame & frame) {
+		std::istream & operator>>(std::istream & input, SkeletonAnimationKeyFrame & frame) {
 			input >> frame.bone;
 
 			{
@@ -85,9 +139,9 @@ namespace TaggedFormat {
 				input >> interpolation_method;
 
 				if (interpolation_method == "bezier")
-					frame.interpolation = SkeletonBoneKeyFrame::Interpolation::BEZIER;
+					frame.interpolation = SkeletonAnimationKeyFrame::Interpolation::BEZIER;
 				else
-					frame.interpolation = SkeletonBoneKeyFrame::Interpolation::LINEAR;
+					frame.interpolation = SkeletonAnimationKeyFrame::Interpolation::LINEAR;
 			}
 
 			input >> frame.time;
@@ -99,22 +153,22 @@ namespace TaggedFormat {
 			return input;
 		}
 		
-		std::ostream & operator<<(std::ostream & output, const BasicVertexP3N3 & vertex) {
+		std::ostream & operator<<(std::ostream & output, const VertexP3N3 & vertex) {
 			output << "P=(" << vertex.position[0] << ", " << vertex.position[1] << ", " << vertex.position[2] << ")";
 			output << " N=(" << vertex.normal[0] << ", " << vertex.normal[1] << ", " << vertex.normal[2] << ")";
 			
 			return output;
 		}
 		
-		std::ostream & operator<<(std::ostream & output, const BasicVertexP3N3M2 & vertex) {
-			output << (BasicVertexP3N3 &)vertex;
+		std::ostream & operator<<(std::ostream & output, const VertexP3N3M2 & vertex) {
+			output << (VertexP3N3 &)vertex;
 			output << " M=(" << vertex.mapping[0] << ", " << vertex.mapping[1] << ")";
 			
 			return output;
 		}
 		
-		std::ostream & operator<<(std::ostream & output, const BasicVertexP3N3M2C4 & vertex) {
-			output << (BasicVertexP3N3M2 &)vertex;
+		std::ostream & operator<<(std::ostream & output, const VertexP3N3M2C4 & vertex) {
+			output << (VertexP3N3M2 &)vertex;
 			output << " C=(" << vertex.color[0] << ", " << vertex.color[1] << ", " << vertex.color[2] << ", " << vertex.color[3] << ")";
 			
 			return output;
@@ -128,14 +182,14 @@ namespace TaggedFormat {
 			return output;
 		}
 
-		std::ostream & operator<<(std::ostream & output, const Bones::Bone & bone) {
+		std::ostream & operator<<(std::ostream & output, const SkeletonBone & bone) {
 			output << " Bone=(" << bone.parent << " -> " << bone.transform << ")";
 
 			return output;
 		}
 
-		std::ostream & operator<<(std::ostream & output, SkeletonBoneKeyFrame::Frame & frame) {
-			output << " Frame=(" << frame.bone << " @ " << frame.time << "[" << SkeletonBoneKeyFrame::name_for_interpolation(frame.interpolation) << "]" << " -> " << frame.transform << ")";
+		std::ostream & operator<<(std::ostream & output, SkeletonAnimationKeyFrame & frame) {
+			output << " Frame=(" << frame.bone << " @ " << frame.time << "[" << SkeletonAnimationKeyFrame::name_for_interpolation(frame.interpolation) << "]" << " -> " << frame.transform << ")";
 
 			return output;
 		}		
@@ -199,7 +253,7 @@ namespace TaggedFormat {
 		}
 
 		OffsetT Context::parse_animation() {
-			auto animation_block = _writer->append<Animation>();
+			auto animation_block = _writer->append<SkeletonAnimation>();
 
 			_input >> animation_block->start_time >> animation_block->end_time;
 
@@ -236,7 +290,7 @@ namespace TaggedFormat {
 			Context child(this);
 			child.parse();
 
-			std::size_t buffer_size = sizeof(Node::ElementT) * child._offsets.size();
+			std::size_t buffer_size = Node::array_size(child._offsets.size());
 			auto node_block = _writer->append<Node>(buffer_size);
 
 			node_block->name = name;
@@ -280,17 +334,17 @@ namespace TaggedFormat {
 			Context child(this);
 			child.parse();
 			
-			auto dictionary_block = _writer->append<OffsetTable>(sizeof(OffsetTable::ElementT) * child._names.size());
+			auto dictionary_block = _writer->append<OffsetTable>(OffsetTable::array_size(child._names.size()));
 			
 			std::size_t i = 0;
+			auto entries = dictionary_block->items();
 			for (auto pair : child._names) {
-				NamedOffset named_offset;
-				std::strncpy((char *)named_offset.name, pair.first.c_str(), 32);
-				named_offset.offset = pair.second;
+				entries[i].name = pair.first;
+				entries[i].offset = pair.second;
 				
-				std::cerr << "Table " << named_offset.name << " = " << named_offset.offset << std::endl;
+				std::cerr << "Table " << entries[i].name << " = " << entries[i].offset << std::endl;
 				
-				dictionary_block->entries[i++] = named_offset;
+				i += 1;
 			}
 			
 			return dictionary_block;
@@ -303,7 +357,7 @@ namespace TaggedFormat {
 			
 			std::size_t buffer_size = sizeof(typename BlockT::ElementT) * items.size();
 			auto block = _writer->append<BlockT>(buffer_size);
-			std::memcpy(block->end(sizeof(BlockT)), items.data(), buffer_size);
+			std::memcpy(block->items(), items.data(), buffer_size);
 			
 			return block;
 		}
@@ -315,20 +369,20 @@ namespace TaggedFormat {
 			//std::cerr << "(parse array) <- " << value_type << std::endl;
 			std::cerr << "Value type = " << value_type << std::endl;
 			
-			if (value_type == "u2") {
-				return parse_block<Indices16>();
-			} else if (value_type == "u4") {
-				return parse_block<Indices32>();
-			} else if (value_type == "p3n3m2") {
-				return parse_block<Vertices<BasicVertexP3N3M2>>();
+			if (value_type == "indices16") {
+				return parse_block<Array<Index16>>();
+			} else if (value_type == "indices32") {
+				return parse_block<Array<Index32>>();
+			} else if (value_type == "vertex-p3n3m2") {
+				return parse_block<Array<VertexP3N3M2>>();
 			} else if (value_type == "p3n3") {
-				return parse_block<Vertices<BasicVertexP3N3>>();
+				return parse_block<Array<VertexP3N3>>();
 			} else if (value_type == "axis") {
 				return parse_block<Axes>();
 			} else if (value_type == "bone") {
-				return parse_block<Bones>();
+				return parse_block<Array<SkeletonBone>>();
 			} else if (value_type == "bone-key-frame") {
-				return parse_block<SkeletonBoneKeyFrame>();
+				return parse_block<Array<SkeletonAnimationKeyFrame>>();
 			}
 			
 			throw std::runtime_error("Could not parse input");

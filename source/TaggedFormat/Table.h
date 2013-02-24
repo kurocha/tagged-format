@@ -13,33 +13,16 @@
 #include <cstring>
 
 namespace TaggedFormat {
-	template <std::size_t NAME_LENGTH = 32>
-	struct NamedElement {
-		unsigned char name[NAME_LENGTH];
-
-		bool match(const std::string & pattern) {
-			if (pattern.size() > NAME_LENGTH)
-				return false;
-			else
-				return std::strncmp(pattern.c_str(), (const char *)name, NAME_LENGTH) == 0;
-		}
-	};
-
-	struct NamedOffset : NamedElement<32> {
-		OffsetT offset;
-	};
-
 	/// A block containing a key-offset mapping.
-	template <typename _ElementT = NamedOffset>
-	struct Table : public Block {
-		typedef _ElementT ElementT;
-
-		ElementT entries[0];
-
+	template <typename ElementT>
+	struct Table : public Array<ElementT> {
 		/// Get a named element within the table.
 		/// @returns nullptr if an element with the given name was not found.
-		ElementT * element_named(const std::string & name) {
-			for (std::size_t i = 0; within<Table>(this, i); i += 1) {
+		template <typename PatternT>
+		ElementT * lookup(const PatternT & name) {
+			ElementT * entries = this->items();
+
+			for (std::size_t i = 0; i < this->count(); i += 1) {
 				if (entries[i].match(name)) {
 					return &entries[i];
 				}
@@ -49,19 +32,21 @@ namespace TaggedFormat {
 		}
 	};
 
-	struct OffsetTable : public Table<> {
-		static const TagT TAG = tag_from_identifier("#TBL");
+	struct NamedOffset {
+		static const TagT TAG = tag_from_identifier("#OFS");
 
+		FixedString<> name;
+		OffsetT offset;
+
+		bool match(const std::string & key) {
+			return name == key;
+		}
+	};
+
+	struct OffsetTable : public Table<NamedOffset> {
 		/// Get an offset with a given name.
 		/// @returns 0 if offset with the given name was found.
-		OffsetT offset_named(std::string name) {
-			ElementT * element = element_named(name);
-
-			if (element)
-				return element->offset;
-			else
-				return 0;
-		}
+		OffsetT offset_named(const std::string & name);
 	};
 }
 

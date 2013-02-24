@@ -30,13 +30,13 @@ namespace TaggedFormat {
 		/// Provides a hint regarding the layout of the indices and vertices.
 		Aligned<Layout>::TypeT layout;
 
-		/// The offset of the indices block.
+		/// The offset of the indices array.
 		OffsetT indices_offset;
 
-		/// The offset of the vertices block.
+		/// The offset of the vertices array.
 		OffsetT vertices_offset;
 
-		/// The offset of the axes block.
+		/// The offset of the axes array.
 		OffsetT axes_offset;
 
 		/// A table for additional metadata.
@@ -46,71 +46,54 @@ namespace TaggedFormat {
 		static std::string name_for_layout(Layout layout);
 	};
 
-	/// A list of indicies, typically an array of uint16_t or unit32_t.
-	template <typename IndexT>
-	struct Indices : public Block {
-		typedef IndexT ElementT;
-
-		IndexT indices[0];
-	};
-
-	struct Indices16 : public Indices<uint16_t> {
+	struct Index16 {
 		static const TagT TAG = tag_from_identifier("IN16");
+
+		uint16_t offset;
 	};
 
-	struct Indices32 : public Indices<uint32_t>  {
+	struct Index32 {
 		static const TagT TAG = tag_from_identifier("IN32");
+
+		uint32_t offset;
 	};
-
-	/// A list of vertices, typically BasicVertexP3N3M2.
-	template <typename VertexT>
-	struct Vertices : public Block {
-		static const TagT TAG = VertexT::TAG;
-
-		typedef VertexT ElementT;
-
-		VertexT vertices[0];
-	};
-
-	// You are recommended to customize this data type to your exact requirements.
 
 	/// For 2D lines and structures.
-	struct BasicVertexP2 {
+	struct VertexP2 {
 		static const TagT TAG = tag_from_identifier("2000");
 		
 		float32 position[2];
 	};
 
 	/// For 2D lines and structures with per-vertex colour.
-	struct BasicVertexP2C4 {
+	struct VertexP2C4 : public VertexP2 {
 		static const TagT TAG = tag_from_identifier("2400");
 
-		float32 position[2];
 		float32 color[4];
 	};
 
 	/// For 3D lines and structures.
-	struct BasicVertexP3 {
+	struct VertexP3 {
 		static const TagT TAG = tag_from_identifier("3000");
 
 		float32 position[3];
 	};
 
-	struct BasicVertexP3N3 : public BasicVertexP3 {
+	struct VertexP3N3 : public VertexP3 {
 		static const TagT TAG = tag_from_identifier("3300");
 
 		float32 normal[3];
 	};
 
 	/// For triangle mesh.
-	struct BasicVertexP3N3M2 : public BasicVertexP3N3 {
+	struct VertexP3N3M2 : public VertexP3N3 {
 		static const TagT TAG = tag_from_identifier("3320");
 
 		float32 mapping[2];
 	};
 
 	/// For triangle mesh with per-vertex colour.
-	struct BasicVertexP3N3M2C4 : public BasicVertexP3N3M2 {
+	struct VertexP3N3M2C4 : public VertexP3N3M2 {
 		static const TagT TAG = tag_from_identifier("3324");
 
 		float32 color[4];

@@ -23,19 +23,14 @@ namespace TaggedFormat {
 		end
 	*/
 
-	struct Node : public Block {
+	struct Node : Array<Reference, Node> {
 		static const TagT TAG = tag_from_identifier("NODE");
-
-		typedef OffsetT ElementT;
 
 		/// The node name, if any.
 		FixedString<> name;
 
 		/// Node transformation.
 		float32 transform[16];
-
-		/// The object being instantiated in this part of the scene graph.
-		OffsetT children[0];
 	};
 
 	struct GeometryInstance : public Block {

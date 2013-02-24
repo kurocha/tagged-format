@@ -13,7 +13,12 @@
 
 namespace TaggedFormat {
 	/// A named axis is used to align meshes together.
-	struct NamedAxis : public NamedElement<32> {
+	struct NamedAxis {
+		static const TagT TAG = tag_from_identifier("#AXE");
+
+		/// The name associated with this axis.
+		FixedString<> name;
+		
 		/// The translation of the axis, if any.
 		float32 translation[3];
 
@@ -23,7 +28,6 @@ namespace TaggedFormat {
 
 	/// A block containing a list of named axes.
 	struct Axes : public Table<NamedAxis> {
-		static const TagT TAG = tag_from_identifier("axes");
 	};
 }
 

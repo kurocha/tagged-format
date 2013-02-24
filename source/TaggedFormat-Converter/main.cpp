@@ -137,9 +137,9 @@ namespace {
 				break;
 				
 			TMF_BLOCK_CASE(Axes, true)
-			TMF_BLOCK_CASE(Vertices<BasicVertexP3N3M2>, true)
-			TMF_BLOCK_CASE(Vertices<BasicVertexP3N3M2C4>, true)
-			TMF_BLOCK_CASE(Vertices<BasicVertexP3N3M2C4W2>, true)
+			TMF_BLOCK_CASE(Vertices<VertexP3N3M2>, true)
+			TMF_BLOCK_CASE(Vertices<VertexP3N3M2C4>, true)
+			TMF_BLOCK_CASE(Vertices<VertexP3N3M2C4W2>, true)
 			TMF_BLOCK_CASE(Indices<uint16_t>, false)
 			TMF_BLOCK_CASE(Indices<uint32_t>, false)
 								

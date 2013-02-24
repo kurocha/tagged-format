@@ -9,4 +9,12 @@
 #include "Table.h"
 
 namespace TaggedFormat {
+	OffsetT OffsetTable::offset_named(const std::string & name) {
+		NamedOffset * element = lookup(name);
+
+		if (element)
+			return element->offset;
+		else
+			return 0;
+	}
 }

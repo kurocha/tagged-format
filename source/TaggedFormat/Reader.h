@@ -48,6 +48,12 @@ namespace TaggedFormat {
 			
 			return (BlockT *)block;
 		}
+
+		/// Read a given array, similar to block_at_offset.
+		template <typename ElementT>
+		Array<ElementT> * array_at_offset(OffsetT offset) {
+			return block_at_offset<Array<ElementT>>(offset);
+		}
 	};
 
 };

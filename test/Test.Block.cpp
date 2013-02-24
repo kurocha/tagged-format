@@ -3,9 +3,16 @@
 #include <TaggedFormat/Block.h>
 
 namespace TaggedFormat {
-	UnitTest::Suite BlocksTestSuite {
-		"Test Blocks",
-		
+	UnitTest::Suite BlockTestSuite {
+		"Test Block",
+
+		{"Check Alignment",
+			[](UnitTest::Examiner & examiner) {
+				examiner.check_equal(member_offset(&Block::tag), 0);
+				examiner.check_equal(member_offset(&Block::size), 4);
+			}
+		},
+
 		{"Data type sizes and alignments",
 			[](UnitTest::Examiner & examiner) {
 				examiner.check_equal(sizeof(TaggedFormat::float32), 4);

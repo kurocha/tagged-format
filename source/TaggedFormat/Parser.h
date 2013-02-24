@@ -22,45 +22,13 @@
 #include <map>
 #include <vector>
 
-namespace TaggedFormat {
-
+namespace TaggedFormat
+{
 	class MemoryBuffer;
 
 	/// Supports text format parsing, used in particular for the tmf-tool.
-	namespace Parser {
-
-		// *** Structured Input ***
-		std::istream & operator>>(std::istream & input, BasicVertexP3N3 & vertex);
-		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2 & vertex);
-		std::istream & operator>>(std::istream & input, BasicVertexP3N3M2C4 & vertex);
-		std::istream & operator>>(std::istream & input, NamedAxis & axis);
-
-		// Skeletons
-		std::istream & operator>>(std::istream & input, Bones::Bone & bone);
-		std::istream & operator>>(std::istream & input, SkeletonBoneKeyFrame::Frame & frame);
-
-		class DataType {
-		};
-
-		using DataTypePtr = std::shared_ptr<DataType>;
-
-		class BlockTemplate {
-		protected:
-			TagT _tag;
-			std::string _name;
-			std::vector<DataTypePtr> _structure;
-
-		public:
-			BlockTemplate(TagT tag, std::string name, std::vector<DataTypePtr> structure);
-			virtual ~BlockTemplate();
-
-			TagT tag() const { return _tag; }
-			const std::string & name() const { return _name; }
-			const std::vector<DataTypePtr> & structure() const { return _structure; }
-
-			static std::shared_ptr<BlockTemplate> parse(std::istream & input);
-		};
-
+	namespace Parser
+	{
 		class Context {
 		public:
 			typedef std::map<std::string, OffsetT> NamesMapT;

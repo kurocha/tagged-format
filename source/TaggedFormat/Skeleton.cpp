@@ -9,7 +9,7 @@
 #include "Skeleton.h"
 
 namespace TaggedFormat {
-	std::string SkeletonBoneKeyFrame::name_for_interpolation(Interpolation interpolation)
+	std::string SkeletonAnimationKeyFrame::name_for_interpolation(Interpolation interpolation)
 	{
 		switch (interpolation) {
 		case Interpolation::LINEAR:
