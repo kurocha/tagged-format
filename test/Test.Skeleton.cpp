@@ -86,5 +86,39 @@ namespace TaggedFormat {
 				examiner.check_equal(bone_key_frames->count(), 2);
 			}
 		},
+
+		{"Test Vertex Formats",
+			[](UnitTest::Examiner & examiner) {
+				const char * BasicSkeletonMeshText =
+					"top: mesh triangles\n"
+					"	vertices: array vertex-p3n3m2b4\n"
+					"		1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 1 2 3 4 0.60 0.20 0.15 0.05\n"
+					"	end\n"
+					"end\n";
+
+				std::stringstream input(BasicSkeletonMeshText);
+				MemoryBuffer memory_buffer;
+
+				Parser::serialize(input, memory_buffer);
+
+				Reader reader(memory_buffer.buffer());
+
+				examiner << "Load the mesh block." << std::endl;
+				auto mesh = reader.block_at_offset<Mesh>(reader.header()->top_offset);
+				examiner.check(mesh);
+
+				examiner << "Load the vertices block." << std::endl;
+				auto vertices = reader.array_at_offset<VertexP3N3M2B4>(mesh->vertices_offset);
+				examiner.check(vertices);
+
+				examiner << "Check the number of vertices." << std::endl;
+				examiner.check_equal(vertices->count(), 1);
+
+				examiner.check_equal(vertices->at(0).bones[0], 1);
+				examiner.check_equal(vertices->at(0).bones[1], 2);
+				examiner.check_equal(vertices->at(0).bones[2], 3);
+				examiner.check_equal(vertices->at(0).bones[3], 4);
+			}
+		},
 	};
 }

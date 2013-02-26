@@ -19,6 +19,9 @@ namespace TaggedFormat {
 		"		mesh: $Test-mesh\n"
 		"		skeleton: $Test-skeleton\n"
 		"	end\n"
+		"	node\n"
+		"		child 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1\n"
+		"	end\n"
 		"end\n"
 		"top: $Scene\n";
 
@@ -38,13 +41,19 @@ namespace TaggedFormat {
 				examiner.check(node);
 				examiner.check_equal(node->name, "root");
 
-				examiner.check_equal(node->count(), 1);
+				examiner.check_equal(node->count(), 2);
 				OffsetT instance_offset = node->at(0);
 
 				GeometryInstance * geometry_instance = reader.block_at_offset<GeometryInstance>(instance_offset);
 				examiner.check_equal(24, geometry_instance->mesh_offset);
 				examiner.check_equal(72, geometry_instance->skeleton_offset);
 				examiner.check_equal(0, geometry_instance->material_offset);
+
+				OffsetT child_node_offset = node->at(1);
+
+				Node * child_node = reader.block_at_offset<Node>(child_node_offset);
+				examiner.check(child_node);
+				examiner.check_equal(child_node->name, "child");
 			}
 		},
 	};

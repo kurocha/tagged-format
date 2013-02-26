@@ -111,7 +111,16 @@ namespace TaggedFormat
 			
 			return input;
 		}
-		
+
+		std::istream & operator>>(std::istream & input, VertexP3N3M2B4 & vertex) {
+			input >> (VertexP3N3M2 &)vertex;
+
+			input >> integral(vertex.bones[0]) >> integral(vertex.bones[1]) >> integral(vertex.bones[2]) >> integral(vertex.bones[3]);
+			input >> vertex.weights[0] >> vertex.weights[1] >> vertex.weights[2] >> vertex.weights[3];
+			
+			return input;
+		}
+
 		std::istream & operator>>(std::istream & input, VertexP3N3M2C4 & vertex) {
 			input >> (VertexP3N3M2 &)vertex;
 			input >> vertex.color[0] >> vertex.color[1] >> vertex.color[2] >> vertex.color[3];
@@ -228,6 +237,8 @@ namespace TaggedFormat
 				mesh_block->layout = Mesh::TRIANGLES;
 			else if (layout == "triangle-strip")
 				mesh_block->layout = Mesh::TRIANGLE_STRIP;
+			else
+				throw InvalidSequenceError(std::string("Unknown mesh layout ") + layout);
 			
 			Context child(this);
 			child.parse();
@@ -383,7 +394,7 @@ namespace TaggedFormat
 				return parse_block<Array<SkeletonAnimationKeyFrame>>();
 			}
 			
-			throw InvalidSequenceError("Could not parse input");
+			throw InvalidSequenceError(std::string("Could not parse input ") + value_type);
 		}
 		
 		void Context::parse() {

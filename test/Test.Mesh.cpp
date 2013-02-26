@@ -14,9 +14,13 @@ namespace TaggedFormat {
 		"	end\n"
 		"	vertices: array vertex-p3n3m2\n"
 		"		0.0 1.0 2.0 3.0 4.0 5.0 6.0 7.0\n"
+		"		0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0\n"
 		"		1.0 0.0 0.0 0.0 0.0 1.0 1.0 0.0\n"
 		"		1.0 1.0 0.0 0.0 0.0 1.0 1.0 1.0\n"
 		"		0.0 1.0 0.0 0.0 0.0 1.0 0.0 1.0\n"
+		"	end\n"
+		"	axes: array axis\n"
+		"		Test 1.0 2.0 3.0 4.0 5.0 6.0 7.0"
 		"	end\n"
 		"end\n"
 		"top: $Test-mesh\n";
@@ -60,7 +64,7 @@ namespace TaggedFormat {
 				auto vertices = reader.array_at_offset<VertexP3N3M2>(mesh->vertices_offset);
 				examiner.check(vertices);
 
-				examiner.check_equal(vertices->count(), 4);
+				examiner.check_equal(vertices->count(), 5);
 
 				examiner.check_equal(vertices->at(0).position[0], 0.0);
 				examiner.check_equal(vertices->at(0).position[1], 1.0);
@@ -70,6 +74,19 @@ namespace TaggedFormat {
 				examiner.check_equal(vertices->at(0).normal[2], 5.0);
 				examiner.check_equal(vertices->at(0).mapping[0], 6.0);
 				examiner.check_equal(vertices->at(0).mapping[1], 7.0);
+
+				auto axes = reader.block_at_offset<Axes>(mesh->axes_offset);
+				examiner.check(axes);
+				examiner.check_equal(axes->count(), 1);
+
+				examiner.check_equal(axes->at(0).translation[0], 1.0);
+				examiner.check_equal(axes->at(0).translation[1], 2.0);
+				examiner.check_equal(axes->at(0).translation[2], 3.0);
+
+				examiner.check_equal(axes->at(0).rotation[0], 4.0);
+				examiner.check_equal(axes->at(0).rotation[1], 5.0);
+				examiner.check_equal(axes->at(0).rotation[2], 6.0);
+				examiner.check_equal(axes->at(0).rotation[3], 7.0);
 			}
 		},
 	};
