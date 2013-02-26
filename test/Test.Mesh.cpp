@@ -66,6 +66,13 @@ namespace TaggedFormat {
 
 				examiner.check_equal(vertices->count(), 5);
 
+				examiner << "Check that enumeration works correctly." << std::endl;
+				std::size_t count = 0;
+				for (auto vertex : *vertices) {
+					count += vertex.position[0];
+				}
+				examiner.check_equal(count, 2);
+
 				examiner.check_equal(vertices->at(0).position[0], 0.0);
 				examiner.check_equal(vertices->at(0).position[1], 1.0);
 				examiner.check_equal(vertices->at(0).position[2], 2.0);

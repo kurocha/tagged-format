@@ -19,9 +19,6 @@ namespace TaggedFormat {
 	struct Skeleton : public Block {
 		static const TagT TAG = tag_from_identifier("SKEL");
 
-		/// The offset of the per-vertex weights block.
-		OffsetT weights_offset;
-
 		/// The offset of the bone heirarchy.
 		OffsetT bones_offset;
 

@@ -29,9 +29,6 @@ namespace TaggedFormat {
 		/// This function is not implemented correctly and generally reverse byte order is not handled correctly yet.
 		bool flipped();
 
-		/// @returns a human readable tag name.
-		std::string tag_name(TagT tag);
-
 		/// @returns a pointer to the block at a given offset.
 		Block * block_at_offset(OffsetT offset);
 

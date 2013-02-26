@@ -94,7 +94,7 @@ namespace TaggedFormat {
 
 	/// For triangle mesh with per-vertex colour.
 	struct VertexP3N3M2C4 : public VertexP3N3M2 {
-		static const TagT TAG = tag_from_identifier("3324");
+		static const TagT TAG = tag_from_identifier("332C");
 
 		float32 color[4];
 	};

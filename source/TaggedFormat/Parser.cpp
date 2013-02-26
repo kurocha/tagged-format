@@ -26,187 +26,148 @@ namespace TaggedFormat
 		{
 		}
 
-		// Integral input helper
-		template <typename IntegralT = uint8_t>
-		struct Integer {
-			IntegralT * value;
-		};
+		namespace {
+			// Integral input helper
+			template <typename IntegralT = uint8_t>
+			struct Integer {
+				IntegralT * value;
+			};
 
-		template <typename IntegralT>
-		std::istream & operator>>(std::istream & input, Integer<IntegralT> & integer) {
-			input >> integer.value;
+			template <typename IntegralT>
+			std::istream & operator>>(std::istream & input, Integer<IntegralT> & integer) {
+				input >> integer.value;
 
-			return input;
-		}
-
-		template <typename IntegralT>
-		std::ostream & operator<<(std::ostream & output, const Integer<IntegralT> & integer) {
-			output << integer.value;
-
-			return output;
-		}
-
-		std::istream & operator>>(std::istream & input, const Integer<uint8_t> & integer) {
-			uint16_t value = 0;
-			input >> value;
-			*integer.value = value;
-
-			return input;
-		}
-
-		std::ostream & operator<<(std::ostream & output, const Integer<uint8_t> & integer) {
-			uint16_t value = *integer.value;
-			output << value;
-
-			return output;
-		}
-
-		template <typename IntegralT>
-		Integer<IntegralT> integral(IntegralT & value) {
-			return Integer<IntegralT>{&value};
-		}
-
-		// *** Matrix I/O ***
-		
-		std::istream & operator>>(std::istream & input, float32 (&matrix)[16]) {
-			for (std::size_t i = 0; i < 16 && input.good(); i += 1) {
-				input >> matrix[i];
+				return input;
 			}
 
-			return input;
-		}
+			template <typename IntegralT>
+			std::ostream & operator<<(std::ostream & output, const Integer<IntegralT> & integer) {
+				output << integer.value;
 
-		std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[16]) {
-			for (std::size_t i = 0; i < 16 && output.good(); i += 1) {
-				output << matrix[i];
+				return output;
 			}
 
-			return output;
-		}
+			std::istream & operator>>(std::istream & input, const Integer<uint8_t> & integer) {
+				uint16_t value = 0;
+				input >> value;
+				*integer.value = value;
 
-		// *** Vertex I/O ***
-
-		std::istream & operator>>(std::istream & input, Index16 & index) {
-			input >> index.value;
-			
-			return input;
-		}
-
-		std::istream & operator>>(std::istream & input, Index32 & index) {
-			input >> index.value;
-			
-			return input;
-		}
-		
-		std::istream & operator>>(std::istream & input, VertexP3N3 & vertex) {
-			input >> vertex.position[0] >> vertex.position[1] >> vertex.position[2];
-			input >> vertex.normal[0] >> vertex.normal[1] >> vertex.normal[2];
-			
-			return input;
-		}
-		
-		std::istream & operator>>(std::istream & input, VertexP3N3M2 & vertex) {
-			input >> (VertexP3N3 &)vertex;
-			input >> vertex.mapping[0] >> vertex.mapping[1];
-			
-			return input;
-		}
-
-		std::istream & operator>>(std::istream & input, VertexP3N3M2B4 & vertex) {
-			input >> (VertexP3N3M2 &)vertex;
-
-			input >> integral(vertex.bones[0]) >> integral(vertex.bones[1]) >> integral(vertex.bones[2]) >> integral(vertex.bones[3]);
-			input >> vertex.weights[0] >> vertex.weights[1] >> vertex.weights[2] >> vertex.weights[3];
-			
-			return input;
-		}
-
-		std::istream & operator>>(std::istream & input, VertexP3N3M2C4 & vertex) {
-			input >> (VertexP3N3M2 &)vertex;
-			input >> vertex.color[0] >> vertex.color[1] >> vertex.color[2] >> vertex.color[3];
-			
-			return input;
-		}
-
-		std::istream & operator>>(std::istream & input, NamedAxis & axis) {
-			input >> axis.name;
-			input >> axis.translation[0] >> axis.translation[1] >> axis.translation[2];
-			input >> axis.rotation[0] >> axis.rotation[1] >> axis.rotation[2] >> axis.rotation[3];
-			
-			return input;
-		}
-
-		std::istream & operator>>(std::istream & input, SkeletonBone & bone) {
-			input >> bone.name;
-			input >> integral(bone.parent);
-			input >> bone.transform;
-
-			return input;
-		}
-
-		std::istream & operator>>(std::istream & input, SkeletonAnimationKeyFrame & frame) {
-			input >> frame.bone;
-
-			{
-				std::string interpolation_method;
-				input >> interpolation_method;
-
-				if (interpolation_method == "bezier")
-					frame.interpolation = SkeletonAnimationKeyFrame::Interpolation::BEZIER;
-				else
-					frame.interpolation = SkeletonAnimationKeyFrame::Interpolation::LINEAR;
+				return input;
 			}
 
-			input >> frame.time;
+			//std::ostream & operator<<(std::ostream & output, const Integer<uint8_t> & integer) {
+			//	uint16_t value = *integer.value;
+			//	output << value;
+			//
+			//	return output;
+			//}
 
-			for (std::size_t i = 0; i < 16 && input.good(); i += 1) {
-				input >> frame.transform[i];
+			template <typename IntegralT>
+			Integer<IntegralT> integral(IntegralT & value) {
+				return Integer<IntegralT>{&value};
 			}
 
-			return input;
-		}
-		
-		std::ostream & operator<<(std::ostream & output, const VertexP3N3 & vertex) {
-			output << "P=(" << vertex.position[0] << ", " << vertex.position[1] << ", " << vertex.position[2] << ")";
-			output << " N=(" << vertex.normal[0] << ", " << vertex.normal[1] << ", " << vertex.normal[2] << ")";
+			// *** Matrix I/O ***
 			
-			return output;
-		}
-		
-		std::ostream & operator<<(std::ostream & output, const VertexP3N3M2 & vertex) {
-			output << (VertexP3N3 &)vertex;
-			output << " M=(" << vertex.mapping[0] << ", " << vertex.mapping[1] << ")";
+			std::istream & operator>>(std::istream & input, float32 (&matrix)[16]) {
+				for (std::size_t i = 0; i < 16 && input.good(); i += 1) {
+					input >> matrix[i];
+				}
+
+				return input;
+			}
+
+			//std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[16]) {
+			//	for (std::size_t i = 0; i < 16 && output.good(); i += 1) {
+			//		output << matrix[i];
+			//	}
+			//
+			//	return output;
+			//}
+
+			// *** Vertex I/O ***
+
+			std::istream & operator>>(std::istream & input, Index16 & index) {
+				input >> index.value;
+				
+				return input;
+			}
+
+			std::istream & operator>>(std::istream & input, Index32 & index) {
+				input >> index.value;
+				
+				return input;
+			}
 			
-			return output;
-		}
-		
-		std::ostream & operator<<(std::ostream & output, const VertexP3N3M2C4 & vertex) {
-			output << (VertexP3N3M2 &)vertex;
-			output << " C=(" << vertex.color[0] << ", " << vertex.color[1] << ", " << vertex.color[2] << ", " << vertex.color[3] << ")";
+			std::istream & operator>>(std::istream & input, VertexP3N3 & vertex) {
+				input >> vertex.position[0] >> vertex.position[1] >> vertex.position[2];
+				input >> vertex.normal[0] >> vertex.normal[1] >> vertex.normal[2];
+				
+				return input;
+			}
 			
-			return output;
+			std::istream & operator>>(std::istream & input, VertexP3N3M2 & vertex) {
+				input >> (VertexP3N3 &)vertex;
+				input >> vertex.mapping[0] >> vertex.mapping[1];
+				
+				return input;
+			}
+
+			std::istream & operator>>(std::istream & input, VertexP3N3M2B4 & vertex) {
+				input >> (VertexP3N3M2 &)vertex;
+
+				input >> integral(vertex.bones[0]) >> integral(vertex.bones[1]) >> integral(vertex.bones[2]) >> integral(vertex.bones[3]);
+				input >> vertex.weights[0] >> vertex.weights[1] >> vertex.weights[2] >> vertex.weights[3];
+				
+				return input;
+			}
+
+			std::istream & operator>>(std::istream & input, VertexP3N3M2C4 & vertex) {
+				input >> (VertexP3N3M2 &)vertex;
+				input >> vertex.color[0] >> vertex.color[1] >> vertex.color[2] >> vertex.color[3];
+				
+				return input;
+			}
+
+			std::istream & operator>>(std::istream & input, NamedAxis & axis) {
+				input >> axis.name;
+				input >> axis.translation[0] >> axis.translation[1] >> axis.translation[2];
+				input >> axis.rotation[0] >> axis.rotation[1] >> axis.rotation[2] >> axis.rotation[3];
+				
+				return input;
+			}
+
+			std::istream & operator>>(std::istream & input, SkeletonBone & bone) {
+				input >> bone.name;
+				input >> integral(bone.parent);
+				input >> bone.transform;
+
+				return input;
+			}
+
+			std::istream & operator>>(std::istream & input, SkeletonAnimationKeyFrame & frame) {
+				input >> frame.bone;
+
+				{
+					std::string interpolation_method;
+					input >> interpolation_method;
+
+					if (interpolation_method == "bezier")
+						frame.interpolation = SkeletonAnimationKeyFrame::Interpolation::BEZIER;
+					else
+						frame.interpolation = SkeletonAnimationKeyFrame::Interpolation::LINEAR;
+				}
+
+				input >> frame.time;
+
+				for (std::size_t i = 0; i < 16 && input.good(); i += 1) {
+					input >> frame.transform[i];
+				}
+
+				return input;
+			}
 		}
 
-		std::ostream & operator<<(std::ostream & output, const NamedAxis & axis) {
-			output << axis.name;
-			output << " T=(" << axis.translation[0] << ", " << axis.translation[1] << ", " << axis.translation[2] << ")";
-			output << " R=(" << axis.rotation[0] << ", " << axis.rotation[1] << ", " << axis.rotation[2] << ", " << axis.rotation[3] << ")";
-			
-			return output;
-		}
-
-		std::ostream & operator<<(std::ostream & output, const SkeletonBone & bone) {
-			output << " Bone=(" << bone.parent << " -> " << bone.transform << ")";
-
-			return output;
-		}
-
-		std::ostream & operator<<(std::ostream & output, SkeletonAnimationKeyFrame & frame) {
-			output << " Frame=(" << frame.bone << " @ " << frame.time << "[" << SkeletonAnimationKeyFrame::name_for_interpolation(frame.interpolation) << "]" << " -> " << frame.transform << ")";
-
-			return output;
-		}		
-		
 //MARK: -
 	
 		Context::Context(Writer * writer, std::istream & input) : _writer(writer), _input(input), _parent(nullptr) {
@@ -256,7 +217,6 @@ namespace TaggedFormat
 			Context child(this);
 			child.parse();
 
-			skeleton_block->weights_offset = child.lookup("weights");
 			skeleton_block->bones_offset = child.lookup("bones");
 			skeleton_block->sequences_offset = child.lookup("sequences");
 
@@ -346,7 +306,7 @@ namespace TaggedFormat
 			auto dictionary_block = _writer->append<OffsetTable>(OffsetTable::array_size(child._names.size()));
 			
 			std::size_t i = 0;
-			auto entries = dictionary_block->items();
+			auto entries = dictionary_block->begin();
 			for (auto pair : child._names) {
 				entries[i].name = pair.first;
 				entries[i].offset = pair.second;
@@ -366,7 +326,7 @@ namespace TaggedFormat
 			
 			std::size_t buffer_size = sizeof(typename BlockT::ElementT) * items.size();
 			auto block = _writer->append<BlockT>(buffer_size);
-			std::memcpy(block->items(), items.data(), buffer_size);
+			std::memcpy(block->begin(), items.data(), buffer_size);
 			
 			return block;
 		}
@@ -386,6 +346,8 @@ namespace TaggedFormat
 				return parse_block<Array<VertexP3N3M2>>();
 			} else if (value_type == "vertex-p3n3m2b4") {
 				return parse_block<Array<VertexP3N3M2B4>>();
+			} else if (value_type == "vertex-p3n3m2c4") {
+				return parse_block<Array<VertexP3N3M2C4>>();
 			} else if (value_type == "axis") {
 				return parse_block<Axes>();
 			} else if (value_type == "skeleton-bone") {

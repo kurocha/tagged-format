@@ -11,7 +11,6 @@
 
 #include "Buffer.h"
 
-#include <iostream>
 #include <string>
 
 namespace TaggedFormat {
@@ -92,13 +91,20 @@ namespace TaggedFormat {
 		}
 
 		/// Return the end of the structure, where the array elements are stored.
-		ElementT * items() {
-			return (ElementT *)end(sizeof(DerivedT));
+		ElementT * begin() {
+			return (ElementT *)Block::end(sizeof(DerivedT));
+		}
+
+		using Block::end;
+
+		// Make sure we have a suitable type signature for iteration.
+		ElementT * end() {
+			return (ElementT *)Block::end();
 		}
 
 		ElementT & at(std::size_t index) {
 			if (index < count()) {
-				return *(items() + index);
+				return *(begin() + index);
 			} else {
 				throw std::out_of_range("Invalid index for element array!");
 			}

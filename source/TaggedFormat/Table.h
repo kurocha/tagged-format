@@ -20,7 +20,7 @@ namespace TaggedFormat {
 		/// @returns nullptr if an element with the given name was not found.
 		template <typename PatternT>
 		ElementT * lookup(const PatternT & name) {
-			ElementT * entries = this->items();
+			ElementT * entries = this->begin();
 
 			for (std::size_t i = 0; i < this->count(); i += 1) {
 				if (entries[i].match(name)) {

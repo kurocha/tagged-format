@@ -39,16 +39,6 @@ namespace TaggedFormat {
 		return true;
 	}
 	
-	std::string Reader::tag_name(TagT tag) {
-		unsigned char name[4];
-
-		for (std::size_t i = 1; i <= 4; i += 1) {
-			name[4 - i] = tag % 256; tag >>= 8;
-		}
-		
-		return std::string(&name[0], &name[4]);
-	}
-	
 	Block * Reader::block_at_offset(OffsetT offset) {
 		if (offset > _buffer.size) {
 			return nullptr;
