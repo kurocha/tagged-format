@@ -11,25 +11,25 @@
 namespace TaggedFormat {
 	std::string Mesh::name_for_layout(Layout layout) {
 		switch (layout) {
-			case POINTS:
+			case Layout::POINTS:
 				return "points";
 
-			case LINES:
+			case Layout::LINES:
 				return "lines";
 
-			case LINE_LOOP:
+			case Layout::LINE_LOOP:
 				return "line-loop";
 
-			case LINE_STRIP:
+			case Layout::LINE_STRIP:
 				return "line-strip";
 
-			case TRIANGLES:
+			case Layout::TRIANGLES:
 				return "triangles";
 
-			case TRIANGLE_STRIP:
+			case Layout::TRIANGLE_STRIP:
 				return "triangle-strip";
 
-			case TRIANGLE_FAN:
+			case Layout::TRIANGLE_FAN:
 				return "triangle-fan";
 
 			default:

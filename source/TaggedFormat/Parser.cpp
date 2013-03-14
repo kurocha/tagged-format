@@ -195,9 +195,9 @@ namespace TaggedFormat
 			_input >> layout;
 			
 			if (layout == "triangles")
-				mesh_block->layout = Mesh::TRIANGLES;
+				mesh_block->layout = Mesh::Layout::TRIANGLES;
 			else if (layout == "triangle-strip")
-				mesh_block->layout = Mesh::TRIANGLE_STRIP;
+				mesh_block->layout = Mesh::Layout::TRIANGLE_STRIP;
 			else
 				throw InvalidSequenceError(std::string("Unknown mesh layout ") + layout);
 			
@@ -207,6 +207,7 @@ namespace TaggedFormat
 			mesh_block->indices_offset = child.lookup("indices");
 			mesh_block->vertices_offset = child.lookup("vertices");
 			mesh_block->axes_offset = child.lookup("axes");
+			mesh_block->metadata_offset = child.lookup("metadata");
 			
 			return mesh_block;
 		}

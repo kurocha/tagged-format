@@ -17,7 +17,7 @@ namespace TaggedFormat {
 		static const TagT TAG = tag_from_identifier("MESH");
 		
 		// These definitions map directly to the equivalent OpenGL constants.
-		enum Layout {
+		enum class Layout : uint32_t {
 			POINTS = 0,
 			LINES = 1,
 			LINE_LOOP = 2,
