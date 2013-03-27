@@ -30,3 +30,8 @@ define_target "tagged-format-tests" do |target|
 	
 	target.provides "Test/TaggedFormat"
 end
+
+define_configuration "teapot-local" do |configuration|
+	configuration[:source] = "../"
+	configuration.import! "local"
+end
