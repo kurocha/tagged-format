@@ -135,6 +135,20 @@ Block.Index16 = function(block) {
 
 Block.Tags['IN16'] = Block.Index16;
 
+Block.VertexP3N3M2 = function(block) {
+	block.format = [
+		{name: 'position', dataType: 'float32', count: 3},
+		{name: 'normal', dataType: 'float32', count: 3},
+		{name: 'mapping', dataType: 'float32', count: 2},
+	];
+	
+	block.vertexSize = 8*4;
+	
+	block.elements = new DataView(block.buffer, block.offset + 12, block.byteSize - 12);
+}
+
+Block.Tags['3320'] = Block.VertexP3N3M2;
+
 Block.VertexP3N3M2B4 = function(block) {
 	block.format = [
 		{name: 'position', dataType: 'float32', count: 3},
