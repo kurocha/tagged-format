@@ -21,7 +21,7 @@ It is recommended that you modify the exporter code for your exact requirements.
 
 ### Axes ###
 
-I often use attachment points to connect and animate models. In parlance, these are called Axes. To add these from Blender, from the `Add` menu, select `Empty`. This adds a 3-D axis which can be manipulated. During export, these axes will be bundled along with the mesh data which can then be accessed programatically.
+I often use attachment points to connect and animate models. In parlance, these are called Axes. To add these from Blender, from the `Add` menu, select `Empty`. This adds a 3D axis which can be manipulated. During export, these axes will be bundled along with the mesh data which can then be accessed programatically.
 
 ## License
 

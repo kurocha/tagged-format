@@ -30,7 +30,7 @@ The tagged format is very simple storage system which stores an index list along
 bl_info = {
 	"name": "Tagged Format (.tagged-*)",
 	"author": "Samuel Williams",
-	"version": (0, 3),
+	"version": (0, 4),
 	"blender": (2, 6, 4),
 	"location": "File > Export > Tagged Format (.tagged-*)",
 	"description": "Import-Export Tagged Format",
@@ -112,7 +112,7 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 	
 	# We might not have uv_coordinates, so we check here:
 	if mesh.tessface_uv_textures:
-		vertex_format = "p3n3m2"
+		vertex_format = "vertex-p3n3m2"
 		uv_coordinates = mesh.tessface_uv_textures[0]
 		
 		def generate_vertex(index, triangle, offset):
@@ -122,7 +122,7 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 				tuple(flipped_coordinates(uv_coordinates.data[index].uv[offset], flip_uv_coordinates)),
 			)
 	else:
-		vertex_format = "p3n3"
+		vertex_format = "vertex-p3n3"
 		
 		def generate_vertex(index, triangle, offset):
 			return (
@@ -136,7 +136,7 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 			
 			triangles.append([vertices.get(vertex) for vertex in face_vertices])
 	
-	output.write("\tindices: array u2\n")
+	output.write("\tindices: array index16\n")
 	for triangle in triangles:
 		output.write("\t\t{0} {1} {2}\n".format(*triangle))
 	output.write("\tend\n")
@@ -172,7 +172,7 @@ def write_tagged_format_text(filepath, flip_uv_coordinates):
 			write_mesh(output, data_object, flip_uv_coordinates)
 			names.append(data_object.name)
 	
-	output.write("top: dictionary\n")
+	output.write("top: offset-table\n")
 	for name in names:
 		output.write("\t{0}: ${0}\n".format(name))
 	output.write("end\n")
