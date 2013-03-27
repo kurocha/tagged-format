@@ -293,7 +293,7 @@ TaggedFormat.Model = function(gl, reader, mesh) {
 			type: TaggedFormat.glTypeForDataType(gl, attribute.dataType)
 		});
 		
-		offset = offset + TaggedFormat.dataTypeLength(attribute.dataType);
+		offset = offset + TaggedFormat.dataTypeLength(attribute.dataType) * attribute.count;
 	}
 	
 	return this;
