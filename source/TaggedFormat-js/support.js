@@ -1,4 +1,4 @@
-function initializeWebGL(canvas) {
+initializeWebGL = function(canvas) {
 	// Initialize the global variable gl to null.
 	gl = null;
 
