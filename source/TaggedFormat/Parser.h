@@ -22,6 +22,8 @@
 #include <map>
 #include <vector>
 
+#include <stdexcept>
+
 namespace TaggedFormat
 {
 	class MemoryBuffer;

@@ -12,6 +12,7 @@
 #include "Buffer.h"
 
 #include <string>
+#include <stdexcept>
 
 namespace TaggedFormat {
 	constexpr TagT tag_from_identifier(const char identifier[4]) {

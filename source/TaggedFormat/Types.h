@@ -11,7 +11,12 @@
 
 #include <cstddef>
 #include <cstdint>
+
 #include <string>
+
+// std::strncpy, std::strncmp
+#include <cstring>
+
 #include <iostream>
 
 namespace TaggedFormat
