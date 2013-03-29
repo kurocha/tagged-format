@@ -24,6 +24,10 @@ namespace TaggedFormat {
 
 		/// The initial rotation of the axis, if any. Stored as a quaternion (x y z w).
 		float32 rotation[4];
+
+		bool match(const std::string & key) const {
+			return name == key;
+		}
 	};
 
 	/// A block containing a list of named axes.

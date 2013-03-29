@@ -38,7 +38,7 @@ namespace TaggedFormat {
 		FixedString<> name;
 		OffsetT offset;
 
-		bool match(const std::string & key) {
+		bool match(const std::string & key) const {
 			return name == key;
 		}
 	};
