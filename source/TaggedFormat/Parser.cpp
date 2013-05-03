@@ -26,7 +26,7 @@ namespace TaggedFormat
 		{
 		}
 
-		namespace {
+		namespace IO {
 			// Integral input helper
 			template <typename IntegralT = uint8_t>
 			struct Integer {
@@ -34,20 +34,20 @@ namespace TaggedFormat
 			};
 
 			template <typename IntegralT>
-			std::istream & operator>>(std::istream & input, Integer<IntegralT> & integer) {
+			static std::istream & operator>>(std::istream & input, Integer<IntegralT> & integer) {
 				input >> integer.value;
 
 				return input;
 			}
 
 			template <typename IntegralT>
-			std::ostream & operator<<(std::ostream & output, const Integer<IntegralT> & integer) {
+			static std::ostream & operator<<(std::ostream & output, const Integer<IntegralT> & integer) {
 				output << integer.value;
 
 				return output;
 			}
 
-			std::istream & operator>>(std::istream & input, const Integer<uint8_t> & integer) {
+			static std::istream & operator>>(std::istream & input, const Integer<uint8_t> & integer) {
 				uint16_t value = 0;
 				input >> value;
 				*integer.value = value;
@@ -55,12 +55,12 @@ namespace TaggedFormat
 				return input;
 			}
 
-			//std::ostream & operator<<(std::ostream & output, const Integer<uint8_t> & integer) {
-			//	uint16_t value = *integer.value;
-			//	output << value;
-			//
-			//	return output;
-			//}
+//			static std::ostream & operator<<(std::ostream & output, const Integer<uint8_t> & integer) {
+//				uint16_t value = *integer.value;
+//				output << value;
+//
+//				return output;
+//			}
 
 			template <typename IntegralT>
 			Integer<IntegralT> integral(IntegralT & value) {
@@ -77,13 +77,15 @@ namespace TaggedFormat
 				return input;
 			}
 
-			//std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[16]) {
-			//	for (std::size_t i = 0; i < 16 && output.good(); i += 1) {
-			//		output << matrix[i];
-			//	}
-			//
-			//	return output;
-			//}
+			std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[16]) {
+				for (std::size_t i = 0; i < 16 && output.good(); i += 1) {
+					if (i > 0) output << " ";
+
+					output << matrix[i];
+				}
+
+				return output;
+			}
 
 			// *** Vertex I/O ***
 
@@ -146,7 +148,7 @@ namespace TaggedFormat
 			}
 
 			std::istream & operator>>(std::istream & input, SkeletonAnimationKeyFrame & frame) {
-				input >> frame.bone;
+				input >> integral(frame.bone);
 
 				{
 					std::string interpolation_method;
@@ -159,16 +161,84 @@ namespace TaggedFormat
 				}
 
 				input >> frame.time;
-
-				for (std::size_t i = 0; i < 16 && input.good(); i += 1) {
-					input >> frame.transform[i];
-				}
+				input >> frame.transform;
 
 				return input;
+			}
+
+			std::ostream & operator<<(std::ostream & output, const Index16 & index) {
+				output << index.value;
+
+				return output;
+			}
+
+			std::ostream & operator<<(std::ostream & output, const Index32 & index) {
+				output << index.value;
+
+				return output;
+			}
+
+			std::ostream & operator<<(std::ostream & output, const VertexP3N3 & vertex) {
+				output << "P=(" << vertex.position[0] << ", " << vertex.position[1] << ", " << vertex.position[2] << ")";
+				output << " N=(" << vertex.normal[0] << ", " << vertex.normal[1] << ", " << vertex.normal[2] << ")";
+				
+				return output;
+			}
+			
+			std::ostream & operator<<(std::ostream & output, const VertexP3N3M2 & vertex) {
+				output << (VertexP3N3 &)vertex;
+				output << " M=(" << vertex.mapping[0] << ", " << vertex.mapping[1] << ")";
+				
+				return output;
+			}
+			
+			std::ostream & operator<<(std::ostream & output, const VertexP3N3M2C4 & vertex) {
+				output << (VertexP3N3M2 &)vertex;
+				output << " C=(" << vertex.color[0] << ", " << vertex.color[1] << ", " << vertex.color[2] << ", " << vertex.color[3] << ")";
+				
+				return output;
+			}
+
+			std::ostream & operator<<(std::ostream & output, const VertexP3N3M2B4 & vertex) {
+				output << (VertexP3N3M2 &)vertex;
+
+				output << " B=(";
+
+				for (std::size_t i = 0; i < 4; i += 1) {
+					if (i > 0) output << ", ";
+
+					output << (uint16_t)vertex.bones[i] << "*" << vertex.weights[i];
+				}
+
+				output << ")";
+				
+				return output;
+			}
+
+			std::ostream & operator<<(std::ostream & output, const NamedAxis & axis) {
+				output << axis.name;
+				output << " T=(" << axis.translation[0] << ", " << axis.translation[1] << ", " << axis.translation[2] << ")";
+				output << " R=(" << axis.rotation[0] << ", " << axis.rotation[1] << ", " << axis.rotation[2] << ", " << axis.rotation[3] << ")";
+				
+				return output;
+			}
+
+			std::ostream & operator<<(std::ostream & output, const SkeletonBone & bone) {
+				output << " Bone=(id: " << (uint16_t)bone.parent << " transform: " << bone.transform << ")";
+
+				return output;
+			}
+
+			std::ostream & operator<<(std::ostream & output, const SkeletonAnimationKeyFrame & frame) {
+				output << " Frame=(bone-id: " << integral(frame.bone) << " @ " << frame.time << "s " << SkeletonAnimationKeyFrame::name_for_interpolation(frame.interpolation) << " -> " << frame.transform << ")";
+
+				return output;
 			}
 		}
 
 //MARK: -
+
+		using namespace IO;
 	
 		Context::Context(Writer * writer, std::istream & input) : _writer(writer), _input(input), _parent(nullptr) {
 		}
@@ -188,7 +258,7 @@ namespace TaggedFormat
 			return 0;
 		}
 		
-		OffsetT Context::parse_mesh() {			
+		OffsetT Context::parse_mesh() {
 			auto mesh_block = _writer->append<Mesh>();
 			
 			std::string layout; 

@@ -36,6 +36,48 @@ namespace TaggedFormat
 			explicit InvalidSequenceError(const std::string & message);
 		};
 
+		namespace IO {
+			std::istream & operator>>(std::istream & input, float32 (&matrix)[16]);
+			std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[16]);
+
+			std::istream & operator>>(std::istream & input, Index16 & index);
+			std::istream & operator>>(std::istream & input, Index32 & index);
+			std::istream & operator>>(std::istream & input, VertexP3N3 & vertex);
+			std::istream & operator>>(std::istream & input, VertexP3N3M2 & vertex);
+			std::istream & operator>>(std::istream & input, VertexP3N3M2B4 & vertex);
+			std::istream & operator>>(std::istream & input, VertexP3N3M2C4 & vertex);
+			std::istream & operator>>(std::istream & input, NamedAxis & axis);
+			std::istream & operator>>(std::istream & input, SkeletonBone & bone);
+			std::istream & operator>>(std::istream & input, SkeletonAnimationKeyFrame & frame);
+
+			std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[16]);
+			std::ostream & operator<<(std::ostream & output, const Index16 & index);
+			std::ostream & operator<<(std::ostream & output, const Index32 & index);
+			std::ostream & operator<<(std::ostream & output, const VertexP3N3 & vertex);
+			std::ostream & operator<<(std::ostream & output, const VertexP3N3M2 & vertex);
+			std::ostream & operator<<(std::ostream & output, const VertexP3N3M2C4 & vertex);
+			std::ostream & operator<<(std::ostream & output, const VertexP3N3M2B4 & vertex);
+			std::ostream & operator<<(std::ostream & output, const NamedAxis & axis);
+			std::ostream & operator<<(std::ostream & output, const SkeletonBone & bone);
+			std::ostream & operator<<(std::ostream & output, const SkeletonAnimationKeyFrame & frame);
+
+			template <typename ElementT>
+			std::ostream & operator<<(std::ostream & output, std::vector<ElementT> & items) {
+				output << "[";
+				
+				for (auto item : items) {
+					output << item;
+					
+					if (item != items.back())
+						output << ", ";
+				}
+				
+				output << "]";
+				
+				return output;
+			}
+		}
+
 		class Context {
 		public:
 			typedef std::map<std::string, OffsetT> NamesMapT;
