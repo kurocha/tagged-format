@@ -7,8 +7,11 @@ compiler: clang
 install:
 # gcc libstdc++ 4.7.2
     - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+# latest clang
+    - sudo add-apt-repository --yes ppa:h-rayflood/llvm
     - sudo apt-get -qq update
-    - sudo apt-get -qq install libstdc++6
+    - sudo apt-get -qq install libstdc++6 clang-3.2
+    - export CC=clang-3.2 CXX=clang++-3.2
 # ruby 2.0 and teapot
     - rvm use 2.0 --install --binary --fuzzy
     - bundle install
