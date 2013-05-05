@@ -1,10 +1,12 @@
 language: cpp
-script: rake
+script:
+    - teapot -c travis fetch
+    - teapot -c travis build Test/TaggedFormat variant-debug
+    - ./teapot/platforms/travis/darwin-linux-debug/bin/tagged-format-test-runner
 compiler:
-    - g++-4.7
+    - clang-3.2
 before_script:
-    - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test  
-    - sudo apt-get -qq update  
-    - sudo apt-get -qq install g++-4.7
-    - export CXX=g++-4.7
-    - cd test
+    - sudo apt-add-repository --yes ppa:georgekola/clang
+    - sudo apt-get -qq update
+    - sudo apt-get -qq install clang
+    - sudo gem install teapot

@@ -11,7 +11,7 @@ copy_headers do
 	end
 end
 
-compile_executable("tagged-format-convert") do
+compile_executable 'tagged-format-convert' do
 	configure do
 		linkflags ["-lTaggedFormat"]
 	end

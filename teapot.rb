@@ -31,7 +31,27 @@ define_target "tagged-format-tests" do |target|
 	target.provides "Test/TaggedFormat"
 end
 
-define_configuration "teapot-local" do |configuration|
+define_configuration "tagged-format" do |configuration|
+	configuration[:source] = "https://github.com/dream-framework"
+	
+	configuration.import! "platforms"
+	
+	# Direct dependencies:
+	configuration.require "unit-test"
+	configuration.require "euclid"
+end
+
+define_configuration "travis" do |configuration|
+	configuration[:source] = "https://github.com/dream-framework"
+	
+	configuration.require "platform-linux"
+	configuration.require "variants"
+	
+	configuration.require "unit-test"
+	configuration.require "euclid"
+end
+
+define_configuration "local" do |configuration|
 	configuration[:source] = "../"
 	configuration.import! "local"
 end
