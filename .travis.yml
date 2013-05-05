@@ -2,7 +2,7 @@ language: cpp
 script:
     - bundle exec teapot -c travis fetch
     - bundle exec teapot -c travis build Test/TaggedFormat variant-debug compiler-clang-3.2
-    - ./teapot/platforms/travis/darwin-linux-debug/bin/tagged-format-test-runner
+    - ./teapot/platforms/travis/linux-debug/bin/tagged-format-test-runner 
 compiler: clang
 install:
 # gcc libstdc++ 4.7.2
