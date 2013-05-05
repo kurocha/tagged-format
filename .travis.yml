@@ -3,11 +3,7 @@ script:
     - bundle exec teapot -c travis fetch
     - bundle exec teapot -c travis build Test/TaggedFormat variant-debug
     - ./teapot/platforms/travis/darwin-linux-debug/bin/tagged-format-test-runner
-compiler:
-    - clang-3.2
-before_script:
-    - sudo apt-add-repository --yes ppa:h-rayflood/llvm
-#    - sudo apt-add-repository --yes ppa:georgekola/clang
-    - sudo apt-get -qq update
-    - sudo apt-get -qq install clang
-    - sudo gem install teapot
+compiler: clang
+install:
+    - rvm use 2.0 --install --binary --fuzzy
+    - bundle install
