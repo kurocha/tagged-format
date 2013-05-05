@@ -8,7 +8,7 @@ It supports a variety of different purposes, but is primarily designed for geome
 very simple and to act as a bridge between typical rendering formats (e.g. vertex arrays) and model editors 
 (e.g. Blender).
 
-[![Build Status](https://secure.travis-ci.org/ioquatix/tagged-format.png)](http://travis-ci.org/ioquatix/tagged-format)
+[![Build Status](https://secure.travis-ci.org/dream-framework/tagged-format.png)](http://travis-ci.org/ioquatix/tagged-format)
 
 Build and Install
 -----------------
