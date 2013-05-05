@@ -13,19 +13,13 @@ very simple and to act as a bridge between typical rendering formats (e.g. verte
 Build and Install
 -----------------
 
-Use CMake to build and install Tagged Format:
+Use Teapot to build and install Tagged Format:
 
 	$ cd tagged-format
-	$ mkdir build
-	$ cd build
-	$ CXXFLAGS="-std=c++11 -stdlib=libc++" cmake ../
-	$ make
-	$ make install
+	$ sudo gem install teapot
+	$ teapot build Library/TaggedFormat variant-debug
 
-You can also get some basic API documentation by running
-
-	$ make doc
-	$ open src/docs/html/index.html
+Currently, only Mac OS X and Linux are supported using standards conformant C++11 compilers.
 
 File Format
 -----------
@@ -57,11 +51,11 @@ used.
 Here is an example of a simple 10x10 square made by two triangles:
 
 	top: mesh triangles
-		indices: array u2
+		indices: array index16
 			0 1 2 3
 		end
 
-		vertices: array p3n3m2
+		vertices: array vertex-p3n3m2
 			 0  0 0 0 0 1 0 0
 			 0 10 0 0 0 1 0 1
 			10  0 0 0 0 1 1 0
@@ -120,14 +114,17 @@ The binary format is platform specific. It would be possible to adjust data orde
 this goes against the spirit of the Tagged binary format: a simple loader that provides platform and 
 application specific data that can be quickly loaded into the graphics card.
 
-In the case where you need some form of platform independence, integrate the `tagged-format-convert` into your application
-development toolchain to produce target-specific binary versions of your model data.
+In the case where you need some form of platform independence, there are two options: Either integrate the 
+`tagged-format-convert` into your application development toolchain to produce target-specific binary 
+versions of your model data, or integrate the parser directly into your application and cache binary versions
+of the model data as required.
 
 Future Work
 -----------
 
 - Provide target specific options to `tagged-format-convert` for generating platform specific (e.g. endian) binary data.
 - Develop a simple Cocoa application for visualising the model data structure and rendering meshes.
+- Complete animation related data-structures and provide examples.
 
 ## License
 
