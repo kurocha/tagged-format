@@ -23,6 +23,12 @@ define_target "tagged-format-tests" do |target|
 		build_directory(package.path, 'test', environment)
 	end
 	
+	target.run do |environment|
+		environment = environment.flatten
+		
+		Commands.run(environment[:install_prefix] + "bin/tagged-format-test-runner")
+	end
+	
 	target.depends :platform
 	target.depends "Language/C++11"
 	target.depends "Library/UnitTest"
@@ -31,23 +37,15 @@ define_target "tagged-format-tests" do |target|
 	target.provides "Test/TaggedFormat"
 end
 
-define_configuration "tagged-format" do |configuration|
+define_configuration "travis" do |configuration|
 	configuration[:source] = "https://github.com/dream-framework"
 	
 	configuration.import! "platforms"
 	
 	configuration.require "unit-test"
 	configuration.require "euclid"
-end
-
-define_configuration "travis" do |configuration|
-	configuration[:source] = "https://github.com/dream-framework"
 	
-	configuration.require "platform-linux"
-	configuration.require "variants"
-	
-	configuration.require "unit-test"
-	configuration.require "euclid"
+	configuration[:run] = ["Test/TaggedFormat"]
 end
 
 define_configuration "local" do |configuration|
