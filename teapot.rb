@@ -3,7 +3,7 @@
 #  This file is part of the "Teapot" project, and is released under the MIT license.
 #
 
-required_version "0.7.0"
+teapot_version "0.8.0"
 
 define_target "tagged-format" do |target|
 	target.build do |environment|
@@ -36,7 +36,6 @@ define_configuration "tagged-format" do |configuration|
 	
 	configuration.import! "platforms"
 	
-	# Direct dependencies:
 	configuration.require "unit-test"
 	configuration.require "euclid"
 end
