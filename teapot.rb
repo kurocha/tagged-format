@@ -40,15 +40,9 @@ end
 define_configuration "travis" do |configuration|
 	configuration[:source] = "https://github.com/dream-framework"
 	
-	configuration.import! "platforms"
-	
+	configuration.require "platforms"
 	configuration.require "unit-test"
 	configuration.require "euclid"
 	
 	configuration[:run] = ["Test/TaggedFormat"]
-end
-
-define_configuration "local" do |configuration|
-	configuration[:source] = "../"
-	configuration.import! "local"
 end
