@@ -42,7 +42,7 @@ define_target "tagged-format-converter" do |target|
 end
 
 define_target "tagged-format-tests" do |target|
-	target.build do |environment|
+	target.build do
 		test_root = target.package.path + 'test'
 		
 		run tests: "TaggedFormat", source_files: test_root.glob('TaggedFormat/**/*.cpp')
