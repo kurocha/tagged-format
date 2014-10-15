@@ -1,7 +1,7 @@
 language: cpp
 script:
     - teapot -c travis fetch
-    - teapot -c travis run variant-debug compiler-clang-3.2
+    - teapot -c travis build Test/TaggedFormat
 compiler: clang
 install:
 # libstdc++-4.8-dev
