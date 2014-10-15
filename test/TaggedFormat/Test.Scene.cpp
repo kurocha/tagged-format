@@ -1,5 +1,5 @@
 
-#include <UnitTest/UnitTest.h>
+#include <UnitTest/UnitTest.hpp>
 #include <array>
 
 #include <TaggedFormat/Scene.h>
