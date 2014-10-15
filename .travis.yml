@@ -1,15 +1,13 @@
 language: cpp
 script:
-    - teapot -c travis fetch
-    - teapot -c travis build Test/TaggedFormat
+  - teapot -c travis fetch
+  - teapot -c travis build Test/TaggedFormat
 compiler: clang
 install:
 # libstdc++-4.8-dev
-    - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-# clang++-3.2
-    - sudo add-apt-repository --yes ppa:h-rayflood/llvm
-    - sudo apt-get -qq update
-    - sudo apt-get -qq install libstdc++-4.8-dev clang-3.2
+  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+  - sudo apt-get -qq update
+  - sudo apt-get -qq install libstdc++-4.8-dev
 # ruby 2.0 and teapot
-    - rvm use 2.0 --install --binary --fuzzy
-    - gem install teapot
+  - rvm use 2.0 --install --binary --fuzzy
+  - bundle install
