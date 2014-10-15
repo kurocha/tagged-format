@@ -1,6 +1,6 @@
 
 #include <UnitTest/UnitTest.hpp>
-#include <TaggedFormat/Block.h>
+#include <TaggedFormat/Block.hpp>
 
 namespace TaggedFormat {
 	UnitTest::Suite BlockTestSuite {

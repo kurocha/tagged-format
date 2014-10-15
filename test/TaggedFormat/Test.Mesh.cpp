@@ -1,10 +1,10 @@
 
 #include <UnitTest/UnitTest.hpp>
 
-#include <TaggedFormat/Mesh.h>
-#include <TaggedFormat/Parser.h>
-#include <TaggedFormat/MemoryBuffer.h>
-#include <TaggedFormat/Reader.h>
+#include <TaggedFormat/Mesh.hpp>
+#include <TaggedFormat/Parser.hpp>
+#include <TaggedFormat/MemoryBuffer.hpp>
+#include <TaggedFormat/Reader.hpp>
 
 namespace TaggedFormat {
 	const char * BasicMeshText =
