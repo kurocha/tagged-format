@@ -12,10 +12,10 @@
 #include <assert.h>
 #include <vector>
 
-#include <TaggedFormat/Parser.h>
-#include <TaggedFormat/Reader.h>
-#include <TaggedFormat/Table.h>
-#include <TaggedFormat/MemoryBuffer.h>
+#include <TaggedFormat/Parser.hpp>
+#include <TaggedFormat/Reader.hpp>
+#include <TaggedFormat/Table.hpp>
+#include <TaggedFormat/MemoryBuffer.hpp>
 
 namespace {
 	using namespace TaggedFormat;

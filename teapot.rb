@@ -24,6 +24,23 @@ define_target "tagged-format" do |target|
 	end
 end
 
+define_target "tagged-format-converter" do |target|
+	target.build do
+		source_root = target.package.path + 'source'
+		
+		build executable: "tagged-format-converter", source_files: source_root.glob('TaggedFormat-Converter/**/*.cpp')
+	end
+	
+	target.depends :platform
+	target.depends "Build/Files"
+	target.depends "Build/Clang"
+	target.depends "Language/C++11"
+	
+	target.depends "Library/TaggedFormat"
+
+	target.provides "Executable/TaggedFormat-Converter"
+end
+
 define_target "tagged-format-tests" do |target|
 	target.build do |environment|
 		test_root = target.package.path + 'test'
