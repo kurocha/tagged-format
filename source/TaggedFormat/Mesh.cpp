@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#include "Mesh.h"
+#include "Mesh.hpp"
 
 namespace TaggedFormat {
 	std::string Mesh::name_for_layout(Layout layout) {

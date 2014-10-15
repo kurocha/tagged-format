@@ -9,8 +9,8 @@
 #ifndef __TAGGED_FORMAT_SKELETON_H
 #define __TAGGED_FORMAT_SKELETON_H
 
-#include "Block.h"
-#include "Mesh.h"
+#include "Block.hpp"
+#include "Mesh.hpp"
 
 namespace TaggedFormat {
 	typedef uint8_t BoneID;

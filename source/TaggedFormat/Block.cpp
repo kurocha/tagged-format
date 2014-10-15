@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#include "Block.h"
+#include "Block.hpp"
 #include <string.h>
 
 namespace TaggedFormat {

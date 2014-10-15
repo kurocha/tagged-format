@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Orion Transfer Ltd. All rights reserved.
 //
 
-#include "Skeleton.h"
+#include "Skeleton.hpp"
 
 namespace TaggedFormat {
 	std::string SkeletonAnimationKeyFrame::name_for_interpolation(Interpolation interpolation)

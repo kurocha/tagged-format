@@ -6,10 +6,10 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#include "Parser.h"
-#include "MemoryBuffer.h"
+#include "Parser.hpp"
+#include "MemoryBuffer.hpp"
 
-#include "Table.h"
+#include "Table.hpp"
 
 #include <iostream>
 #include <sstream>

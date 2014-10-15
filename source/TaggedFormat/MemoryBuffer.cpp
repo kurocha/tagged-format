@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#include "MemoryBuffer.h"
+#include "MemoryBuffer.hpp"
 
 #include <stdlib.h>
 #include <string.h>

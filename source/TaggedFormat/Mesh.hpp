@@ -9,7 +9,7 @@
 #ifndef __TAGGED_FORMAT_MESH_H
 #define __TAGGED_FORMAT_MESH_H
 
-#include "Block.h"
+#include "Block.hpp"
 
 namespace TaggedFormat {
 	/// A mesh block contains indices, vertices and axes.

@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#include "Table.h"
+#include "Table.hpp"
 
 namespace TaggedFormat {
 	OffsetT OffsetTable::offset_named(const std::string & name) {

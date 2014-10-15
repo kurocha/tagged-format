@@ -9,7 +9,7 @@
 #ifndef __TAGGED_FORMAT_DICTIONARY_H
 #define __TAGGED_FORMAT_DICTIONARY_H
 
-#include "Block.h"
+#include "Block.hpp"
 #include <cstring>
 
 namespace TaggedFormat {

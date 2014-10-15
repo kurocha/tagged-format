@@ -9,7 +9,7 @@
 #ifndef _TAGGED_FORMAT_MEMORY_BUFFER_H
 #define _TAGGED_FORMAT_MEMORY_BUFFER_H
 
-#include "Writer.h"
+#include "Writer.hpp"
 
 namespace TaggedFormat {
 

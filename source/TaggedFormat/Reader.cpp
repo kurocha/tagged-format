@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#include "Reader.h"
+#include "Reader.hpp"
 #include <string>
 
 namespace TaggedFormat {

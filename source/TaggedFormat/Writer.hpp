@@ -9,7 +9,7 @@
 #ifndef _TAGGED_FORMAT_WRITER_H
 #define _TAGGED_FORMAT_WRITER_H
 
-#include "Block.h"
+#include "Block.hpp"
 #include <cstring>
 
 namespace TaggedFormat {

@@ -9,7 +9,7 @@
 #ifndef __TAGGED_FORMAT_SCENE_H
 #define __TAGGED_FORMAT_SCENE_H
 
-#include "Block.h"
+#include "Block.hpp"
 
 namespace TaggedFormat {
 	/*

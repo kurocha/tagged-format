@@ -9,7 +9,7 @@
 #ifndef __TAGGED_FORMAT_AXES_H
 #define __TAGGED_FORMAT_AXES_H
 
-#include "Table.h"
+#include "Table.hpp"
 
 namespace TaggedFormat {
 	/// A named axis is used to align meshes together.

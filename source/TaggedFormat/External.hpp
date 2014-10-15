@@ -9,7 +9,7 @@
 #ifndef __TAGGED_FORMAT_EXTERNAL_H
 #define __TAGGED_FORMAT_EXTERNAL_H
 
-#include "Block.h"
+#include "Block.hpp"
 
 namespace TaggedFormat {
 	/// Reference an external resource. Implementation defined.

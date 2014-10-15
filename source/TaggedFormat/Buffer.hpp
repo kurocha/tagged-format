@@ -9,7 +9,7 @@
 #ifndef _TAGGED_FORMAT_BUFFER_H
 #define _TAGGED_FORMAT_BUFFER_H
 
-#include "Types.h"
+#include "Types.hpp"
 
 namespace TaggedFormat
 {

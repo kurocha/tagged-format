@@ -9,7 +9,7 @@
 #ifndef _TAGGED_FORMAT_READER_H
 #define _TAGGED_FORMAT_READER_H
 
-#include "Block.h"
+#include "Block.hpp"
 
 namespace TaggedFormat {
 

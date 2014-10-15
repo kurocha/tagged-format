@@ -9,7 +9,7 @@
 #ifndef _TAGGED_FORMAT_BLOCK_H
 #define _TAGGED_FORMAT_BLOCK_H
 
-#include "Buffer.h"
+#include "Buffer.hpp"
 
 #include <string>
 #include <stdexcept>

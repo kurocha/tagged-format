@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#include "Writer.h"
+#include "Writer.hpp"
 
 namespace TaggedFormat {
 	

@@ -9,12 +9,12 @@
 #ifndef _TAGGED_FORMAT_PARSER_H
 #define _TAGGED_FORMAT_PARSER_H
 
-#include "Mesh.h"
-#include "Skeleton.h"
-#include "Axes.h"
-#include "Scene.h"
+#include "Mesh.hpp"
+#include "Skeleton.hpp"
+#include "Axes.hpp"
+#include "Scene.hpp"
 
-#include "Writer.h"
+#include "Writer.hpp"
 
 #include <iosfwd>
 #include <string>
