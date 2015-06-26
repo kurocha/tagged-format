@@ -356,12 +356,18 @@ namespace TaggedFormat
 				
 				input.seekg(current);
 				ElementT value;
-				
+				memset(&value, 0, sizeof(value));
+
 				input >> value;
 				//std::cerr << "(parse items) <- " << value << std::endl;
 				
 				if (input.fail()) {
-					throw InvalidSequenceError("Could not parse item");
+					std::stringstream buffer;
+
+					buffer << "Could not parse item: " << typeid(ElementT).name();
+					buffer << " -> " << value;
+
+					throw InvalidSequenceError(buffer.str());
 				}
 				
 				//std::cerr << "Appending value : " << value << std::endl;
