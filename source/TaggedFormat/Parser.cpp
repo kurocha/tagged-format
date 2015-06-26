@@ -55,12 +55,12 @@ namespace TaggedFormat
 				return input;
 			}
 
-//			static std::ostream & operator<<(std::ostream & output, const Integer<uint8_t> & integer) {
-//				uint16_t value = *integer.value;
-//				output << value;
-//
-//				return output;
-//			}
+			static std::ostream & operator<<(std::ostream & output, const Integer<uint8_t> & integer) {
+				uint16_t value = *integer.value;
+				output << value;
+
+				return output;
+			}
 
 			template <typename IntegralT>
 			Integer<IntegralT> integral(IntegralT & value) {
