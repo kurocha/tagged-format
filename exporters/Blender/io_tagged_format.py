@@ -185,27 +185,27 @@ class TaggedFormatMeshExporter(bpy.types.Operator):
 	bl_label = "Export Tagged Format Mesh"
 
 	filepath = StringProperty(
-			subtype='FILE_PATH',
-			)
+		subtype='FILE_PATH',
+	)
 
 	check_existing = BoolProperty(
-			name="Check Existing",
-			description="Check and warn on overwriting existing files",
-			default=True,
-			options={'HIDDEN'},
-			)
+		name="Check Existing",
+		description="Check and warn on overwriting existing files",
+		default=True,
+		options={'HIDDEN'},
+	)
 
 	apply_modifiers = BoolProperty(
-			name="Apply Modifiers",
-			description="Use transformed mesh data from each object",
-			default=True,
-			)
+		name="Apply Modifiers",
+		description="Use transformed mesh data from each object",
+		default=True,
+	)
 
 	flip_uv_coordinates = BoolProperty(
-			name="Flip UV Coordinates",
-			description="Flip the UV coordinates vertically for systems where the image origin is the upper left",
-			default=True,
-			)
+		name="Flip UV Coordinates",
+		description="Flip the UV coordinates vertically for systems where the image origin is the upper left",
+		default=True,
+	)
 
 	def execute(self, context):
 		write_tagged_format_text(self.filepath, self.flip_uv_coordinates)
