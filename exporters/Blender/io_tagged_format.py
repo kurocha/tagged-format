@@ -178,13 +178,8 @@ def write_camera(output, data_object, render):
 		render.pixel_aspect_y,
 	)
 	
-	output.write("\t# View matrix:\n")
 	write_matrix(output, view_matrix)
-	
-	output.write("\t# Projection matrix:\n")
 	write_matrix(output, projection_matrix)
-	
-	output.write("end\n\n")
 
 def write_tagged_format_text(filepath, flip_uv_coordinates):
 	output = open(filepath, "w")
