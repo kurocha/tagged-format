@@ -6,13 +6,13 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef _TAGGED_FORMAT_PARSER_H
-#define _TAGGED_FORMAT_PARSER_H
+#pragma once
 
 #include "Mesh.hpp"
 #include "Skeleton.hpp"
 #include "Axes.hpp"
 #include "Scene.hpp"
+#include "Camera.hpp"
 
 #include "Writer.hpp"
 
@@ -50,7 +50,6 @@ namespace TaggedFormat
 			std::istream & operator>>(std::istream & input, SkeletonBone & bone);
 			std::istream & operator>>(std::istream & input, SkeletonAnimationKeyFrame & frame);
 
-			std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[16]);
 			std::ostream & operator<<(std::ostream & output, const Index16 & index);
 			std::ostream & operator<<(std::ostream & output, const Index32 & index);
 			std::ostream & operator<<(std::ostream & output, const VertexP3N3 & vertex);
@@ -111,6 +110,7 @@ namespace TaggedFormat
 
 			OffsetT parse_geometry_instance();
 			OffsetT parse_node();
+			OffsetT parse_camera();
 
 			void parse();
 		};
@@ -119,5 +119,3 @@ namespace TaggedFormat
 		void serialize(std::istream & input, std::ostream & output);
 	};
 }
-
-#endif

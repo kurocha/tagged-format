@@ -33,6 +33,13 @@ namespace {
 		}
 	}
 
+	void dump_block(Reander * reader, Camera * camera, std::ostream & output, std::size_t indentation) {
+		std::string indent(indentation, '\t');
+
+		output << indent << "view_matrix = " << camera->view_matrix << std::endl;
+		output << indent << "projection_matrix = " << camera->projection_matrix << std::endl;
+	}
+
 	void dump_block(Reader * reader, Mesh * mesh, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 		

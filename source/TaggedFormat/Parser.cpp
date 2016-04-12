@@ -340,6 +340,14 @@ namespace TaggedFormat
 
 			return node_block;
 		}
+
+		OffsetT Context::parse_camera() {
+			auto camera_block = _writer->append<Camera>();
+			
+			_input >> camera_block->view_matrix >> camera_block->projection_matrix;
+
+			return camera_block;
+		}
 		
 		template <typename ElementT>
 		void parse_items(std::istream & input, std::vector<ElementT> & items) {
@@ -482,6 +490,8 @@ namespace TaggedFormat
 					offset = parse_node();
 				} else if (symbol == "geometry-instance") {
 					offset = parse_geometry_instance();
+				} else if (symbol == "camera") {
+					offset = parse_camera();
 				} else {
 					throw InvalidSequenceError("Could not parse input");
 				}
