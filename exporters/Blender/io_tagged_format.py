@@ -163,15 +163,45 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 	output.write("end\n\n")
 	bpy.data.meshes.remove(mesh)
 
+def write_matrix(output, matrix, indentation = "\t"):
+	for column in matrix:
+		output.write("{0}{1}\n".format(indentation, " ".join([str(i) for i in column])))
+
+def write_camera(output, data_object, render):
+	output.write("{0}: camera\n".format(data_object.name))
+	
+	view_matrix = data_object.matrix_world.inverted()
+	projection_matrix = data_object.calc_matrix_camera(
+		render.resolution_x,
+		render.resolution_y,
+		render.pixel_aspect_x,
+		render.pixel_aspect_y,
+	)
+	
+	output.write("\t# View matrix:\n")
+	write_matrix(output, view_matrix)
+	
+	output.write("\t# Projection matrix:\n")
+	write_matrix(output, projection_matrix)
+	
+	output.write("end\n\n")
+
 def write_tagged_format_text(filepath, flip_uv_coordinates):
 	output = open(filepath, "w")
 	
+	context = bpy.context
+	export_objects = context.selected_objects
+	render = context.scene.render
+	
 	names = []
-	for data_object in bpy.context.selected_objects:
+	for data_object in export_objects:
 		if data_object.type == 'MESH':
 			write_mesh(output, data_object, flip_uv_coordinates)
 			names.append(data_object.name)
-	
+		elif data_object.type == 'CAMERA':
+			write_camera(output, data_object, render)
+			names.append(data_object.name)
+			
 	output.write("top: offset-table\n")
 	for name in names:
 		output.write("\t{0}: ${0}\n".format(name))
