@@ -1,5 +1,4 @@
-Tagged Format
-=============
+# Tagged Format
 
 The Tagged Format is a simple generic text/binary format. It is primarily designed for storing and accessing
 game data in binary format for quick loading.
@@ -8,10 +7,9 @@ It supports a variety of different purposes, but is primarily designed for geome
 very simple and to act as a bridge between typical rendering formats (e.g. vertex arrays) and model editors 
 (e.g. Blender).
 
-[![Build Status](https://secure.travis-ci.org/dream-framework/tagged-format.png)](http://travis-ci.org/dream-framework/tagged-format)
+[![Build Status](https://secure.travis-ci.org/kurocha/tagged-format.svg)](http://travis-ci.org/kurocha/tagged-format)
 
-Build and Install
------------------
+## Build and Install
 
 Use Teapot to build and install Tagged Format:
 
@@ -21,8 +19,7 @@ Use Teapot to build and install Tagged Format:
 
 Currently, only Mac OS X and Linux are supported using standards conformant C++11 compilers.
 
-File Format
------------
+## File Format
 
 The Tagged file format is designed to be application specific rather than generic. Many generic file formats 
 already exist (e.g. Wavefront OBJ) but they are cumbersome to use because they lack the ability to be 
@@ -41,8 +38,7 @@ references.
 The Tagged text format is well defined and is compiled to a binary format using the included `tagged-format-convert`, much 
 like how an assembler converts symbolic code to binary machine code.
 
-Tagged Format Tool
-------------------
+## Tagged Format Tool
 
 Included in this implementation is the `tagged-format-convert` which converts a text format into a binary format. The text 
 format is primarily used as an export format and is typically converted into the binary format before being
@@ -85,8 +81,7 @@ You can check the results by running:
 		axes:
 		[null: 0 bytes]
 
-Rendering
----------
+## Rendering
 
 Loading the file is very simple and fast as data can be loaded almost directly into graphics memory. Use the 
 `TaggedFormat::Reader` to load a model from a data buffer (typically loaded from disk using `mmap`).
@@ -107,8 +102,7 @@ Loading the file is very simple and fast as data can be loaded almost directly i
 
 The Dream framework includes an example of how to load and render models using the tagged model format.
 
-Caveats
--------
+## Caveats
 
 The binary format is platform specific. It would be possible to adjust data ordering (e.g. endian) however 
 this goes against the spirit of the Tagged binary format: a simple loader that provides platform and 
@@ -119,8 +113,7 @@ In the case where you need some form of platform independence, there are two opt
 versions of your model data, or integrate the parser directly into your application and cache binary versions
 of the model data as required.
 
-Future Work
------------
+## Future Work
 
 - Provide target specific options to `tagged-format-convert` for generating platform specific (e.g. endian) binary data.
 - Develop a simple Cocoa application for visualising the model data structure and rendering meshes.
@@ -130,7 +123,7 @@ Future Work
 
 Released under the MIT license.
 
-Copyright, 2012, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
+Copyright, 2016, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
