@@ -3,7 +3,7 @@
 #  This file is part of the "Teapot" project, and is released under the MIT license.
 #
 
-teapot_version "1.0"
+teapot_version "1.0.0"
 
 define_target "tagged-format" do |target|
 	target.build do
@@ -58,11 +58,12 @@ define_target "tagged-format-tests" do |target|
 	target.provides "Test/TaggedFormat"
 end
 
-define_configuration "travis" do |configuration|
-	configuration[:source] = "https://github.com/dream-framework"
+define_configuration "test" do |configuration|
+	configuration[:source] = "https://github.com/kurocha"
 	
 	configuration.require "platforms"
 	configuration.require "build-files"
 	configuration.require "unit-test"
 	configuration.require "euclid"
+	configuration.require "language-cpp-class"
 end
