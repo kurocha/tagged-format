@@ -42,7 +42,7 @@ namespace TaggedFormat
 	typedef Aligned<uint64_t>::TypeT OffsetT;
 
 	/// An 8-bit byte data-type.
-	typedef unsigned char ByteT;
+	typedef unsigned char Byte;
 
 	/// A fixed string typically used for holding names or references:
 	template <std::size_t N = 32>

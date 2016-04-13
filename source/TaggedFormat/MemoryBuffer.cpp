@@ -58,7 +58,7 @@ namespace TaggedFormat {
 	}
 	
 	void * MemoryBuffer::fetch(OffsetT offset) {
-		return (ByteT *)_begin + offset;
+		return (Byte *)_begin + offset;
 	}
 	
 	void MemoryBuffer::write_to_file(std::string path) const {

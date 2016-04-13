@@ -44,6 +44,6 @@ namespace TaggedFormat {
 			return nullptr;
 		}
 		
-		return (Block *)((ByteT *)_buffer.begin + offset);
+		return (Block *)((Byte *)_buffer.begin + offset);
 	}
 }

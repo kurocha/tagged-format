@@ -33,12 +33,12 @@ namespace TaggedFormat {
 
 		/// @returns a pointer to the end of the block in memory based on its size.
 		void * end() {
-			return (ByteT *)this + size;
+			return (Byte *)this + size;
 		}
 		
 		/// @returns a pointer to a specific offset from the start of the block.
 		void * end(std::size_t offset) {
-			return (ByteT *)this + offset;
+			return (Byte *)this + offset;
 		}
 
 		/// Return a human readable name for the given tag.

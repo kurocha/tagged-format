@@ -20,7 +20,7 @@ namespace TaggedFormat
 		OffsetT size;
 		
 		void * at(OffsetT offset) {
-			return (ByteT *)begin + offset;
+			return (Byte *)begin + offset;
 		}
 	};
 }
