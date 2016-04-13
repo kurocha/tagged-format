@@ -33,7 +33,7 @@ namespace {
 		}
 	}
 
-	void dump_block(Reander * reader, Camera * camera, std::ostream & output, std::size_t indentation) {
+	void dump_block(Reader * reader, Camera * camera, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 
 		output << indent << "view_matrix = " << camera->view_matrix << std::endl;
@@ -133,6 +133,10 @@ namespace {
 				dump_block(reader, (Mesh *)block, output, indentation + 1);
 				break;
 			
+			case Camera::TAG:
+				dump_block(reader, (Camera *)block, output, indentation + 1);
+				break;
+
 			case OffsetTable::TAG:
 				dump_block(reader, (OffsetTable *)block, output, indentation + 1);
 				break;
