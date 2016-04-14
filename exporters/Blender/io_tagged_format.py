@@ -30,7 +30,7 @@ The tagged format is very simple storage system which stores an index list along
 bl_info = {
 	"name": "Tagged Format (.tagged-*)",
 	"author": "Samuel Williams",
-	"version": (0, 4),
+	"version": (0, 5),
 	"blender": (2, 6, 4),
 	"location": "File > Export > Tagged Format (.tagged-*)",
 	"description": "Import-Export Tagged Format",
@@ -63,7 +63,7 @@ def face_to_triangles(face):
 	triangles = []
 	if len(face.vertices) == 4:
 		triangles.append((face.vertices[0], face.vertices[1], face.vertices[2],))
-		triangles.append((face.vertices[2], face.vertices[3], face.vertices[0],))
+		triangles.append((face.vertices[0], face.vertices[2], face.vertices[3],))
 	else:
 		triangles.append(face.vertices)
 
@@ -164,7 +164,8 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 	bpy.data.meshes.remove(mesh)
 
 def write_matrix(output, matrix, indentation = "\t"):
-	for column in matrix:
+	# We output matricies in row-major order, so that items 13, 14, 15 are the translation.
+	for column in matrix.col:
 		output.write("{0}{1}\n".format(indentation, " ".join([str(i) for i in column])))
 
 def write_camera(output, data_object, render):
@@ -204,10 +205,10 @@ def write_tagged_format_text(filepath, flip_uv_coordinates):
 	
 	output.close()
 
-class TaggedFormatMeshExporter(bpy.types.Operator):
+class TaggedFormatExporter(bpy.types.Operator):
 	'''Save triangle mesh data'''
-	bl_idname = "export.tagged_format_mesh"
-	bl_label = "Export Tagged Format Mesh"
+	bl_idname = "export.tagged_format"
+	bl_label = "Export Tagged Format"
 
 	filepath = StringProperty(
 		subtype='FILE_PATH',
@@ -245,7 +246,7 @@ class TaggedFormatMeshExporter(bpy.types.Operator):
 		return {'RUNNING_MODAL'}
 
 def menu_export(self, context):
-	self.layout.operator(TaggedFormatMeshExporter.bl_idname, text="Tagged Format (.tft)")
+	self.layout.operator(TaggedFormatExporter.bl_idname, text="Tagged Format (.tft)")
 
 def register():
 	bpy.utils.register_module(__name__)

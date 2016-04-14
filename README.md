@@ -38,6 +38,10 @@ references.
 The Tagged text format is well defined and is compiled to a binary format using the included `tagged-format-convert`, much 
 like how an assembler converts symbolic code to binary machine code.
 
+### Matricies
+
+Matricies are represented in all cases in the order they will be in-memory. When writing this in text, the matrix is therefore listed in rows.
+
 ## Tagged Format Tool
 
 Included in this implementation is the `tagged-format-convert` which converts a text format into a binary format. The text 
