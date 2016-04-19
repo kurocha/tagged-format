@@ -20,7 +20,7 @@ define_target "tagged-format" do |target|
 	target.depends "Language/C++11"
 	
 	target.provides "Library/TaggedFormat" do
-		append linkflags "-lTaggedFormat"
+		append linkflags {install_prefix + "lib/libTaggedFormat.a"}
 	end
 end
 
