@@ -37,8 +37,27 @@ namespace TaggedFormat
 		};
 
 		namespace IO {
-			std::istream & operator>>(std::istream & input, float32 (&matrix)[16]);
-			std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[16]);
+			// *** Matrix I/O ***
+			
+			template <std::size_t N>
+			std::istream & operator>>(std::istream & input, float32 (&matrix)[N]) {
+				for (std::size_t i = 0; i < N && input.good(); i += 1) {
+					input >> matrix[i];
+				}
+
+				return input;
+			}
+
+			template <std::size_t N>
+			std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[N]) {
+				for (std::size_t i = 0; i < N && output.good(); i += 1) {
+					if (i > 0) output << " ";
+
+					output << matrix[i];
+				}
+
+				return output;
+			}
 
 			std::istream & operator>>(std::istream & input, Index16 & index);
 			std::istream & operator>>(std::istream & input, Index32 & index);

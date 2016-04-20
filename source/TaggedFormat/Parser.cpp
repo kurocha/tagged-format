@@ -68,26 +68,6 @@ namespace TaggedFormat
 				return Integer<IntegralT>{&value};
 			}
 
-			// *** Matrix I/O ***
-			
-			std::istream & operator>>(std::istream & input, float32 (&matrix)[16]) {
-				for (std::size_t i = 0; i < 16 && input.good(); i += 1) {
-					input >> matrix[i];
-				}
-
-				return input;
-			}
-
-			std::ostream & operator<<(std::ostream & output, const float32 (&matrix)[16]) {
-				for (std::size_t i = 0; i < 16 && output.good(); i += 1) {
-					if (i > 0) output << " ";
-
-					output << matrix[i];
-				}
-
-				return output;
-			}
-
 			// *** Vertex I/O ***
 
 			std::istream & operator>>(std::istream & input, Index16 & index) {
@@ -345,6 +325,7 @@ namespace TaggedFormat
 		OffsetT Context::parse_camera() {
 			auto camera_block = _writer->append<Camera>();
 			
+			_input >> camera_block->resolution >> camera_block->pixel_aspect_ratio;
 			_input >> camera_block->view_matrix >> camera_block->projection_matrix;
 
 			return camera_block;

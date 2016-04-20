@@ -19,6 +19,7 @@ namespace TaggedFormat
 {
 	const char * CameraTestText =
 		"Test-camera: camera\n"
+		"	1920 1080 1 1\n"
 		"	1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16\n"
 		"	1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16\n"
 		"top: $Test-camera\n";
@@ -37,8 +38,12 @@ namespace TaggedFormat
 
 				auto camera = reader.block_at_offset<Camera>(reader.header()->top_offset);
 
-				float32 test_pattern[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+				examiner.expect(camera->resolution[0]) == 1920;
+				examiner.expect(camera->resolution[1]) == 1080;
+				examiner.expect(camera->pixel_aspect_ratio[0]) == 1;
+				examiner.expect(camera->pixel_aspect_ratio[1]) == 1;
 
+				float32 test_pattern[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
 				examiner.check(std::equal(camera->view_matrix, camera->view_matrix+16, test_pattern));
 			}
 		},

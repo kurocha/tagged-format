@@ -28,11 +28,11 @@ The tagged format is very simple storage system which stores an index list along
 """
 
 bl_info = {
-	"name": "Tagged Format (.tagged-*)",
+	"name": "Tagged Format",
 	"author": "Samuel Williams",
-	"version": (0, 5),
-	"blender": (2, 6, 4),
-	"location": "File > Export > Tagged Format (.tagged-*)",
+	"version": (0, 6),
+	"blender": (2, 7, 0),
+	"location": "File > Export > Tagged Format",
 	"description": "Import-Export Tagged Format",
 	"warning": "",
 	"category": "Import-Export"
@@ -58,16 +58,6 @@ def flatten(l, ltypes=(list, tuple)):
 				l[i:i + 1] = l[i]
 		i += 1
 	return ltype(l)
-
-def face_to_triangles(face):
-	triangles = []
-	if len(face.vertices) == 4:
-		triangles.append((face.vertices[0], face.vertices[1], face.vertices[2],))
-		triangles.append((face.vertices[0], face.vertices[2], face.vertices[3],))
-	else:
-		triangles.append(face.vertices)
-
-	return triangles
 
 class Vertices(object):
 	def __init__(self):
@@ -96,17 +86,21 @@ def flipped_coordinates(coordinates, flip):
 def convert_wxyz_quaternion(q):
 	return [q[1], q[2], q[3], q[0]]
 
+def safe_name(data_object):
+	return data_object.name.replace(' ', '-')
+
 def write_mesh(output, data_object, flip_uv_coordinates):
-	output.write("{0}: mesh triangles\n".format(data_object.name))
+	output.write("{0}: mesh triangles\n".format(safe_name(data_object)))
 	mesh = data_object.to_mesh(bpy.context.scene, True, "PREVIEW")
 
-	# From Blender 2.6.3, we now need to use tessfaces:
-	mesh.update(calc_tessface=True)
-
-	# Transform the mesh data into world coordinates:
 	world_matrix = data_object.matrix_world
 	mesh.transform(world_matrix)
 	
+	mesh.calc_normals()
+	mesh.calc_tessface()
+	mesh.update(calc_tessface=True)
+
+	# Transform the mesh data into world coordinates:
 	vertices = Vertices()
 	triangles = []
 	
@@ -115,26 +109,32 @@ def write_mesh(output, data_object, flip_uv_coordinates):
 		vertex_format = "vertex-p3n3m2"
 		uv_coordinates = mesh.tessface_uv_textures[0]
 		
-		def generate_vertex(index, triangle, offset):
+		def generate_vertex(face, index, offset):
 			return (
-				tuple(mesh.vertices[triangle[offset]].co),
-				tuple(mesh.vertices[triangle[offset]].normal),
-				tuple(flipped_coordinates(uv_coordinates.data[index].uv[offset], flip_uv_coordinates)),
+				tuple(mesh.vertices[offset].co),
+				tuple(mesh.vertices[offset].normal),
+				tuple(flipped_coordinates(uv_coordinates.data[face.index].uv[index], flip_uv_coordinates)),
 			)
 	else:
 		vertex_format = "vertex-p3n3"
 		
-		def generate_vertex(index, triangle, offset):
+		def generate_vertex(face, index, offset):
 			return (
-				tuple(mesh.vertices[triangle[offset]].co),
-				tuple(mesh.vertices[triangle[offset]].normal),
+				tuple(mesh.vertices[offset].co),
+				tuple(mesh.vertices[offset].normal),
 			)
 	
-	for index, face in enumerate(mesh.tessfaces):
-		for triangle in face_to_triangles(face):
-			face_vertices = [generate_vertex(index, triangle, offset) for offset in range(3)]
-			
-			triangles.append([vertices.get(vertex) for vertex in face_vertices])
+	for face in mesh.tessfaces:
+		# We assume a face represents a triangle fan:
+		face_vertices = [generate_vertex(face, index, offset) for index, offset in enumerate(face.vertices)]
+		
+		center_vertex = vertices.get(face_vertices[0])
+		previous_vertex = vertices.get(face_vertices[1])
+		
+		for face_vertex in face_vertices[2:]:
+			next_vertex = vertices.get(face_vertex)
+			triangles.append([center_vertex, previous_vertex, next_vertex])
+			previous_vertex = next_vertex
 	
 	output.write("\tindices: array index16\n")
 	for triangle in triangles:
@@ -169,7 +169,7 @@ def write_matrix(output, matrix, indentation = "\t"):
 		output.write("{0}{1}\n".format(indentation, " ".join([str(i) for i in column])))
 
 def write_camera(output, data_object, render):
-	output.write("{0}: camera\n".format(data_object.name))
+	output.write("{0}: camera\n".format(safe_name(data_object)))
 	
 	view_matrix = data_object.matrix_world.inverted()
 	projection_matrix = data_object.calc_matrix_camera(
@@ -178,6 +178,11 @@ def write_camera(output, data_object, render):
 		render.pixel_aspect_x,
 		render.pixel_aspect_y,
 	)
+	
+	output.write("\t{0} {1} {2} {3}\n".format(
+		render.resolution_x, render.resolution_y,
+		render.pixel_aspect_x, render.pixel_aspect_y,
+	))
 	
 	write_matrix(output, view_matrix)
 	write_matrix(output, projection_matrix)

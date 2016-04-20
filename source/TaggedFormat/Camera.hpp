@@ -13,7 +13,10 @@
 namespace TaggedFormat
 {
 	struct Camera : Block {
-		static const TagT TAG = tag_from_identifier("CAM4");
+		static const TagT TAG = tag_from_identifier("CAM5");
+		
+		/// Native viewport size.
+		float32 resolution[2], pixel_aspect_ratio[2];
 		
 		float32 view_matrix[16];
 		float32 projection_matrix[16];

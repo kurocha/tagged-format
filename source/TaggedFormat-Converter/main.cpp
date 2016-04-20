@@ -36,6 +36,8 @@ namespace {
 	void dump_block(Reader * reader, Camera * camera, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 
+		output << indent << "resolution = " << camera->resolution << std::endl;
+		output << indent << "pixel_aspect_ratio = " << camera->pixel_aspect_ratio << std::endl;
 		output << indent << "view_matrix = " << camera->view_matrix << std::endl;
 		output << indent << "projection_matrix = " << camera->projection_matrix << std::endl;
 	}
