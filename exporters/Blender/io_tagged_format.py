@@ -171,6 +171,11 @@ def write_matrix(output, matrix, indentation = "\t"):
 def write_camera(output, data_object, render):
 	output.write("{0}: camera\n".format(safe_name(data_object)))
 	
+	output.write("\t{0} {1} {2} {3}\n".format(
+		render.resolution_x, render.resolution_y,
+		render.pixel_aspect_x, render.pixel_aspect_y,
+	))
+	
 	view_matrix = data_object.matrix_world.inverted()
 	projection_matrix = data_object.calc_matrix_camera(
 		render.resolution_x,
@@ -178,11 +183,6 @@ def write_camera(output, data_object, render):
 		render.pixel_aspect_x,
 		render.pixel_aspect_y,
 	)
-	
-	output.write("\t{0} {1} {2} {3}\n".format(
-		render.resolution_x, render.resolution_y,
-		render.pixel_aspect_x, render.pixel_aspect_y,
-	))
 	
 	write_matrix(output, view_matrix)
 	write_matrix(output, projection_matrix)
@@ -198,10 +198,10 @@ def write_tagged_format_text(filepath, flip_uv_coordinates):
 	for data_object in export_objects:
 		if data_object.type == 'MESH':
 			write_mesh(output, data_object, flip_uv_coordinates)
-			names.append(data_object.name)
+			names.append(safe_name(data_object))
 		elif data_object.type == 'CAMERA':
 			write_camera(output, data_object, render)
-			names.append(data_object.name)
+			names.append(safe_name(data_object))
 			
 	output.write("top: offset-table\n")
 	for name in names:
