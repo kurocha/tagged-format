@@ -40,6 +40,11 @@ bl_info = {
 
 import bpy
 
+#
+# Should probably consider axis_conversion:
+# https://www.blender.org/api/blender_python_api_2_61_release/bpy_extras.io_utils.html
+#
+
 from bpy.props import StringProperty, BoolProperty
 from collections import defaultdict
 
