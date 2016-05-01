@@ -24,11 +24,11 @@ define_target "tagged-format" do |target|
 	end
 end
 
-define_target "tagged-format-converter" do |target|
+define_target "tagged-format-executable" do |target|
 	target.build do
 		source_root = target.package.path + 'source'
 		
-		build executable: "tagged-format-converter", source_files: source_root.glob('TaggedFormat-Converter/**/*.cpp')
+		build executable: "TaggedFormat", source_files: source_root.glob('TaggedFormat/TaggedFormat.cpp')
 	end
 	
 	target.depends :platform
