@@ -1,11 +1,8 @@
 # Tagged Format
 
-The Tagged Format is a simple generic text/binary format. It is primarily designed for storing and accessing
-game data in binary format for quick loading.
+The Tagged Format is a simple text and binary format designed to be loaded directly into the memory of the running process. It uses a simple text format that can be incrementally parsed and serialized, and the binary format uses tagged memory blocks and offsets for addressing.
 
-It supports a variety of different purposes, but is primarily designed for geometry. It is designed to be a 
-very simple and to act as a bridge between typical rendering formats (e.g. vertex arrays) and model editors 
-(e.g. Blender).
+It is primarily used for storing 3D model data, and includes an exporter for [Blender](https://www.blender.org/) and both a C++ and JavaScript implementation. However, it's design is generic and it can be modified to suit a wide range of tasks.
 
 [![Build Status](https://secure.travis-ci.org/kurocha/tagged-format.svg)](http://travis-ci.org/kurocha/tagged-format)
 
@@ -14,39 +11,26 @@ very simple and to act as a bridge between typical rendering formats (e.g. verte
 Use Teapot to build and install Tagged Format:
 
 	$ cd tagged-format
-	$ sudo gem install teapot
+	$ gem install teapot
 	$ teapot build Library/TaggedFormat variant-debug
-
-Currently, only Mac OS X and Linux are supported using standards conformant C++11 compilers.
 
 ## File Format
 
-The Tagged file format is designed to be application specific rather than generic. Many generic file formats 
-already exist (e.g. Wavefront OBJ) but they are cumbersome to use because they lack the ability to be 
-customised without a significant amount of work.
+The Tagged file format is designed to be application specific rather than generic. Many generic file formats already exist (e.g. Wavefront OBJ) but they are cumbersome to use because they lack the ability to be customised without a significant amount of work, or require significant work at run-time.
 
-Rather than try to design a one-size fits all general file format, you are encouraged to fork the Tagged format
-on a per-application basis and build specific resource formats that match your exact needs. Cases where you 
-might want to customise the behaviour include unusual vertex formats (e.g. multiple texture coordinates, 
-additional per-vertex attributes, etc) or embedded binary data (e.g. animation data, texture data, shaders).
+Rather than try to design a one-size fits all general file format, you are encouraged to fork the library on a per-application basis and build specific resource formats that match your exact needs. Cases where you  might want to customise the behavior include unusual vertex formats (e.g. multiple texture coordinates, additional per-vertex attributes, etc) or embedded binary data (e.g. animation data, texture data, shaders).
 
-The Tagged binary format consists of a sequential set of blocks, where each block has a tag and size. The basic
-file has a header which includes an offset to the top block. By default, a variety of block types are included
-in the specification, including a `Table`, `Mesh`, `Axis`, a variety of vertex formats and `External` 
-references.
+The tagged binary format consists of a sequential set of blocks, where each block has a tag and size. The basic file has a header which includes an offset to the top block. By default, a variety of block types are included in the specification, including a `Table`, `Mesh`, `Axis`, a variety of vertex formats and `External` references.
 
-The Tagged text format is well defined and is compiled to a binary format using the included `tagged-format-convert`, much 
-like how an assembler converts symbolic code to binary machine code.
+The tagged text format is well defined and is compiled to a binary format using the included `TaggedFormat`, much like how an assembler converts symbolic code to binary machine code.
 
-### Matricies
+### Matrices
 
-Matricies are represented in all cases in the order they will be in-memory. When writing this in text, the matrix is therefore listed in rows.
+Matrices are represented in all cases in the order they will be in-memory. When writing this in text, the matrix is therefore listed in rows.
 
 ## Tagged Format Tool
 
-Included in this implementation is the `tagged-format-convert` which converts a text format into a binary format. The text 
-format is primarily used as an export format and is typically converted into the binary format before being
-used.
+Included in this implementation is the `TaggedFormat` executable which converts a text format into a binary format. The text format is primarily used as an export format and is typically converted into the binary format before being used.
 
 Here is an example of a simple 10x10 square made by two triangles:
 
@@ -65,11 +49,11 @@ Here is an example of a simple 10x10 square made by two triangles:
 
 To assemble this to the binary TMF format, simply run:
 
-	tagged-format-convert --text-to-binary input.tft output.tfb
+	TaggedFormat --text-to-binary input.tft output.tfb
 
 You can check the results by running:
 
-	$ tagged-format-convert --dump-binary output.tfb
+	$ TaggedFormat --dump-binary output.tfb
 	<tmv2; 32 bytes; magic = 42>
 	[mesh; 48 bytes; offset = 32]
 		layout = triangles
@@ -87,8 +71,7 @@ You can check the results by running:
 
 ## Rendering
 
-Loading the file is very simple and fast as data can be loaded almost directly into graphics memory. Use the 
-`TaggedFormat::Reader` to load a model from a data buffer (typically loaded from disk using `mmap`).
+Loading the file is very simple and fast as data can be loaded almost directly into graphics memory. Use the `TaggedFormat::Reader` to load a model from a data buffer (typically loaded from disk using `mmap`).
 
 	Model model = load_model(state->resource_loader, "base/models/baseplate.tfb");
 
@@ -108,14 +91,9 @@ The Dream framework includes an example of how to load and render models using t
 
 ## Caveats
 
-The binary format is platform specific. It would be possible to adjust data ordering (e.g. endian) however 
-this goes against the spirit of the Tagged binary format: a simple loader that provides platform and 
-application specific data that can be quickly loaded into the graphics card.
+The binary format is platform specific. It would be possible to adjust data ordering (e.g. endian) however this goes against the spirit of the Tagged binary format: a simple loader that provides platform and application specific data that can be quickly loaded into the graphics card.
 
-In the case where you need some form of platform independence, there are two options: Either integrate the 
-`tagged-format-convert` into your application development toolchain to produce target-specific binary 
-versions of your model data, or integrate the parser directly into your application and cache binary versions
-of the model data as required.
+In the case where you need some form of platform independence, there are two options: Either integrate the `tagged-format-convert` into your application development toolchain to produce target-specific binary versions of your model data, or integrate the parser directly into your application and cache binary versions of the model data as required.
 
 ## Future Work
 
