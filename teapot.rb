@@ -28,7 +28,7 @@ define_target "tagged-format-executable" do |target|
 	target.build do
 		source_root = target.package.path + 'source'
 		
-		build executable: "TaggedFormat", source_files: source_root.glob('TaggedFormat/TaggedFormat.cpp')
+		build executable: "TaggedFormat", source_files: source_root.glob('TaggedFormat.cpp')
 	end
 	
 	target.depends :platform
@@ -38,7 +38,7 @@ define_target "tagged-format-executable" do |target|
 	
 	target.depends "Library/TaggedFormat"
 
-	target.provides "Executable/TaggedFormat-Converter"
+	target.provides "Executable/TaggedFormat"
 end
 
 define_target "tagged-format-tests" do |target|
