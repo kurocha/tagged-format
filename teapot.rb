@@ -37,8 +37,44 @@ define_target "tagged-format-executable" do |target|
 	target.depends "Language/C++11"
 	
 	target.depends "Library/TaggedFormat"
-
-	target.provides "Executable/TaggedFormat"
+	
+	target.provides "Executable/TaggedFormat" do
+		define Rule, "convert.tagged-format-file" do
+			input :source_file, pattern: /\.tft/
+			output :destination_path
+			
+			apply do |arguments|
+				mkpath File.dirname(arguments[:destination_path])
+				
+				run!(
+					environment[:install_prefix] + 'bin/TaggedFormat',
+					"--convert-text-to-binary",
+					arguments[:source_file],
+					arguments[:destination_path],
+				)
+			end
+		end
+		
+		define Rule, "convert.tagged-format-files" do
+			# The input prefix where files are copied from:
+			input :source, multiple: true, pattern: /\.tft/
+			
+			# The output files:
+			parameter :root
+			parameter :extension, default: '.tfb'
+			parameter :basename, default: true
+				
+			apply do |arguments|
+				output_mapping = arguments.select{|key| [:root, :extension, :basename].include? key}
+				
+				arguments[:source].each do |path|
+					destination_path = path.with(output_mapping)
+					
+					convert source_file: path, destination_path: destination_path
+				end
+			end
+		end
+	end
 end
 
 define_target "tagged-format-tests" do |target|
