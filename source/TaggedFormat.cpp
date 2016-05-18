@@ -236,5 +236,9 @@ int main(int argc, const char * argv[]) {
 			
 			i += 1;
 		}
+		
+		else {
+			exit(1);
+		}
 	}
 }

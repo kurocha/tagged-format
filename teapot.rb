@@ -48,7 +48,7 @@ define_target "tagged-format-executable" do |target|
 				
 				run!(
 					environment[:install_prefix] + 'bin/TaggedFormat',
-					"--convert-text-to-binary",
+					"--text-to-binary",
 					arguments[:source_file],
 					arguments[:destination_path],
 				)

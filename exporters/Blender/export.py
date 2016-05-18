@@ -8,7 +8,7 @@ output_path = sys.argv[-1]
 
 from io_tagged_format import safe_name, write_mesh, write_camera
 
-def write_to_file(scene, export_objects, path, flip_uv_coordinates=True):
+def write_to_file(scene, export_objects, flip_uv_coordinates=True):
 	render = scene.render
 	
 	names = []
@@ -25,8 +25,14 @@ def write_to_file(scene, export_objects, path, flip_uv_coordinates=True):
 		output.write("\t{0}: ${0}\n".format(name))
 	output.write("end\n")
 
-scene = bpy.data.scenes[scene_name]
+if scene_name == "--all":
+	for scene in bpy.data.scenes:
+		output = open(output_path.replace('$SCENE', scene.name), "w") 
+		write_to_file(scene, scene.objects)
+		output.close()
+else:
+	scene = bpy.data.scenes[scene_name]
 
-output = open(output_path, "w")
-write_to_file(scene, scene.objects, output_path)
-output.close()
+	output = open(output_path, "w")
+	write_to_file(scene, scene.objects, output_path)
+	output.close()
