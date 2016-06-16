@@ -11,8 +11,9 @@ It is primarily used for storing 3D model data, and includes an exporter for [Bl
 Use Teapot to build and install Tagged Format:
 
 	$ cd tagged-format
-	$ gem install teapot
-	$ teapot build Library/TaggedFormat variant-debug
+	$ bundle install 
+	$ bundle exec teapot fetch
+	$ bundle exec teapot build Library/TaggedFormat variant-debug
 
 ## File Format
 
