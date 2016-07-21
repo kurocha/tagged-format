@@ -1,31 +1,40 @@
 
 #include <UnitTest/UnitTest.hpp>
+
 #include <TaggedFormat/Block.hpp>
+#include <TaggedFormat/Mesh.hpp>
 
 namespace TaggedFormat {
 	UnitTest::Suite BlockTestSuite {
 		"Test Block",
 
-		{"Check Alignment",
+		{"it is empty",
 			[](UnitTest::Examiner & examiner) {
-				examiner.check_equal(member_offset(&Block::tag), 0);
-				examiner.check_equal(member_offset(&Block::size), 4);
+				Array<VertexP3> array;
+				clear(array);
+				
+				examiner.expect(array.count()) == 0;
 			}
 		},
 
-		{"Data type sizes and alignments",
+		{"it has the correct size and alignment",
 			[](UnitTest::Examiner & examiner) {
-				examiner.check_equal(sizeof(TaggedFormat::float32), 4);
-				examiner.check_equal(sizeof(TaggedFormat::float64), 8);
+				examiner.expect(member_offset(&Block::tag)) == 0;
+				examiner.expect(member_offset(&Block::size)) == 4;
+				
+				examiner.expect(sizeof(float32)) == 4;
+				examiner.expect(sizeof(float64)) == 8;
+				
+				examiner.expect(sizeof(Block)) == 12;
 			}
 		},
 		
-		{"Block header initialisation",
+		{"it can clear block header",
 			[](UnitTest::Examiner & examiner) {
-				TaggedFormat::Header header;
-				TaggedFormat::clear(header);
+				Header header;
+				clear(header);
 				
-				examiner.check_equal(sizeof(TaggedFormat::Header), header.size);
+				examiner.expect(header.size) == sizeof(Header);
 			}
 		}
 	};

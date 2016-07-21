@@ -19,8 +19,10 @@ define_target "tagged-format" do |target|
 	target.depends "Build/Clang"
 	target.depends "Language/C++11"
 	
+	target.depends "Library/Buffers"
+	
 	target.provides "Library/TaggedFormat" do
-		append linkflags {install_prefix + "lib/libTaggedFormat.a"}
+		append linkflags ->{install_prefix + "lib/libTaggedFormat.a"}
 	end
 end
 
@@ -101,5 +103,7 @@ define_configuration "test" do |configuration|
 	configuration.require "build-files"
 	configuration.require "unit-test"
 	configuration.require "euclid"
+	configuration.require "buffers"
+	
 	configuration.require "language-cpp-class"
 end

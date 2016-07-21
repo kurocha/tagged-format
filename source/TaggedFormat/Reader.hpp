@@ -6,53 +6,56 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef _TAGGED_FORMAT_READER_H
-#define _TAGGED_FORMAT_READER_H
+#pragma once
 
 #include "Block.hpp"
 
+#include <Buffers/Buffer.hpp>
+
 namespace TaggedFormat {
+	using Buffers::Buffer;
 
 	/// Provides support for reading blocks from a given data buffer.
 	class Reader {
-	protected:
-		Buffer _buffer;
-		Header * _header;
-		
-	public:		
-		Reader(Buffer buffer);
+	public:
+		Reader(const Buffer & buffer);
 		virtual ~Reader();
 		
-		Header * header();
+		Reader(const Reader & other) = delete;
+		Reader & operator=(const Reader & other) = delete;
+		
+		const Header * header();
 		
 		/// If this returns true, all data is flipped (e.g. reversed).
 		/// This function is not implemented correctly and generally reverse byte order is not handled correctly yet.
 		bool flipped();
 
 		/// @returns a pointer to the block at a given offset.
-		Block * block_at_offset(OffsetT offset);
+		const Block * block_at_offset(OffsetT offset);
 
 		/// Read a given block of a specific type from a given offset. Provides basic sanity checking.
 		/// @returns nullptr in the event that the block is not the correct type.
 		template <typename BlockT>
-		BlockT * block_at_offset(OffsetT offset) {
-			Block * block = block_at_offset(offset);
+		const BlockT * block_at_offset(OffsetT offset) {
+			const Block * block = block_at_offset(offset);
 			
 			// Basic error checking:
 			if (block->tag != BlockT::TAG) {
 				return nullptr;
 			}
 			
-			return (BlockT *)block;
+			return (const BlockT *)block;
 		}
 
 		/// Read a given array, similar to block_at_offset.
 		template <typename ElementT>
-		Array<ElementT> * array_at_offset(OffsetT offset) {
+		const Array<ElementT> * array_at_offset(OffsetT offset) {
 			return block_at_offset<Array<ElementT>>(offset);
 		}
+		
+	protected:
+		const Buffer & _buffer;
+		const Header * _header = nullptr;
 	};
 
 };
-
-#endif

@@ -4,8 +4,9 @@
 
 #include <TaggedFormat/Scene.hpp>
 #include <TaggedFormat/Parser.hpp>
-#include <TaggedFormat/MemoryBuffer.hpp>
 #include <TaggedFormat/Reader.hpp>
+
+#include <Buffers/DynamicBuffer.hpp>
 
 namespace TaggedFormat {
 	const char * BasicSceneText =
@@ -31,27 +32,27 @@ namespace TaggedFormat {
 		{"Test Parser",
 			[](UnitTest::Examiner & examiner) {
 				std::stringstream input(BasicSceneText);
-				MemoryBuffer memory_buffer;
+				Buffers::DynamicBuffer buffer;
 
-				Parser::serialize(input, memory_buffer);
+				Parser::serialize(input, buffer);
 
-				Reader reader(memory_buffer.buffer());
+				Reader reader(buffer);
 
-				Node * node = reader.block_at_offset<Node>(reader.header()->top_offset);
+				auto node = reader.block_at_offset<Node>(reader.header()->top_offset);
 				examiner.check(node);
 				examiner.check_equal(node->name, "root");
 
 				examiner.check_equal(node->count(), 2);
 				OffsetT instance_offset = node->at(0);
 
-				GeometryInstance * geometry_instance = reader.block_at_offset<GeometryInstance>(instance_offset);
+				auto geometry_instance = reader.block_at_offset<GeometryInstance>(instance_offset);
 				examiner.check_equal(24, geometry_instance->mesh_offset);
 				examiner.check_equal(72, geometry_instance->skeleton_offset);
 				examiner.check_equal(0, geometry_instance->material_offset);
 
 				OffsetT child_node_offset = node->at(1);
 
-				Node * child_node = reader.block_at_offset<Node>(child_node_offset);
+				auto child_node = reader.block_at_offset<Node>(child_node_offset);
 				examiner.check(child_node);
 				examiner.check_equal(child_node->name, "child");
 			}

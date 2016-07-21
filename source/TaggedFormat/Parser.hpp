@@ -134,7 +134,7 @@ namespace TaggedFormat
 			void parse();
 		};
 
-		void serialize(std::istream & input, MemoryBuffer & output);
+		void serialize(std::istream & input, ResizableBuffer & output);
 		void serialize(std::istream & input, std::ostream & output);
 	};
 }

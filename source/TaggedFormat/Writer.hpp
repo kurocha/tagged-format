@@ -6,77 +6,81 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef _TAGGED_FORMAT_WRITER_H
-#define _TAGGED_FORMAT_WRITER_H
+#pragma once
 
 #include "Block.hpp"
+
+#include <Buffers/ResizableBuffer.hpp>
+
 #include <cstring>
 
 namespace TaggedFormat {
+	using Buffers::MutableBuffer;
+	using Buffers::ResizableBuffer;
 	
-	/// A simple output buffer for writing blocks of data.
-	class IWriteBuffer {
-	public:
-		virtual ~IWriteBuffer();
-		
-		/// Append size bytes to the buffer, return the offset to the start.
-		virtual OffsetT append(std::size_t size) = 0;
-		
-		/// Dereference an offset into the buffer:
-		virtual void * fetch(OffsetT offset) = 0;
-	};
-
 	/// Used for writing data at a given offset, but can be implicitly cast to an offset.
-	/// Rather than work directly with pointers, this wrapper assists with writing data to a particular offset in a buffer.
 	template <typename BlockT>
 	class BufferedOffset {
-	protected:
-		OffsetT _offset;
-		IWriteBuffer * _write_buffer;
-	
 	public:
-		BufferedOffset(OffsetT offset, IWriteBuffer * write_buffer) : _offset(offset), _write_buffer(write_buffer) {
+		BufferedOffset()
+		{
+		}
+		
+		BufferedOffset(OffsetT offset, MutableBuffer * buffer) : _offset(offset), _buffer(buffer)
+		{
 		}
 		
 		BlockT * operator*() {
-			return (BlockT *)_write_buffer->fetch(_offset);
+			return reinterpret_cast<BlockT *>(*_buffer + _offset);
 		}
 		
 		BlockT * operator->() {
-			return (BlockT *)_write_buffer->fetch(_offset);
+			return reinterpret_cast<BlockT *>(*_buffer + _offset);
 		}
-
+		
 		/// Return the offset of the block.
 		operator OffsetT() {
 			return _offset;
 		}
+		
+		operator bool() {
+			return _buffer != nullptr;
+		}
+	protected:
+		OffsetT _offset = 0;
+		MutableBuffer * _buffer = nullptr;
 	};
 	
-//MARK: -
-	
 	class Writer {
-	protected:
-		IWriteBuffer * _write_buffer;
-		
 	public:
-		Writer(IWriteBuffer * write_buffer);
+		Writer(ResizableBuffer & buffer);
 		virtual ~Writer();
+		
+		Writer(const Writer & other) = delete;
+		Writer & operator=(const Writer & other) = delete;
 		
 		BufferedOffset<Header> header();
 		
 		template <typename BlockT>
 		BufferedOffset<BlockT> append(OffsetT capacity = 0) {
 			BlockT block;
+			
+			// Initialize the block with the required capacity:
 			clear(block, capacity);
 			
-			OffsetT offset = _write_buffer->append(block.size);
+			auto offset = _buffer.size();
 			
-			void * start = _write_buffer->fetch(offset);
-			std::memcpy(start, &block, sizeof(BlockT));
+			//std::cerr << "Increasing size by " << block.size << std::endl;
+			_buffer.expand(block.size);
 			
-			return BufferedOffset<BlockT>(offset, _write_buffer);
+			//std::cerr << "Writing block of size " << sizeof(BlockT) << " at " << offset << " buffer size is " << _buffer.size() << std::endl;
+			_buffer.write(block, offset);
+			
+			return BufferedOffset<BlockT>(offset, &_buffer);
 		}
+		
+	protected:
+		ResizableBuffer & _buffer;
+		BufferedOffset<Header> _header;
 	};
 }
-
-#endif

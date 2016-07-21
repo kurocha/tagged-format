@@ -6,15 +6,15 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef _TAGGED_FORMAT_BLOCK_H
-#define _TAGGED_FORMAT_BLOCK_H
+#pragma once
 
-#include "Buffer.hpp"
+#include "Types.hpp"
 
 #include <string>
 #include <stdexcept>
 
-namespace TaggedFormat {
+namespace TaggedFormat
+{
 	constexpr TagT tag_from_identifier(const char identifier[4]) {
 		return (identifier[3] << 24) | (identifier[2] << 16) | (identifier[1] << 8) | identifier[0];
 	}
@@ -27,22 +27,12 @@ namespace TaggedFormat {
 	struct Block {
 		/// The blog identifier.
 		TagT tag;
-
+		
 		// Total size of block including this structure.
 		OffsetT size;
-
-		/// @returns a pointer to the end of the block in memory based on its size.
-		void * end() {
-			return (Byte *)this + size;
-		}
 		
-		/// @returns a pointer to a specific offset from the start of the block.
-		void * end(std::size_t offset) {
-			return (Byte *)this + offset;
-		}
-
 		/// Return a human readable name for the given tag.
-		std::string tag_name() {
+		std::string tag_name() const {
 			return identifier_from_tag(tag);
 		}
 	};
@@ -75,7 +65,7 @@ namespace TaggedFormat {
 			return offset;
 		}
 	};
-
+	
 	template <typename _ElementT, typename DerivedT = Block>
 	struct Array : public Block {
 		typedef _ElementT ElementT;
@@ -87,30 +77,46 @@ namespace TaggedFormat {
 		}
 
 		/// Number of elements in the array:
-		std::size_t count () {
+		std::size_t count () const {
 			return (size - sizeof(DerivedT)) / sizeof(ElementT);
 		}
 
 		/// Return the end of the structure, where the array elements are stored.
 		ElementT * begin() {
-			return (ElementT *)Block::end(sizeof(DerivedT));
+			return reinterpret_cast<ElementT *>(
+				reinterpret_cast<Byte *>(this) + sizeof(DerivedT)
+			);
 		}
-
-		using Block::end;
-
+		
+		const ElementT * begin() const {
+			return reinterpret_cast<const ElementT *>(
+				reinterpret_cast<const Byte *>(this) + sizeof(DerivedT)
+			);
+		}
+		
 		// Make sure we have a suitable type signature for iteration.
-		ElementT * end() {
-			return (ElementT *)Block::end();
+		ElementT * end()
+		{
+			return reinterpret_cast<ElementT *>(
+				reinterpret_cast<Byte *>(this) + this->size
+			);
 		}
-
+		
+		const ElementT * end() const
+		{
+			return reinterpret_cast<const ElementT *>(
+				reinterpret_cast<const Byte *>(this) + this->size
+			);
+		}
+		
+		const ElementT & at(std::size_t index) const {
+			if (index >= count()) throw std::out_of_range("index out of bounds");
+			else return begin()[index];
+		}
+		
 		ElementT & at(std::size_t index) {
-			if (index < count()) {
-				return *(begin() + index);
-			} else {
-				throw std::out_of_range("Invalid index for element array!");
-			}
+			if (index >= count()) throw std::out_of_range("index out of bounds");
+			else return begin()[index];
 		}
 	};
 }
-
-#endif

@@ -6,8 +6,7 @@
 //  Copyright (c) 2013 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef __TAGGED_FORMAT_SCENE_H
-#define __TAGGED_FORMAT_SCENE_H
+#pragma once
 
 #include "Block.hpp"
 
@@ -23,7 +22,7 @@ namespace TaggedFormat {
 		end
 	*/
 
-	struct Node : Array<Reference, Node> {
+	struct Node : public Array<Reference, Node> {
 		static const TagT TAG = tag_from_identifier("NODE");
 
 		/// The node name, if any.
@@ -41,5 +40,3 @@ namespace TaggedFormat {
 		OffsetT material_offset;
 	};
 }
-
-#endif

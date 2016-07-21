@@ -8,27 +8,23 @@
 
 #include "Writer.hpp"
 
-namespace TaggedFormat {
-	
-	IWriteBuffer::~IWriteBuffer() {
-		
+namespace TaggedFormat
+{
+	Writer::Writer(ResizableBuffer & buffer) : _buffer(buffer)
+	{
 	}
 	
-//MARK: -
-	
-	Writer::Writer(IWriteBuffer * write_buffer) : _write_buffer(write_buffer) {	
-		
+	Writer::~Writer()
+	{
 	}
 	
-	Writer::~Writer() {
+	BufferedOffset<Header> Writer::header()
+	{
+		if (!_header) {
+			_header = append<Header>();
+			_header->magic = 42;
+		}
 		
-	}
-	
-	BufferedOffset<Header> Writer::header() {
-		auto header = append<Header>();
-
-		header->magic = 42;
-		
-		return header;
+		return _header;
 	}
 }

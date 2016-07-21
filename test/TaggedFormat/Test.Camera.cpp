@@ -10,8 +10,9 @@
 #include <TaggedFormat/Camera.hpp>
 
 #include <TaggedFormat/Parser.hpp>
-#include <TaggedFormat/MemoryBuffer.hpp>
 #include <TaggedFormat/Reader.hpp>
+
+#include <Buffers/DynamicBuffer.hpp>
 
 #include <vector>
 
@@ -30,12 +31,15 @@ namespace TaggedFormat
 		{"it should parse view and projection matrices",
 			[](UnitTest::Examiner & examiner) {
 				std::stringstream input(CameraTestText);
-				MemoryBuffer memory_buffer;
+				Buffers::DynamicBuffer buffer;
 
-				Parser::serialize(input, memory_buffer);
-
-				Reader reader(memory_buffer.buffer());
-
+				Parser::serialize(input, buffer);
+				
+				examiner << "Data size is correct." << std::endl;
+				examiner.expect(buffer.size()) == 180;
+				
+				Reader reader(buffer);
+				
 				auto camera = reader.block_at_offset<Camera>(reader.header()->top_offset);
 
 				examiner.expect(camera->resolution[0]) == 1920;

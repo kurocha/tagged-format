@@ -6,8 +6,7 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef __TAGGED_FORMAT_DICTIONARY_H
-#define __TAGGED_FORMAT_DICTIONARY_H
+#pragma once
 
 #include "Block.hpp"
 #include <cstring>
@@ -19,8 +18,8 @@ namespace TaggedFormat {
 		/// Get a named element within the table.
 		/// @returns nullptr if an element with the given name was not found.
 		template <typename PatternT>
-		ElementT * lookup(const PatternT & name) {
-			ElementT * entries = this->begin();
+		const ElementT * lookup(const PatternT & name) const {
+			const ElementT * entries = this->begin();
 
 			for (std::size_t i = 0; i < this->count(); i += 1) {
 				if (entries[i].match(name)) {
@@ -29,6 +28,13 @@ namespace TaggedFormat {
 			}
 
 			return nullptr;
+		}
+		
+		template <typename PatternT>
+		ElementT * lookup(const PatternT & name) {
+			auto result = const_cast<const decltype(this)>(this)->lookup(name);
+			
+			return const_cast<ElementT *>(result);
 		}
 	};
 
@@ -46,8 +52,6 @@ namespace TaggedFormat {
 	struct OffsetTable : public Table<NamedOffset> {
 		/// Get an offset with a given name.
 		/// @returns 0 if offset with the given name was found.
-		OffsetT offset_named(const std::string & name);
+		OffsetT offset_named(const std::string & name) const;
 	};
 }
-
-#endif

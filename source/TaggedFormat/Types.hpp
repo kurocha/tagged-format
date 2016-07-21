@@ -6,8 +6,7 @@
 //  Copyright (c) 2012 Orion Transfer Ltd. All rights reserved.
 //
 
-#ifndef _TAGGED_FORMAT_TYPES_H
-#define _TAGGED_FORMAT_TYPES_H
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -17,10 +16,10 @@
 // std::strncpy, std::strncmp
 #include <cstring>
 
-#include <iostream>
-
 namespace TaggedFormat
 {
+	typedef std::uint8_t Byte;
+	
 	/// A helper for aligned data, defaulting to 32-bit boundaries:
 	template <typename _TypeT, std::size_t _Alignment = 4>
 	struct Aligned
@@ -39,10 +38,7 @@ namespace TaggedFormat
 	typedef Aligned<double>::TypeT float64;
 
 	/// A memory offset to a specific block.
-	typedef Aligned<uint64_t>::TypeT OffsetT;
-
-	/// An 8-bit byte data-type.
-	typedef unsigned char Byte;
+	typedef Aligned<std::size_t>::TypeT OffsetT;
 
 	/// A fixed string typically used for holding names or references:
 	template <std::size_t N = 32>
@@ -99,12 +95,14 @@ namespace TaggedFormat
 	}
 
 	/// This function returns the offset of a member of a class.
-	///		e.g. member_offset(VertexData::color)
+	///		e.g. member_offset(&VertexData::color)
 	template <class T, typename U>
-	inline constexpr std::ptrdiff_t member_offset(U T::* member)
+	inline constexpr std::size_t member_offset(U T::* member)
 	{
-		return reinterpret_cast<std::ptrdiff_t>(&(reinterpret_cast<T const volatile*>(NULL)->*member));
+		// https://gist.github.com/graphitemaster/494f21190bb2c63c5516
+		// constexpr T t {};
+		// return size_t(&(t.*member)) - size_t(&t);
+
+		return reinterpret_cast<std::size_t>(&(reinterpret_cast<T const volatile*>(0)->*member));
 	}
 }
-
-#endif

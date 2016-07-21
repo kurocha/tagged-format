@@ -7,7 +7,6 @@
 //
 
 #include "Parser.hpp"
-#include "MemoryBuffer.hpp"
 
 #include "Table.hpp"
 
@@ -18,6 +17,8 @@
 #include <typeinfo>
 #include <cassert>
 #include <cstring>
+
+#include <Buffers/DynamicBuffer.hpp>
 
 namespace TaggedFormat
 {
@@ -228,7 +229,7 @@ namespace TaggedFormat
 		}
 		
 		OffsetT Context::lookup(std::string name) {
-			NamesMapT::iterator offset = _names.find(name);
+			auto offset = _names.find(name);
 			
 			if (offset != _names.end()) {
 				return offset->second;
@@ -317,7 +318,7 @@ namespace TaggedFormat
 			node_block->name = name;
 			std::copy(transform, transform+16, node_block->transform);
 
-			std::memcpy(node_block->end(sizeof(Node)), child._offsets.data(), buffer_size);
+			std::memcpy(node_block->begin(), child._offsets.data(), buffer_size);
 
 			return node_block;
 		}
@@ -459,7 +460,7 @@ namespace TaggedFormat
 					
 					//std::cerr << "Found offset " << offset << " for name " << symbol << std::endl;
 				} else if (symbol == "mesh") {
-					offset = parse_mesh();	
+					offset = parse_mesh();
 				} else if (symbol == "array") {
 					offset = parse_array();
 				} else if (symbol == "offset-table") {
@@ -488,11 +489,11 @@ namespace TaggedFormat
 			//std::cerr << "<- Exiting parse; names defined = " << _names.size() << std::endl;
 		}
 		
-		void serialize(std::istream & input, MemoryBuffer & output) {
+		void serialize(std::istream & input, ResizableBuffer & output) {
 			using namespace TaggedFormat;
 			
 			// Initialize memory buffer:
-			Writer writer(&output);
+			Writer writer(output);
 			auto header = writer.header();
 			
 			{
@@ -504,6 +505,8 @@ namespace TaggedFormat
 
 				if (header->top_offset == 0) {
 					std::cerr << "Warning: Could not find block for top offset!" << std::endl;
+				} else if (header->top_offset >= output.size()) {
+					std::cerr << "Warning: Top offset points past end of buffer!" << std::endl;
 				}
 				
 				//std::cerr << "Top block at offset " << header->top_offset << std::endl;
@@ -511,14 +514,13 @@ namespace TaggedFormat
 		}
 
 		void serialize(std::istream & input, std::ostream & output) {
-			MemoryBuffer memory_buffer(1024);
+			Buffers::DynamicBuffer buffer(1024);
 
-			serialize(input, memory_buffer);
+			serialize(input, buffer);
 
 			{
 				// Write buffer to output:
-				Buffer buffer = memory_buffer.buffer();
-				output.write((char *)buffer.begin, buffer.size);
+				output.write((char *)buffer.begin(), buffer.size());
 			}
 		}
 

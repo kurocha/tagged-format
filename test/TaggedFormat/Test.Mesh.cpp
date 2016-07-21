@@ -3,8 +3,9 @@
 
 #include <TaggedFormat/Mesh.hpp>
 #include <TaggedFormat/Parser.hpp>
-#include <TaggedFormat/MemoryBuffer.hpp>
 #include <TaggedFormat/Reader.hpp>
+
+#include <Buffers/DynamicBuffer.hpp>
 
 namespace TaggedFormat {
 	const char * BasicMeshText =
@@ -43,11 +44,11 @@ namespace TaggedFormat {
 		{"Test Parser",
 			[](UnitTest::Examiner & examiner) {
 				std::stringstream input(BasicMeshText);
-				MemoryBuffer memory_buffer;
+				Buffers::DynamicBuffer buffer;
 
-				Parser::serialize(input, memory_buffer);
+				Parser::serialize(input, buffer);
 
-				Reader reader(memory_buffer.buffer());
+				Reader reader(buffer);
 
 				auto mesh = reader.block_at_offset<Mesh>(reader.header()->top_offset);
 				examiner.check(mesh);

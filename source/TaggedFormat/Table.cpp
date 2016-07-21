@@ -9,8 +9,8 @@
 #include "Table.hpp"
 
 namespace TaggedFormat {
-	OffsetT OffsetTable::offset_named(const std::string & name) {
-		NamedOffset * element = lookup(name);
+	OffsetT OffsetTable::offset_named(const std::string & name) const {
+		const NamedOffset * element = lookup(name);
 
 		if (element)
 			return element->offset;

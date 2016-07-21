@@ -11,15 +11,16 @@
 
 namespace TaggedFormat {
 	
-	Reader::Reader(Buffer buffer) : _buffer(buffer), _header(nullptr) {		
+	Reader::Reader(const Buffer & buffer) : _buffer(buffer)
+	{
 	}
 	
 	Reader::~Reader() {
 	}
 	
-	Header * Reader::header() {
+	const Header * Reader::header() {
 		if (!_header) {
-			_header = (Header *)_buffer.begin;
+			_header = reinterpret_cast<const Header *>(_buffer.begin());
 		}
 
 		if (_header->magic != 42) {
@@ -30,7 +31,7 @@ namespace TaggedFormat {
 	}
 
 	bool Reader::flipped() {
-		Header * header = this->header();
+		auto header = this->header();
 		
 		if (header->tag == Header::TAG) {
 			return false;
@@ -39,11 +40,11 @@ namespace TaggedFormat {
 		return true;
 	}
 	
-	Block * Reader::block_at_offset(OffsetT offset) {
-		if (offset > _buffer.size) {
+	const Block * Reader::block_at_offset(OffsetT offset) {
+		if (offset > _buffer.size()) {
 			return nullptr;
 		}
 		
-		return (Block *)((Byte *)_buffer.begin + offset);
+		return reinterpret_cast<const Block *>(_buffer + offset);
 	}
 }
