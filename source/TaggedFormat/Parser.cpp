@@ -318,7 +318,8 @@ namespace TaggedFormat
 			node_block->name = name;
 			std::copy(transform, transform+16, node_block->transform);
 
-			std::memcpy(node_block->begin(), child._offsets.data(), buffer_size);
+			if (!child._offsets.empty())
+				std::memcpy(node_block->begin(), child._offsets.data(), buffer_size);
 
 			return node_block;
 		}
