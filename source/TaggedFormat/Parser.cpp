@@ -515,13 +515,13 @@ namespace TaggedFormat
 		}
 
 		void serialize(std::istream & input, std::ostream & output) {
-			Buffers::DynamicBuffer buffer(1024);
+			Buffers::DynamicBuffer buffer;
 
 			serialize(input, buffer);
 
 			{
 				// Write buffer to output:
-				output.write((char *)buffer.begin(), buffer.size());
+				output.write(reinterpret_cast<char *>(buffer.begin()), buffer.size());
 			}
 		}
 

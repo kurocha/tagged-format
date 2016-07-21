@@ -15,7 +15,9 @@
 #include <TaggedFormat/Parser.hpp>
 #include <TaggedFormat/Reader.hpp>
 #include <TaggedFormat/Table.hpp>
-#include <TaggedFormat/MemoryBuffer.hpp>
+
+#include <Buffers/File.hpp>
+#include <Buffers/MappedBuffer.hpp>
 
 namespace {
 	using namespace TaggedFormat;
@@ -23,7 +25,7 @@ namespace {
 
 	void dump_offset(Reader * reader, OffsetT offset, std::ostream & output, std::size_t indentation = 0);
 
-	void dump_block(Reader * reader, OffsetTable * block, std::ostream & output, std::size_t indentation) {
+	void dump_block(Reader * reader, const OffsetTable * block, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 		
 		for (auto item : *block) {
@@ -33,7 +35,7 @@ namespace {
 		}
 	}
 
-	void dump_block(Reader * reader, Camera * camera, std::ostream & output, std::size_t indentation) {
+	void dump_block(Reader * reader, const Camera * camera, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 
 		output << indent << "resolution = " << camera->resolution << std::endl;
@@ -42,7 +44,7 @@ namespace {
 		output << indent << "projection_matrix = " << camera->projection_matrix << std::endl;
 	}
 
-	void dump_block(Reader * reader, Mesh * mesh, std::ostream & output, std::size_t indentation) {
+	void dump_block(Reader * reader, const Mesh * mesh, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 		
 		output << indent << "layout = " << Mesh::name_for_layout(mesh->layout) << std::endl;
@@ -57,7 +59,7 @@ namespace {
 		dump_offset(reader, mesh->axes_offset, output, indentation);
 	}
 
-	void dump_block(Reader * reader, Skeleton * skeleton, std::ostream & output, std::size_t indentation) {
+	void dump_block(Reader * reader, const Skeleton * skeleton, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 
 		output << indent << "bones:" << std::endl;
@@ -67,7 +69,7 @@ namespace {
 		dump_offset(reader, skeleton->sequences_offset, output, indentation);
 	}
 
-	void dump_block(Reader * reader, SkeletonAnimation * skeleton_animation, std::ostream & output, std::size_t indentation) {
+	void dump_block(Reader * reader, const SkeletonAnimation * skeleton_animation, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 
 		output << indent << "Animation=(" << skeleton_animation->start_time << " -> " << skeleton_animation->end_time << ")" << std::endl;
@@ -77,7 +79,7 @@ namespace {
 	}
 
 	template <typename ArrayT>
-	void dump_array(Reader * reader, ArrayT * array, std::ostream & output, std::size_t indentation, bool separate = true) {
+	void dump_array(Reader * reader, const ArrayT * array, std::ostream & output, std::size_t indentation, bool separate = true) {
 		std::string indent(indentation, '\t');
 
 		if (!separate) output << indent;
@@ -94,12 +96,13 @@ namespace {
 		if (!separate) output << std::endl;
 	}
 	
-	void dump_header(Reader * reader, Header * block, std::ostream & output, std::size_t indentation) {
+	void dump_header(Reader * reader, const Header * block, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 		
 		output << indent << "<" << block->tag_name();
 		output << "; " << block->size << " bytes";
 		output << "; " << "magic = " << block->magic;
+		output << "; " << "top_offset = " << block->top_offset;
 		output << ">" << std::endl;
 		
 		dump_offset(reader, block->top_offset, output, indentation);
@@ -108,7 +111,7 @@ namespace {
 	void dump_offset(Reader * reader, OffsetT offset, std::ostream & output, std::size_t indentation) {
 		std::string indent(indentation, '\t');
 		
-		Block * block = nullptr;
+		const Block * block = nullptr;
 		
 		// The header is always at offset 0.
 		if (offset) {
@@ -188,7 +191,7 @@ namespace {
 		}
 	}
 	
-	void dump(Buffer buffer, std::ostream & output) {
+	void dump(Buffer & buffer, std::ostream & output) {
 		Reader reader(buffer);
 		
 		dump_header(&reader, reader.header(), std::cout, 0);
@@ -204,7 +207,7 @@ int main(int argc, const char * argv[]) {
 		auto & argument = arguments[i];
 		
 		if (argument == "--help") {
-			std::cerr << argv[0] << " Copyright 2012 Samuel Williams. No warranty." << std::endl;
+			std::cerr << argv[0] << " Copyright, 2016, by Samuel Williams. No warranty." << std::endl;
 			std::cerr << "\t--text-to-binary [input-text-path] [output-binary-path]" << std::endl;
 			std::cerr << "\t--dump-binary [input-binary-path]" << std::endl;
 		}
@@ -227,12 +230,14 @@ int main(int argc, const char * argv[]) {
 		else if (argument == "--dump-binary") {
 			assert(i + 1 < arguments.size());
 			
-			MemoryBuffer memory_buffer;
-			memory_buffer.read_from_file(arguments[i+1]);
-
+			Buffers::File file(arguments[i+1]);
+			
 			std::cout.precision(4);
 			std::cout.setf(std::ios::fixed, std::ios::floatfield);
-			dump(memory_buffer.buffer(), std::cout);
+			
+			file.read([&](Buffer & buffer){
+				dump(buffer, std::cout);
+			});
 			
 			i += 1;
 		}
