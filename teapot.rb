@@ -45,14 +45,21 @@ define_target "tagged-format-executable" do |target|
 			input :source_file, pattern: /\.tft/
 			output :destination_path
 			
+			input :tagged_format_binary, implicit: true do |arguments|
+				environment[:install_prefix] + 'bin/TaggedFormat'
+			end
+			
 			apply do |arguments|
 				mkpath File.dirname(arguments[:destination_path])
 				
+				root = arguments[:source_file].root
+				
 				run!(
-					environment[:install_prefix] + 'bin/TaggedFormat',
+					arguments[:tagged_format_binary],
 					"--text-to-binary",
-					arguments[:source_file],
-					arguments[:destination_path],
+					arguments[:source_file].shortest_path(root),
+					arguments[:destination_path].shortest_path(root),
+					chdir: root
 				)
 			end
 		end

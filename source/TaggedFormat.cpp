@@ -216,12 +216,15 @@ int main(int argc, const char * argv[]) {
 			assert(i + 2 < arguments.size());
 			
 			std::ifstream input(arguments[i+1]);
-			std::ofstream output(arguments[i+2]);
+			std::string output_path(arguments[i+2]);
 			
 			try {
-				Parser::serialize(input, output);
+				Parser::serialize(input, output_path);
 			} catch (std::exception & exception) {
 				std::cerr << exception.what() << std::endl;
+				
+				// And thar she blows!
+				exit(1);
 			}
 			
 			i += 2;

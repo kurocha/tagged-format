@@ -135,6 +135,6 @@ namespace TaggedFormat
 		};
 
 		void serialize(std::istream & input, ResizableBuffer & output);
-		void serialize(std::istream & input, std::ostream & output);
+		void serialize(std::istream & input, const std::string & output_path);
 	};
 }

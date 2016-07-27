@@ -24,6 +24,8 @@ namespace TaggedFormat
 {
 	namespace Parser
 	{
+		const bool DEBUG = false;
+		
 		InvalidSequenceError::InvalidSequenceError(const std::string & message) : std::runtime_error(message)
 		{
 		}
@@ -429,14 +431,14 @@ namespace TaggedFormat
 		}
 		
 		void Context::parse() {
-			//std::cerr << "-> Entering parse" << std::endl;
+			if (DEBUG) std::cerr << "-> Entering parse" << std::endl;
 			
 			while (_input.good()) {
 				std::string symbol, name;
 				
 				bool named = false;
 				_input >> symbol;
-				//std::cerr << "(parse) <- " << symbol << std::endl;
+				if (DEBUG) std::cerr << "(parse) <- " << symbol << std::endl;
 				
 				if (_input.eof() || symbol == "end") {
 					break;
@@ -448,18 +450,17 @@ namespace TaggedFormat
 					name = symbol;
 					named = true;
 					
-					assert(_input >> symbol);
-					//std::cerr << "(parse name) <- " << symbol << std::endl;
+					_input >> symbol;
 				}
 				
-				//std::cerr << "Parsing " << symbol << " named " << name << std::endl;
+				if (DEBUG) std::cerr << "Parsing " << symbol << " named " << name << std::endl;
 
 				OffsetT offset = 0;
 				if (symbol.front() == '$') {
 					// Lookup the offset - no parsing required:
 					offset = lookup(std::string(symbol.begin() + 1, symbol.end()));
 					
-					//std::cerr << "Found offset " << offset << " for name " << symbol << std::endl;
+					if (DEBUG) std::cerr << "Found offset " << offset << " for name " << symbol << std::endl;
 				} else if (symbol == "mesh") {
 					offset = parse_mesh();
 				} else if (symbol == "array") {
@@ -477,7 +478,7 @@ namespace TaggedFormat
 				} else if (symbol == "camera") {
 					offset = parse_camera();
 				} else {
-					throw InvalidSequenceError("Could not parse input");
+					throw InvalidSequenceError(std::string("Could not parse symbol: ") + symbol);
 				}
 
 				if (named) {
@@ -514,16 +515,13 @@ namespace TaggedFormat
 			}
 		}
 
-		void serialize(std::istream & input, std::ostream & output) {
+		void serialize(std::istream & input, const std::string & output_path) {
 			Buffers::DynamicBuffer buffer;
-
+			
 			serialize(input, buffer);
-
-			{
-				// Write buffer to output:
-				output.write(reinterpret_cast<char *>(buffer.begin()), buffer.size());
-			}
+			
+			buffer.write_to_file(output_path);
 		}
 
-	}		
+	}
 }
