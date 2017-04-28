@@ -3,7 +3,7 @@
 #  This file is part of the "Teapot" project, and is released under the MIT license.
 #
 
-teapot_version "1.0.0"
+teapot_version "1.3"
 
 define_target "tagged-format" do |target|
 	target.build do
@@ -17,7 +17,7 @@ define_target "tagged-format" do |target|
 	target.depends :platform
 	target.depends "Build/Files"
 	target.depends "Build/Clang"
-	target.depends "Language/C++11"
+	target.depends "Language/C++11", private: true
 	
 	target.depends "Library/Buffers"
 	
@@ -36,7 +36,7 @@ define_target "tagged-format-executable" do |target|
 	target.depends :platform
 	target.depends "Build/Files"
 	target.depends "Build/Clang"
-	target.depends "Language/C++11"
+	target.depends "Language/C++11", private: true
 	
 	target.depends "Library/TaggedFormat"
 	
@@ -96,7 +96,7 @@ define_target "tagged-format-tests" do |target|
 	target.depends "Build/Clang"
 	
 	target.depends :platform
-	target.depends "Language/C++11"
+	target.depends "Language/C++11", private: true
 	target.depends "Library/UnitTest"
 	target.depends "Library/TaggedFormat"
 	
