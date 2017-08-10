@@ -6,6 +6,9 @@ import bpy, sys, os
 scene_name = sys.argv[-2]
 output_path = sys.argv[-1]
 
+file_dir = os.path.dirname(__file__)
+sys.path.append(file_dir)
+
 from io_tagged_format import safe_name, write_mesh, write_camera
 
 def write_to_file(scene, export_objects, flip_uv_coordinates=True):
