@@ -5,7 +5,20 @@
 
 teapot_version "1.3"
 
-define_target "tagged-format" do |target|
+# Project Metadata
+
+define_project "tagged-format" do |project|
+	project.title = "Tagged Format"
+	project.summary = 'Implements the reactor pattern using fibers.'
+	
+	project.license = "MIT License"
+	
+	project.add_author 'Samuel Williams', email: 'samuel.williams@oriontransfer.co.nz'
+	
+	project.version = "1.0.0"
+end
+
+define_target "tagged-format-library" do |target|
 	target.build do
 		source_root = target.package.path + 'source'
 		
@@ -22,7 +35,9 @@ define_target "tagged-format" do |target|
 	target.depends "Library/Buffers"
 	
 	target.provides "Library/TaggedFormat" do
-		append linkflags ->{install_prefix + "lib/libTaggedFormat.a"}
+		append linkflags [
+			->{install_prefix + 'lib/libTaggedFormat.a'},
+		]
 	end
 end
 
@@ -87,10 +102,10 @@ define_target "tagged-format-executable" do |target|
 end
 
 define_target "tagged-format-tests" do |target|
-	target.build do
+	target.build do |*arguments|
 		test_root = target.package.path + 'test'
 		
-		run tests: "TaggedFormat", source_files: test_root.glob('TaggedFormat/**/*.cpp')
+		run tests: "TaggedFormat", source_files: test_root.glob('TaggedFormat/**/*.cpp'), arguments: arguments
 	end
 	
 	target.depends "Build/Clang"
@@ -103,14 +118,26 @@ define_target "tagged-format-tests" do |target|
 	target.provides "Test/TaggedFormat"
 end
 
-define_configuration "test" do |configuration|
-	configuration[:source] = "https://github.com/kurocha"
-	
+# Configurations
+
+define_configuration "development" do |configuration|
+	configuration[:source] = "http://github.com/kurocha/"
+	configuration.import "tagged-format"
+		
+	# Provides all the build related infrastructure:
 	configuration.require "platforms"
 	configuration.require "build-files"
+	
+	# Provides unit testing infrastructure and generators:
 	configuration.require "unit-test"
+	
+	# Provides some useful C++ generators:
+	configuration.require "generate-travis"
+	configuration.require "generate-project"
+	configuration.require "generate-cpp-class"
+end
+
+define_configuration "tagged-format" do |configuration|
 	configuration.require "euclid"
 	configuration.require "buffers"
-	
-	configuration.require "language-cpp-class"
 end
