@@ -1,15 +1,9 @@
+# Teapot v3.4.1 configuration generated at 2022-05-23 20:27:04 +1200
 
-#
-#  This file is part of the "Teapot" project, and is released under the MIT license.
-#
-
-teapot_version "1.3"
-
-# Project Metadata
+required_version "3.0"
 
 define_project "tagged-format" do |project|
 	project.title = "Tagged Format"
-	project.summary = 'Implements the reactor pattern using fibers.'
 	
 	project.license = "MIT License"
 	
@@ -18,126 +12,79 @@ define_project "tagged-format" do |project|
 	project.version = "1.0.0"
 end
 
-define_target "tagged-format-library" do |target|
-	target.build do
-		source_root = target.package.path + 'source'
-		
-		copy headers: source_root.glob('TaggedFormat/**/*.{h,hpp}')
-		
-		build static_library: "TaggedFormat", source_files: source_root.glob('TaggedFormat/**/*.cpp')
-	end
-	
-	target.depends :platform
-	target.depends "Build/Files"
-	target.depends "Build/Clang"
-	target.depends "Language/C++11", private: true
-	
+# Build Targets
+
+define_target 'tagged-format-library' do |target|
+	target.depends 'Language/C++14'
 	target.depends "Library/Buffers"
 	
-	target.provides "Library/TaggedFormat" do
-		append linkflags [
-			->{install_prefix + 'lib/libTaggedFormat.a'},
-		]
-	end
-end
-
-define_target "tagged-format-executable" do |target|
-	target.build do
+	target.provides 'Library/TaggedFormat' do
 		source_root = target.package.path + 'source'
 		
-		build executable: "TaggedFormat", source_files: source_root.glob('TaggedFormat.cpp')
-	end
-	
-	target.depends :platform
-	target.depends "Build/Files"
-	target.depends "Build/Clang"
-	target.depends "Language/C++11", private: true
-	
-	target.depends "Library/TaggedFormat"
-	
-	target.provides "Executable/TaggedFormat" do
-		define Rule, "convert.tagged-format-file" do
-			input :source_file, pattern: /\.tft/
-			output :destination_path
-			
-			input :tagged_format_binary, implicit: true do |arguments|
-				environment[:install_prefix] + 'bin/TaggedFormat'
-			end
-			
-			apply do |arguments|
-				mkpath File.dirname(arguments[:destination_path])
-				
-				root = arguments[:source_file].root
-				
-				run!(
-					arguments[:tagged_format_binary],
-					"--text-to-binary",
-					arguments[:source_file].shortest_path(root),
-					arguments[:destination_path].shortest_path(root),
-					chdir: root
-				)
-			end
-		end
+		library_path = build static_library: 'TaggedFormat', source_files: source_root.glob('TaggedFormat/**/*.cpp')
 		
-		define Rule, "convert.tagged-format-files" do
-			# The input prefix where files are copied from:
-			input :source, multiple: true, pattern: /\.tft/
-			
-			# The output files:
-			parameter :root
-			parameter :extension, default: '.tfb'
-			parameter :basename, default: true
-				
-			apply do |arguments|
-				output_mapping = arguments.select{|key| [:root, :extension, :basename].include? key}
-				
-				arguments[:source].each do |path|
-					destination_path = path.with(output_mapping)
-					
-					convert source_file: path, destination_path: destination_path
-				end
-			end
-		end
+		append linkflags library_path
+		append header_search_paths source_root
 	end
 end
 
-define_target "tagged-format-tests" do |target|
-	target.build do |*arguments|
+define_target 'tagged-format-test' do |target|
+	target.depends 'Library/TaggedFormat'
+	target.depends 'Library/UnitTest'
+	
+	target.depends 'Language/C++14'
+	
+	target.provides 'Test/TaggedFormat' do |arguments|
 		test_root = target.package.path + 'test'
 		
-		run tests: "TaggedFormat", source_files: test_root.glob('TaggedFormat/**/*.cpp'), arguments: arguments
+		run tests: 'TaggedFormat-tests', source_files: test_root.glob('TaggedFormat/**/*.cpp'), arguments: arguments
 	end
+end
+
+define_target 'tagged-format-executable' do |target|
+	target.depends 'Library/TaggedFormat'
 	
-	target.depends "Build/Clang"
+	target.depends 'Language/C++14'
 	
-	target.depends :platform
-	target.depends "Language/C++11", private: true
-	target.depends "Library/UnitTest"
-	target.depends "Library/TaggedFormat"
+	target.provides 'Executable/TaggedFormat' do
+		source_root = target.package.path + 'source'
+		
+		executable_path = build executable: 'TaggedFormat', source_files: source_root.glob('TaggedFormat.cpp')
+		
+		tagged_format_executable executable_path
+	end
+end
+
+define_target 'tagged-format-run' do |target|
+	target.depends 'Executable/TaggedFormat'
 	
-	target.provides "Test/TaggedFormat"
+	target.depends :executor
+	
+	target.provides 'Run/TaggedFormat' do |*arguments|
+		run executable_file: environment[:tagged_format_executable], arguments: arguments
+	end
 end
 
 # Configurations
 
-define_configuration "development" do |configuration|
-	configuration[:source] = "http://github.com/kurocha/"
+define_configuration 'development' do |configuration|
+	configuration[:source] = "https://github.com/kurocha"
 	configuration.import "tagged-format"
-		
+	
 	# Provides all the build related infrastructure:
-	configuration.require "platforms"
-	configuration.require "build-files"
+	configuration.require 'platforms'
 	
 	# Provides unit testing infrastructure and generators:
-	configuration.require "unit-test"
+	configuration.require 'unit-test'
 	
 	# Provides some useful C++ generators:
-	configuration.require "generate-travis"
+	configuration.require 'generate-cpp-class'
+	
 	configuration.require "generate-project"
-	configuration.require "generate-cpp-class"
 end
 
 define_configuration "tagged-format" do |configuration|
+	configuration.public!
 	configuration.require "euclid"
 	configuration.require "buffers"
 end
