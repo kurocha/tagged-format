@@ -16,7 +16,7 @@ end
 
 define_target 'tagged-format-library' do |target|
 	target.depends 'Language/C++14'
-	target.depends "Library/Buffers"
+	target.depends "Library/Buffers", public: true
 	
 	target.provides 'Library/TaggedFormat' do
 		source_root = target.package.path + 'source'

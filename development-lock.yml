@@ -1,0 +1,46 @@
+---
+platforms:
+  :commit: 53bfdd34201790980ba8f4c335dbf659d038eb06
+  :branch: master
+unit-test:
+  :commit: 10505017a6360a47b79699c673ee834b5ba73eb5
+  :branch: master
+generate-cpp-class:
+  :commit: b8996bd1404904a737b76d6893fc9f9bf78da540
+  :branch: master
+generate-project:
+  :commit: 2515e20b576c1a7dc5c5d2c1e14dea06ff5159ab
+  :branch: master
+euclid:
+  :commit: 932e4a01043442becc696eb337e796ae9578a078
+  :branch: master
+buffers:
+  :commit: 419fba9a2553a4829db5b75b40234bdafd1b0365
+  :branch: master
+variants:
+  :commit: f6a26a8ac3a47a23a213cbd15da2183239d394d1
+  :branch: master
+platform-linux:
+  :commit: 3619b22cfc66fd0691a8e747d1c5d445ac4cb9a6
+  :branch: master
+build-clang:
+  :commit: 89942e92e5ac6ffb10faa9cd2d4858903bd28d4f
+  :branch: master
+build-linux:
+  :commit: 1d9e9a5ade9b5817dd9f5c2cb4f5f43883a64c66
+  :branch: master
+build-files:
+  :commit: 2e5392ef4e171885b621288c7829e5160f1255bf
+  :branch: master
+executor-unix:
+  :commit: 36fe76d003e45c97cfb1d9d2726c17a33f28cad5
+  :branch: master
+executor-lldb:
+  :commit: 75f65ccadcf08aaed5694870c31556fbd656427a
+  :branch: master
+streams:
+  :commit: 2f9141de26e5331ab35fc91c03ab6a60317bbf7c
+  :branch: master
+generate-template:
+  :commit: ad0dcfb6da64cc0508b71916b30e1050c82ecea7
+  :branch: master

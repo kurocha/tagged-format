@@ -1,0 +1,201 @@
+<html>
+	<head>
+		<title>Tagged Format</title>
+		
+		<script src="gl-matrix.js" type="text/javascript"></script>
+		<script src="tagged-format.js" type="text/javascript"></script>
+		<script src="support.js" type="text/javascript"></script>
+		
+		<script type="text/javascript">
+			var gl = null; // our WebGL rendering context
+			var viewportWidth = 0;
+			var viewportHeight = 0;
+ 
+			var program = null; // shader program object
+			var texture = null; // texture object
+			
+			var model = null; // The model we will render.
+ 
+			function init() {
+				var canvas = document.getElementById("canvas");
+				viewportWidth = canvas.width;
+				viewportHeight = canvas.height;
+				
+				gl = initializeWebGL(canvas);
+				
+				// basic settings
+				// =================================================
+				gl.clearColor(0, 0, 0, 1);
+				gl.enable(gl.DEPTH_TEST);
+ 
+				// setup shaders
+				// =================================================
+				var vertexShaderSource = getShaderSource("shader-vs");
+				var fragmentShaderSource = getShaderSource("shader-fs");
+ 
+				var vertexShader = loadShader(gl.VERTEX_SHADER, vertexShaderSource);
+				var fragmentShader = loadShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+				if (!vertexShader || !fragmentShader) {
+					return;
+				}
+ 
+				// create program object
+				program = gl.createProgram();
+ 
+				// attach our two shaders to the program
+				gl.attachShader(program, vertexShader);
+				gl.attachShader(program, fragmentShader);
+ 
+				// setup attributes (optional)
+				gl.bindAttribLocation(program, 0, "aPosition");
+				gl.bindAttribLocation(program, 1, "aNormal");
+				gl.bindAttribLocation(program, 2, "aTexCoord");
+ 
+				// linking
+				gl.linkProgram(program);
+				if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+					alert(gl.getProgramInfoLog(program));
+					return;
+				}
+ 
+				// setup uniforms (optional)
+				gl.useProgram(program);
+				gl.uniform1i(gl.getUniformLocation(program, "uTexture"), 0);
+				
+				var viewMatrix = mat4.create();
+				
+				mat4.perspective(viewMatrix, 45, 400 / 300, 0.1, 1000.0);
+				mat4.translate(viewMatrix, mat4.clone(viewMatrix), [0, 0, -10.0]);
+				mat4.rotate(viewMatrix, mat4.clone(viewMatrix), Math.PI / 2.0, [1.0, 0, 0]);
+				
+				gl.uniformMatrix4fv(gl.getUniformLocation(program, "viewTransform"),
+					false,
+					viewMatrix
+				);
+ 
+				// setup VBO
+				// =================================================
+ 
+ 				texture = loadTexture("7810.jpg");
+ 
+				Reader.load('Automatic Mortar.tfb', function(reader) {
+					var header = reader.header();
+					var top = reader.blockAtOffset(header.topOffset);
+					
+					var mesh = reader.blockAtOffset(top.offsetTable['transmitter']);
+					console.log("Mesh", mesh);
+					model = new TaggedFormat.Model(gl, reader, mesh);
+					model.attributes = model.attributes.slice(0, 3);
+					
+					console.log("Model attributes: ", model.attributes);
+					
+					// draw scene every 33 milliseconds
+					setInterval(draw, 1000);
+				});
+			}
+
+			function getShaderSource(id) {
+				var script = document.getElementById(id);
+				if (!script) { return null; }
+ 
+				var source = "";
+				var child = script.firstChild;
+				while (child) {
+					// node is a "textnode" ?
+					if (child.nodeType == 3) {
+						source += child.textContent;
+					}
+					child = child.nextSibling;
+				}
+				return source;
+			}
+ 
+			function loadShader(shaderType, shaderSource) {
+				var shader = gl.createShader(shaderType);
+				if (!shader) { return null; }
+				gl.shaderSource(shader, shaderSource);
+				gl.compileShader(shader);
+ 
+				if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+					alert(gl.getShaderInfoLog(shader));
+					return null;
+				}    
+ 
+				return shader;
+			}
+ 
+			function loadTexture(filename) {
+				// preparations
+				var texture = gl.createTexture();
+				gl.bindTexture(gl.TEXTURE_2D, texture);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+				var image = new Image();
+ 
+				// register event handlers
+				image.onload = function() {
+					gl.bindTexture(gl.TEXTURE_2D, texture);
+					gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+					gl.generateMipmap(gl.TEXTURE_2D);
+					draw(); // texture now available, we can redraw the scene
+				}
+				image.onerror = function() {
+					alert("error while loading image '"+filename+"'.");
+				}
+ 
+				// request image from server
+				image.src = filename;
+ 
+				// return texture object (asynchronous loading, texture NOT available yet!)
+				return texture;
+			}
+ 
+			function draw() {
+				gl.viewport(0, 0, viewportWidth, viewportHeight);
+				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+ 
+				// setup shader:
+				gl.useProgram(program);
+				
+				// setup texture:
+				gl.activeTexture(gl.TEXTURE0);
+				gl.bindTexture(gl.TEXTURE_2D, texture);
+  
+				model.draw();
+			}
+		</script>
+
+		<script id="shader-vs" type="x-shader/x-vertex">
+			precision mediump float;
+			
+			uniform mat4 viewTransform;
+			
+			attribute vec3 aPosition;
+			attribute vec3 aNormal;
+			attribute vec2 aTexCoord;
+			varying vec3 vNormal;
+			varying vec2 vTexCoord;
+			void main() {
+				gl_Position = viewTransform * vec4(aPosition, 1.0);
+				vTexCoord = aTexCoord;
+				vNormal = aNormal;
+			}
+		</script>
+ 
+		<script id="shader-fs" type="x-shader/x-fragment">
+			precision mediump float;
+			
+			varying vec3 vNormal;
+			varying vec2 vTexCoord;
+			uniform sampler2D uTexture;
+			void main() {
+				gl_FragColor = texture2D(uTexture, vTexCoord);
+			}
+		</script>
+	</head>
+	<body onload="init()">
+		<div style="text-align: center">
+			<canvas id="canvas" width="1024" height="1024"></canvas>
+		</div>
+	</body>
+</html>
