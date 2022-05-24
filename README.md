@@ -4,7 +4,7 @@ The Tagged Format is a simple text and binary format designed to be loaded direc
 
 It is primarily used for storing 3D model data, and includes an exporter for [Blender](https://www.blender.org/) and both a C++ and JavaScript implementation. However, it's design is generic and it can be modified to suit a wide range of tasks.
 
-[![Build Status](https://secure.travis-ci.org/kurocha/tagged-format.svg)](http://travis-ci.org/kurocha/tagged-format)
+[![Development](https://github.com/kurocha/tagged-format/actions/workflows/development.yml/badge.svg)](https://github.com/kurocha/tagged-format/actions/workflows/development.yml)
 
 ## Build and Install
 
