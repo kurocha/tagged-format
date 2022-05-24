@@ -52,6 +52,45 @@ define_target 'tagged-format-executable' do |target|
 		executable_path = build executable: 'TaggedFormat', source_files: source_root.glob('TaggedFormat.cpp')
 		
 		tagged_format_executable executable_path
+		
+		define Rule, "convert.tagged-format-file" do
+			input :source_file, pattern: /\.tft/
+			output :destination_path
+			
+ 			apply do |arguments|
+				mkpath File.dirname(arguments[:destination_path])
+				
+				root = arguments[:source_file].root
+				
+				run!(
+					environment[:tagged_format_executable],
+					"--text-to-binary",
+					arguments[:source_file].shortest_path(root),
+					arguments[:destination_path].shortest_path(root),
+					chdir: root
+				)
+			end
+		end
+
+		define Rule, "convert.tagged-format-files" do
+			# The input prefix where files are copied from:
+			input :source, multiple: true, pattern: /\.tft/
+			
+			# The output files:
+			parameter :root
+			parameter :extension, default: '.tfb'
+			parameter :basename, default: true
+				
+			apply do |arguments|
+				output_mapping = arguments.select{|key| [:root, :extension, :basename].include? key}
+				
+				arguments[:source].each do |path|
+					destination_path = path.with(**output_mapping)
+					
+					convert source_file: path, destination_path: destination_path
+				end
+			end
+		end
 	end
 end
 
